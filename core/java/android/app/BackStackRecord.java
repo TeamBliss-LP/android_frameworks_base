@@ -768,6 +768,7 @@ final class BackStackRecord extends FragmentTransaction implements
                             if (f == null || old.mContainerId == f.mContainerId) {
                                 if (old == f) {
                                     op.fragment = f = null;
+                                    break;
                                 } else {
                                     if (op.removed == null) {
                                         op.removed = new ArrayList<Fragment>();
