@@ -358,6 +358,8 @@ public class AudioManager {
             "org.codeaurora.bluetooth.EXTRA_AVAILABLITY_CHANGED_VALUE";
 
 
+    /** @hide No audio stream */
+    public static final int STREAM_DEFAULT = AudioSystem.STREAM_DEFAULT;
     /** The audio stream for phone calls */
     public static final int STREAM_VOICE_CALL = AudioSystem.STREAM_VOICE_CALL;
     /** The audio stream for system sounds */
