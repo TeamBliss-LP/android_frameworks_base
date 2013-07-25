@@ -51,6 +51,8 @@ LOCAL_MODULE_TAGS := optional
 
 LOCAL_CFLAGS += -DSTATIC_ANDROIDFW_FOR_TOOLS
 
+LOCAL_CPPFLAGS += -fno-strict-aliasing
+
 LOCAL_C_INCLUDES := \
 	external/zlib
 
@@ -78,6 +80,8 @@ LOCAL_STATIC_LIBRARIES := libziparchive
 LOCAL_C_INCLUDES := \
     external/zlib \
     system/core/include
+
+LOCAL_CPPFLAGS += -fno-strict-aliasing
 
 LOCAL_MODULE:= libandroidfw
 
