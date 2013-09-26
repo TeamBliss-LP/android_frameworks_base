@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+	
+    <!-- Network speed indicator -->
+    <color name="status_bar_traffic_color">#FFFFFFFF</color>
 
     <!-- Floating action button -->
     <color name="fab_color">#ffDC4C3C</color>
