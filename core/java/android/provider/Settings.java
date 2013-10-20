@@ -3858,6 +3858,21 @@ public final class Settings {
          */
         public static final String STATUS_BAR_EXPANDED_HEADER_SHOW_WEATHER_LOCATION = "status_bar_expanded_header_show_weather_location";
 
+       /**
+         * Whether to display the gesture anywhere trigger region or not.
+         * @hide
+         */
+        @ChaosLab(name="Identicons", classification=Classification.NEW_FIELD)
+        public static final String IDENTICONS_ENABLED = "identicons_enabled";
+
+        /**
+         * Identicons style setting.
+         * @hide
+         */
+        @ChaosLab(name="Identicons", classification=Classification.NEW_FIELD)
+        public static final String IDENTICONS_STYLE = "identicons_style";
+
+
         /**
          * Color of the text on the header of the expanded status bar
          * @hide
