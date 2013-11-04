@@ -2218,6 +2218,9 @@
   <java-symbol type="array" name="notification_light_package_mapping" />
   <java-symbol type="array" name="config_notificationNoAlertsVibePattern" />
 
+  <!-- Config.xml entries -->
+  <java-symbol type="bool" name="config_samsung_stk" />
+
   <!-- Notification and battery light -->
   <java-symbol type="bool" name="config_intrusiveNotificationLed" />
   <java-symbol type="bool" name="config_multiColorNotificationLed" />
