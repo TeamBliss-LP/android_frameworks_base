@@ -56,6 +56,16 @@ public class ScreenPinningRequest implements View.OnClickListener {
 
     private RequestWindowView mRequestWindow;
 
+    public ScreenPinningCallback mCallback;
+
+    public interface ScreenPinningCallback {
+        public void onStartLockTask();
+    }
+
+    public void setCallback(ScreenPinningCallback c) {
+        mCallback = c;
+    }
+
     public ScreenPinningRequest(Context context) {
         mContext = context;
         mAccessibilityService = (AccessibilityManager)
@@ -111,6 +121,7 @@ public class ScreenPinningRequest implements View.OnClickListener {
     public void onClick(View v) {
         if (v.getId() == R.id.screen_pinning_ok_button || mRequestWindow == v) {
             try {
+                if (mCallback != null) mCallback.onStartLockTask();
                 ActivityManagerNative.getDefault().startLockTaskModeOnCurrent();
             } catch (RemoteException e) {}
         }

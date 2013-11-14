@@ -45,7 +45,9 @@ import android.view.KeyEvent;
 import android.view.WindowManagerGlobal;
 import android.widget.Toast;
 
+import com.android.internal.R;
 import com.bliss.util.Helpers;
+import com.android.internal.util.bliss.TaskUtils;
 import com.android.internal.statusbar.IStatusBarService;
 
 import java.net.URISyntaxException;
@@ -54,6 +56,8 @@ public class Action {
 
     private static final int MSG_INJECT_KEY_DOWN = 1066;
     private static final int MSG_INJECT_KEY_UP = 1067;
+
+    private static int mCurrentUserId = 0;
 
     public static void processAction(Context context, String action, boolean isLongpress) {
         processActionWithOptions(context, action, isLongpress, true);
@@ -101,6 +105,45 @@ public class Action {
                 return;
             } else if (action.equals(ActionConstants.ACTION_SEARCH)) {
                 triggerVirtualKeypress(KeyEvent.KEYCODE_SEARCH, isLongpress);
+                return;
+            } else if (action.equals(ActionConstants.ACTION_KILL)) {
+                if (isKeyguardShowing) return;
+				TaskUtils.killActiveTask(context, mCurrentUserId);
+					Toast.makeText(context, R.string.app_killed_message, Toast.LENGTH_SHORT).show();
+                return;
+            } else if (action.equals(ActionConstants.ACTION_NOTIFICATIONS)) {
+                if (isKeyguardShowing && isKeyguardSecure) {
+                    return;
+                }
+                try {
+                    barService.expandNotificationsPanel();
+                } catch (RemoteException e) {
+                }
+                return;
+            } else if (action.equals(ActionConstants.ACTION_SETTINGS_PANEL)) {
+                if (isKeyguardShowing && isKeyguardSecure) {
+                    return;
+                }
+                try {
+                    barService.expandSettingsPanel();
+                } catch (RemoteException e) {}
+            } else if (action.equals(ActionConstants.ACTION_LAST_APP)) {
+                if (isKeyguardShowing) return;               
+                TaskUtils.toggleLastApp(context, mCurrentUserId);
+                return;
+            } else if (action.equals(ActionConstants.ACTION_TORCH)) {
+                try {
+                    ITorchService torchService = ITorchService.Stub.asInterface(
+                            ServiceManager.getService(Context.TORCH_SERVICE));
+                    torchService.toggleTorch();
+                } catch (RemoteException e) {
+                }
+                return;
+            } else if (action.equals(ActionConstants.ACTION_POWER_MENU)) {
+                try {
+                    windowManagerService.toggleGlobalMenu();
+                } catch (RemoteException e) {
+                }
                 return;
             } else if (action.equals(ActionConstants.ACTION_MENU)
                     || action.equals(ActionConstants.ACTION_MENU_BIG)) {
@@ -159,7 +202,7 @@ public class Action {
                 }
                 Settings.System.putIntForUser(
                         context.getContentResolver(),
-                        Settings.System.NAVBAR_FORCE_ENABLE,
+                        Settings.System.NAVIGATION_BAR_SHOW,
                         navBarState ? 0 : 1, UserHandle.USER_CURRENT);
                 return;
             } else if (action.equals(ActionConstants.ACTION_KILL)) {
@@ -233,7 +276,7 @@ public class Action {
                 }
                 Settings.System.putIntForUser(
                         context.getContentResolver(),
-                        Settings.System.NAVBAR_FORCE_ENABLE,
+                        Settings.System.NAVIGATION_BAR_SHOW,
                         navBarState ? 0 : 1, UserHandle.USER_CURRENT);
                 return;
             } else if (action.equals(ActionConstants.ACTION_SCREENSHOT)) {
@@ -372,6 +415,12 @@ public class Action {
                     torchManager.setTorchEnabled(false);
                 }
                 return;
+            } else if (action.equals(ActionConstants.ACTION_SCREENSHOT)) {
+                context.sendBroadcast(new Intent(Intent.ACTION_SCREENSHOT));
+                return;
+            } else if (action.equals(ActionConstants.ACTION_SCREENRECORD)) {
+                context.sendBroadcast(new Intent(Intent.ACTION_SCREENRECORD));
+                return;                  
             } else {
                 // we must have a custom uri
                 Intent intent = null;
@@ -395,7 +444,7 @@ public class Action {
     
     public static boolean isNavBarEnabled(Context context) {
         return Settings.System.getIntForUser(context.getContentResolver(),
-                Settings.System.NAVBAR_FORCE_ENABLE,
+                Settings.System.NAVIGATION_BAR_SHOW,
                 isNavBarDefault(context) ? 1 : 0, UserHandle.USER_CURRENT) == 1;
     }
 
