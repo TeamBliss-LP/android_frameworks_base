@@ -20,5 +20,23 @@
     <string name="ext_media_mount_action">Mount</string>
     <string name="ext_media_unmounting_notification_title">unmounting\u2026</string>
     <string name="ext_media_mounting_notification_title">mounting\u2026</string>
+    
+    <!-- Off/On/Toggle -->
+    <string name="off">Off</string>
+    <string name="on">On</string>
+    <string name="toggle">Toggle</string>
+
+    <!-- Dialog Cancel/OK -->
+    <string name="cancel">Cancel</string>
+    <string name="dlg_ok">Ok</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+
+    <!-- Slim Shortcut Actions -->
+    <string name="shortcut_picker">Slim Shortcuts</string>
+    <string name="shortcut_rotation">Rotation</string>
+    <string name="shortcut_reboot">Reboot</string>
+    <string name="shortcut_recovery">Recovery</string>
+    <string name="shortcut_toggle_title">Action to perform</string>
 
 </resources>
