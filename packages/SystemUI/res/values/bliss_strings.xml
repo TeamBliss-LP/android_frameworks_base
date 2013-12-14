@@ -95,4 +95,7 @@
     <string name="content_setup_dismiss">Continue</string>
     <string name="toast_not_installed">App is not installed</string>
 
+	<!-- TRDS -->
+    <string name="quick_settings_trds_label">TRDS</string>
+
 </resources>
