@@ -5141,7 +5141,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                             telecomManager.silenceRinger();
                         } else if ((mIncallPowerBehavior
                                 & Settings.Secure.INCALL_POWER_BUTTON_BEHAVIOR_HANGUP) != 0
-                                && telecomManager.isInCall() && interactive) {
+                                && telecomManager.isInCall() && interactive && isScreenOn()) {
                             // Otherwise, if "Power button ends call" is enabled,
                             // the Power button will hang up any current active call.
                             hungUp = telecomManager.endCall();
