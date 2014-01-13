@@ -3113,7 +3113,14 @@ public final class Settings {
         public static final String LOCK_TO_APP_ENABLED = "lock_to_app_enabled";
 
         /**
-         * Whether lock-to-app will lock the keyguard when exiting.
+         * @hide
+         * Whether national data roaming should be used.
+         * @hide
+         */
+        public static final String MVNO_ROAMING = "mvno_roaming";
+
+        /**
+ 	 * Whether lock-to-app will lock the keyguard when exiting.
          * @hide
          */
         public static final String LOCK_TO_APP_EXIT_LOCKED = "lock_to_app_exit_locked";
