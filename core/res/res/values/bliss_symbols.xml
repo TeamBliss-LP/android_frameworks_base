@@ -36,7 +36,6 @@
   <java-symbol type="string" name="animation_grow_shrink_bottom"/>
   <java-symbol type="string" name="animation_grow_shrink_left"/>
   <java-symbol type="string" name="animation_grow_shrink_right"/>
-  <java-symbol type="anim" name="no_animation" />
   <java-symbol type="anim" name="shrink_fade_out_ribbon" />
   <java-symbol type="anim" name="shrink_fade_out_center_ribbon" />
   <java-symbol type="anim" name="shrink_fade_out_right_ribbon" />
@@ -59,10 +58,16 @@
   <java-symbol type="anim" name="slow_fade_in" />
   <java-symbol type="anim" name="slow_fade_out" />
   <java-symbol type="anim" name="slide_in_up_ribbon" />
-  <java-symbol type="anim" name="slide_out_down_ribbon" /> 
+  <java-symbol type="anim" name="slide_out_down_ribbon" />
   <java-symbol type="anim" name="slide_in_right_no_fade" />
   <java-symbol type="anim" name="slide_out_left_no_fade" />
   <java-symbol type="anim" name="slide_in_left_no_fade" />
   <java-symbol type="anim" name="slide_out_right_no_fade" />
+  <java-symbol type="anim" name="no_animation" />   
+  <java-symbol type="array" name="anim_controls_entries" />   
+ 
+
+  
+
 
 </resources>
