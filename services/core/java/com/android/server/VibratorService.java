@@ -69,6 +69,7 @@ public class VibratorService extends IVibratorService.Stub
     private PowerManagerInternal mPowerManagerInternal;
     private InputManager mIm;
 
+    float vibrationMultiplier = 1;
     volatile VibrateThread mThread;
 
     // mInputDeviceVibrators lock should be acquired after mVibrations lock, if both are
@@ -184,11 +185,21 @@ public class VibratorService extends IVibratorService.Stub
         mContext.getContentResolver().registerContentObserver(
                 Settings.System.getUriFor(Settings.System.VIBRATE_INPUT_DEVICES),
                 true, mSettingObserver, UserHandle.USER_ALL);
+                
+        mContext.getContentResolver().registerContentObserver(
+                 Settings.System.getUriFor(Settings.System.VIBRATION_MULTIPLIER), true,
+                 new ContentObserver(mH) {
+                     @Override
+                     public void onChange(boolean selfChange) {
+                         updateVibrationMultiplier();
+                     }
+                 }, UserHandle.USER_ALL);                
 
         mContext.registerReceiver(new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 updateInputDeviceVibrators();
+                updateVibrationMultiplier();
             }
         }, new IntentFilter(Intent.ACTION_USER_SWITCHED), null, mH);
 
@@ -204,6 +215,12 @@ public class VibratorService extends IVibratorService.Stub
         public void onChange(boolean SelfChange) {
             updateInputDeviceVibrators();
         }
+    }
+    
+     void updateVibrationMultiplier() {
+         vibrationMultiplier = Settings.System.getFloat(
+                             mContext.getContentResolver(),
+                             Settings.System.VIBRATION_MULTIPLIER, 1);
     }
 
     @Override // Binder call
@@ -223,12 +240,13 @@ public class VibratorService extends IVibratorService.Stub
     }
 
     @Override // Binder call
-    public void vibrate(int uid, String opPkg, long milliseconds, int usageHint,
+    public void vibrate(int uid, String opPkg, long millis, int usageHint,
             IBinder token) {
         if (mContext.checkCallingOrSelfPermission(android.Manifest.permission.VIBRATE)
                 != PackageManager.PERMISSION_GRANTED) {
             throw new SecurityException("Requires VIBRATE permission");
         }
+        long milliseconds = (long)(millis * vibrationMultiplier);
         verifyIncomingUid(uid);
         // We're running in the system server so we cannot crash. Check for a
         // timeout of 0 or negative. This will ensure that a vibration has
@@ -284,7 +302,7 @@ public class VibratorService extends IVibratorService.Stub
      }    
 
     @Override // Binder call
-    public void vibratePattern(int uid, String packageName, long[] pattern, int repeat,
+    public void vibratePattern(int uid, String packageName, long[] pattern2, int repeat,
             int usageHint, IBinder token) {
         if (mContext.checkCallingOrSelfPermission(android.Manifest.permission.VIBRATE)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -345,6 +363,11 @@ public class VibratorService extends IVibratorService.Stub
         // so wakelock calls will succeed
         long identity = Binder.clearCallingIdentity();
         try {
+			 int NQ = pattern2.length;
+             long[] pattern = new long[NQ];
+                 for (int i=0; i<NQ; i++) {
+                     pattern[i] = (long)(pattern2[i] * vibrationMultiplier);
+                  }
             synchronized (mVibrations) {
                 final Vibration vib = removeVibrationLocked(token);
                 if (vib == mCurrentVibration) {
