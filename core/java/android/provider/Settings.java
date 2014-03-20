@@ -3669,7 +3669,20 @@ public final class Settings {
         public static final String ANIMATION_CONTROLS_EXIT_ONLY = "animation_controls_exit_only";
         public static final String ANIMATION_CONTROLS_REVERSE_EXIT = "animation_controls_reverse_exit";		
 		
-        /**		
+        /**
+         * Whether to display app circle sidebar
+         * @hide
+         */
+        public static final String ENABLE_APP_CIRCLE_BAR = "enable_app_circle_bar";
+
+        /**
+         * A list of packages to include in app circle bar.
+         * This should be a string of packages separated by |
+         * @hide
+         */
+        public static final String WHITELIST_APP_CIRCLE_BAR = "whitelist_app_circle_bar";
+
+        /**
          * Settings to backup. This is here so that it's in the same place as the settings
          * keys and easy to update.
          *
