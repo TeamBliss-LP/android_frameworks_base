@@ -3339,6 +3339,12 @@ public final class Settings {
          * @hide
          */
         public static final String HFM_DISABLE_ADS = "hfm_disable_ads";
+        
+        /**
+         * Display second in the Clock
+         * @hide
+         */
+        public static final String CLOCK_USE_SECOND = "clock_use_second";        
 		
         /**
          * Show or hide clock
@@ -3566,7 +3572,6 @@ public final class Settings {
         public static final String VOICE_LAUNCH_INTENT = "voice_launch_intent";
 
         /**
-<<<<<<< HEAD
          * ListView Animations
          * 0 == None
          * 1 == Wave (Left)
