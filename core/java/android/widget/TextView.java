@@ -4042,9 +4042,7 @@ public class TextView extends View implements ViewTreeObserver.OnPreDrawListener
             }
         }
 
-        if (mLayout != null && mLayoutParams != null) {
-            checkForRelayout();
-        }
+        checkForRelayout();
 
         sendOnTextChanged(text, 0, oldlen, textLength);
         onTextChanged(text, 0, oldlen, textLength);
@@ -4136,9 +4134,7 @@ public class TextView extends View implements ViewTreeObserver.OnPreDrawListener
     public final void setHint(CharSequence hint) {
         mHint = TextUtils.stringOrSpannedString(hint);
 
-        if (mLayout != null && mLayoutParams != null) {
-            checkForRelayout();
-        }
+        checkForRelayout();
 
         if (mText.length() == 0) {
             invalidate();
@@ -6807,7 +6803,8 @@ public class TextView extends View implements ViewTreeObserver.OnPreDrawListener
         // If we have a fixed width, we can just swap in a new text layout
         // if the text height stays the same or if the view height is fixed.
 
-        if ((mLayoutParams.width != LayoutParams.WRAP_CONTENT ||
+        if ((mLayout != null &&  mLayoutParams != null) &&
+                (mLayoutParams.width != LayoutParams.WRAP_CONTENT ||
                 (mMaxWidthMode == mMinWidthMode && mMaxWidth == mMinWidth)) &&
                 (mHint == null || mHintLayout != null) &&
                 (mRight - mLeft - getCompoundPaddingLeft() - getCompoundPaddingRight() > 0)) {
@@ -8911,9 +8908,7 @@ public class TextView extends View implements ViewTreeObserver.OnPreDrawListener
 
         mTextDir = getTextDirectionHeuristic();
 
-        if (mLayout != null) {
-            checkForRelayout();
-        }
+        checkForRelayout();
     }
 
     TextDirectionHeuristic getTextDirectionHeuristic() {
