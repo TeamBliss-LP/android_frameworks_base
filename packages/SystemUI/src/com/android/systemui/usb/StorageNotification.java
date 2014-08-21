@@ -60,6 +60,8 @@ public class StorageNotification extends SystemUI {
     private static final boolean POP_UMS_ACTIVITY_ON_CONNECT = true;
     private static final String UNMOUNT_ACTION = "storage_notification_unmount";
     private static final String MOUNT_ACTION = "storage_notification_mount";
+    public static final String KEY_UNMOUNT_USB = "key_unmount_usb";
+    public static final String HIGHLIGHT_PREF_KEY = "pref_key";
 
     /**
      * The notification that is shown when a USB mass storage host
@@ -305,6 +307,7 @@ public class StorageNotification extends SystemUI {
             }
             setMediaStorageNotification(0, 0, 0, false, false, null);
             updateUsbMassStorageNotification(mUmsAvailable);
+            maybeAddUsbUnmountNotification();
         } else if (newState.equals(Environment.MEDIA_UNMOUNTED)) {
             /*
              * Storage is now unmounted. We may have been unmounted
@@ -467,6 +470,30 @@ public class StorageNotification extends SystemUI {
         }
         if (entry != null) {
             if (DEBUG) Log.i(TAG, "X: removed:" + entry.mRemoved + " mounted:" + entry.mMounted + " plugged:" + entry.mPlugged);
+        }
+    }
+
+    private void maybeAddUsbUnmountNotification() {
+        for (StorageVolume volume : mStorageManager.getVolumeList()) {
+            final String usbDiskDesc = Resources.getSystem().getString(
+                    Resources.getSystem().getIdentifier("storage_usb", "string", "android"));
+            final boolean isUsbStorage =  volume.getDescription(mContext).equals(usbDiskDesc);
+            final boolean mounted = volume.getState().equals(Environment.MEDIA_MOUNTED)
+                    || volume.getState().equals(Environment.MEDIA_MOUNTED_READ_ONLY);
+            final boolean isRemovable = volume.isRemovable();
+
+            if (isRemovable && isUsbStorage && mounted) {
+                Intent intent = new Intent(Settings.ACTION_MEMORY_CARD_SETTINGS);
+                intent.putExtra(HIGHLIGHT_PREF_KEY, KEY_UNMOUNT_USB);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+                setUsbStorageNotification(
+                        com.android.internal.R.string.usb_storage_stop_title,
+                        com.android.internal.R.string.usb_storage_notification_manage_message,
+                        com.android.internal.R.drawable.stat_sys_data_usb, false, true,
+                        PendingIntent.getActivity(mContext, 0, intent, 0));
+                return;
+            }
         }
     }
 

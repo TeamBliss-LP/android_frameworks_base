@@ -2195,4 +2195,8 @@
   <java-symbol type="string" name="flashDevice" />
   <java-symbol type="integer" name="valueOff" />
   <java-symbol type="integer" name="valueOn" />
+
+  <!-- USB OTG Notification -->
+  <java-symbol type="string" name="usb_storage_notification_manage_message" />
+
 </resources>

@@ -345,4 +345,6 @@
     <!-- Storage description for the SD card on the dock -->
     <string name="storage_sd_dock_card">Dock SD card</string>
 
+    <!-- USB OTG notification message -->
+    <string name="usb_storage_notification_manage_message">Tap to manage</string>
 </resources>
