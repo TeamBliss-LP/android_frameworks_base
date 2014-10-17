@@ -4700,6 +4700,12 @@ public abstract class ViewGroup extends View implements ViewParent, ViewManager 
                                 (int) (boundingRect.top - 0.5f),
                                 (int) (boundingRect.right + 0.5f),
                                 (int) (boundingRect.bottom + 0.5f));
+
+                        // Forced to update whole region in case of computation error
+                        if (isOpaque) {
+                            mAttachInfo.mSetIgnoreDirtyState = true;
+                            mAttachInfo.mIgnoreDirtyState = true;
+                        }
                     }
                 }
             } while (parent != null);
