@@ -62,8 +62,8 @@ public class StackTapPointerEventListener implements PointerEventListener {
 
                     if ((motionEvent.getEventTime() - motionEvent.getDownTime()) > TAP_TIMEOUT_MSEC
                             || index < 0
-                            || (motionEvent.getX(index) - mDownX) > mMotionSlop
-                            || (motionEvent.getY(index) - mDownY) > mMotionSlop) {
+                            || Math.abs(motionEvent.getX(index) - mDownX) > mMotionSlop
+                            || Math.abs(motionEvent.getY(index) - mDownY) > mMotionSlop) {
                         mPointerId = -1;
                     }
                 }
@@ -76,15 +76,13 @@ public class StackTapPointerEventListener implements PointerEventListener {
                 if (mPointerId == motionEvent.getPointerId(index)) {
                     final int x = (int)motionEvent.getX(index);
                     final int y = (int)motionEvent.getY(index);
-                    synchronized(this) {
-                        if ((motionEvent.getEventTime() - motionEvent.getDownTime())
-                                < TAP_TIMEOUT_MSEC
-                                && Math.abs(x - mDownX) < mMotionSlop
-                                && Math.abs(y - mDownY) < mMotionSlop
-                                && !mTouchExcludeRegion.contains(x, y)) {
-                            mService.mH.obtainMessage(H.TAP_OUTSIDE_STACK, x, y,
-                                    mDisplayContent).sendToTarget();
-                        }
+                    if ((motionEvent.getEventTime() - motionEvent.getDownTime())
+                            < TAP_TIMEOUT_MSEC
+                            && Math.abs(x - mDownX) < mMotionSlop
+                            && Math.abs(y - mDownY) < mMotionSlop
+                            && !mTouchExcludeRegion.contains(x, y)) {
+                        mService.mH.obtainMessage(H.TAP_OUTSIDE_STACK, x, y,
+                                mDisplayContent).sendToTarget();
                     }
                     mPointerId = -1;
                 }
