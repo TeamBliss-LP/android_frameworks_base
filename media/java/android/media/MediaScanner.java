@@ -329,20 +329,13 @@ public class MediaScanner
     /** Whether the database had any entries in it before the scan started */
     private boolean mWasEmptyPriorToScan = false;
     /** Whether the scanner has set a default sound for the ringer ringtone. */
-    private boolean mDefaultRingtoneSet;
+    private boolean[] mDefaultRingtonesSet;
     /** Whether the scanner has set a default sound for the notification ringtone. */
     private boolean mDefaultNotificationSet;
     /** Whether the scanner has set a default sound for the alarm ringtone. */
     private boolean mDefaultAlarmSet;
-    /** Whether the scanner has set a default sound for the ringer ringtone 2. */
-    private boolean mDefaultRingtone2Set;
-    /** Whether the scanner has set a default sound for the ringer ringtone 3. */
-    private boolean mDefaultRingtone3Set;
-    /** Whether the scanner has set a default sound for the mms notification ringtone. */
-    private boolean mDefaultMmsNotificationSet;
-
-    /** The filename for the default sound for the ringer ringtone. */
-    private String mDefaultRingtoneFilename;
+    /** The filenames for the default sound for the ringer ringtone. */
+    private String[] mDefaultRingtoneFilenames;
     /** The filename for the default sound for the notification ringtone. */
     private String mDefaultNotificationFilename;
     /** The filename for the default sound for the alarm ringtone. */
@@ -353,6 +346,7 @@ public class MediaScanner
      * to get the full system property.
      */
     private static final String DEFAULT_RINGTONE_PROPERTY_PREFIX = "ro.config.";
+    private static final int DEFAULT_SIM_INDEX = 0;
 
     // set to true if file path comparisons should be case insensitive.
     // this should be set when scanning files on a case insensitive file system.
