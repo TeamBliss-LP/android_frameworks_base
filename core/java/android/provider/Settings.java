@@ -2990,6 +2990,12 @@ public final class Settings {
         public static final String HARDWARE_KEYS_DISABLE = "hardware_keys_disable";
 
         /**
+         * Disable ads (HFM)
+         * @hide
+         */
+        public static final String HFM_DISABLE_ADS = "hfm_disable_ads";
+
+        /**
          * Settings to backup. This is here so that it's in the same place as the settings
          * keys and easy to update.
          *
