@@ -3174,45 +3174,6 @@ public final class PowerManagerService extends SystemService
             wakeUp(eventTime, false);
         }
 
-        private void runPostProximityCheck(final Runnable r) {
-            if (mSensorManager == null) {
-                r.run();
-                return;
-            }
-            mProximityWakeLock.acquire();
-            mProximityListener = new SensorEventListener() {
-                @Override
-                public void onSensorChanged(SensorEvent event) {
-                    cleanupProximity();
-                    if (!mHandler.hasMessages(MSG_WAKE_UP)) {
-                        Slog.w(TAG, "The proximity sensor took too long, wake event already triggered!");
-                        return;
-                    }
-                    mHandler.removeMessages(MSG_WAKE_UP);
-                    float distance = event.values[0];
-                    if (distance >= PROXIMITY_NEAR_THRESHOLD ||
-                            distance >= mProximitySensor.getMaximumRange()) {
-                        r.run();
-                    }
-                }
-
-                @Override
-                public void onAccuracyChanged(Sensor sensor, int accuracy) {}
-            };
-            mSensorManager.registerListener(mProximityListener,
-                   mProximitySensor, SensorManager.SENSOR_DELAY_FASTEST);
-        }
-
-        @Override // Binder call
-        public void wakeUpWithProximityCheck(long eventTime) {
-            wakeUp(eventTime, true);
-        }
-
-        @Override // Binder call
-        public void wakeUp(long eventTime) {
-            wakeUp(eventTime, false);
-        }
-
         @Override // Binder call
         public void goToSleep(long eventTime, int reason, int flags) {
             if (eventTime > SystemClock.uptimeMillis()) {
