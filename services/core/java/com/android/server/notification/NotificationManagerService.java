@@ -868,6 +868,8 @@ public class NotificationManagerService extends SystemService {
                        Settings.System.MUTE_ANNOYING_NOTIFICATIONS_THRESHOLD, 0,
                        UserHandle.USER_CURRENT_OR_SELF);
             }
+
+            updateNotificationPulse();
         }
     }
 
