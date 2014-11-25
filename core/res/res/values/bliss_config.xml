@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+
+    <!-- Sets whether IME switcher on statusbar should be shown or not. -->
+    <bool name="config_show_IMESwitcher">true</bool>
+
+</resources>
