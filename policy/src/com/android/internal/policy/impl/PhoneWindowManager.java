@@ -2917,8 +2917,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                         UserHandle.CURRENT_OR_SELF);
             }
             return -1;
-        } else if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if (mHardwareKeysDisabled && !virtualKey) return -1;
         } else if (KeyEvent.isMetaKey(keyCode)) {
             if (down) {
                 mPendingMetaAction = true;
