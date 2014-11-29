@@ -3299,6 +3299,12 @@ public final class Settings {
          */
         public static final String VOLUME_WAKE_SCREEN = "volume_wake_screen";
 
+        /**		
+         * Volume music controls
+         * @hide
+         */
+        public static final String VOLUME_MUSIC_CONTROLS = "volume_music_controls";		
+
        /**
          * Network traffic indicator, goes from least to greatest significant bitwise
          * 0 = Display up-stream traffic if set
