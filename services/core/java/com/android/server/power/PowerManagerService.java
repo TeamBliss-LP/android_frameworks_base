@@ -166,7 +166,7 @@ public final class PowerManagerService extends SystemService
     private static final int POWER_HINT_INTERACTION = 2;
     private static final int POWER_HINT_LOW_POWER = 5;
 
-    private static final int DEFAULT_BUTTON_ON_DURATION = 5 * 1000;
+    private static final int DEFAULT_BUTTON_ON_DURATION = 1 * 1000;
 
     // Config value for NSRM
     private static final int DPM_CONFIG_FEATURE_MASK_NSRM = 0x00000004;
