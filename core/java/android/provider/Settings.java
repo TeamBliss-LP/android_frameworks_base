@@ -2263,6 +2263,12 @@ public final class Settings {
          */
         public static final String VOLUME_SYSTEM = "volume_system";
 
+	/**
+	 * Clear Recents in navbar enabler
+         * @hide
+         */
+        public static final String CLEAR_ALL_RECENTS_NAVBAR_ENABLED = "clear_all_recents_navbar_enabled";
+
         /**
          * Voice call volume. This is used internally, changing this value will
          * not change the volume. See AudioManager.
