@@ -14,12 +14,12 @@
 * limitations under the License.
 */
 
-package com.android.internal.util.slim;
+package com.android.internal.util.bliss;
 
-public class SlimActionConstants {
+public class BlissActionConstants {
 
     // key must fit with the values arrays from Settings to use
-    // SlimActions.java actions
+    // BlissActions.java actions
     public static final String ACTION_HOME                 = "**home**";
     public static final String ACTION_BACK                 = "**back**";
     public static final String ACTION_SEARCH               = "**search**";
