@@ -2312,6 +2312,13 @@ public final class Settings {
          */
         public static final String VOLUME_MASTER_MUTE = "volume_master_mute";
 
+        /**		
+         * Whether to wake the screen with the volume keys, the value is boolean.
+         *
+         * @hide
+         */
+        public static final String VOLUME_WAKE_SCREEN = "volume_wake_screen";		
+
         /**
          * Swap volume buttons when the screen is rotated
          * 0 - Disabled
