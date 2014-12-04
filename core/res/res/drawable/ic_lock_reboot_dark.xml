@@ -15,5 +15,5 @@
 -->
 
 <bitmap xmlns:android="http://schemas.android.com/apk/res/android"
-    android:src="@drawable/ic_lock_reboot_alpha"
+    android:src="@drawable/ic_lock_power_reboot_alpha"
     android:tint="@android:color/legacy_control_normal" />
