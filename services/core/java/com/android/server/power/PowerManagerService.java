@@ -721,7 +721,7 @@ public final class PowerManagerService extends SystemService
                 Settings.System.PROXIMITY_ON_WAKE, 0) == 1;
 
         final boolean hasForceNavbar = Settings.System.getIntForUser(resolver,
-                Settings.System.DEV_FORCE_SHOW_NAVBAR, 0, UserHandle.USER_CURRENT) == 1;
+                Settings.System.NAVIGATION_BAR_SHOW, 0, UserHandle.USER_CURRENT) == 1;
         final boolean hardwareKeysDisable = hasForceNavbar && Settings.System.getIntForUser(resolver,
                 Settings.System.HARDWARE_KEYS_DISABLE, 0, UserHandle.USER_CURRENT) == 1;
 

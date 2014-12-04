@@ -116,7 +116,7 @@ import com.android.internal.policy.PolicyManager;
 import com.android.internal.policy.impl.keyguard.KeyguardServiceDelegate;
 import com.android.internal.policy.impl.keyguard.KeyguardServiceDelegate.ShowListener;
 import com.android.internal.statusbar.IStatusBarService;
-import com.android.internal.util.crdroid.Converter;
+import com.android.internal.util.bliss.Converter;
 import com.android.internal.util.gesture.EdgeGesturePosition;
 import com.android.internal.util.gesture.EdgeServiceConstants;
 import com.android.internal.widget.PointerLocationView;
@@ -1444,7 +1444,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         final ContentResolver resolver = mContext.getContentResolver();
 
         final boolean hasForceNavbar = Settings.System.getIntForUser(resolver,
-                Settings.System.DEV_FORCE_SHOW_NAVBAR, 0, UserHandle.USER_CURRENT) == 1;
+                Settings.System.NAVIGATION_BAR_SHOW, 0, UserHandle.USER_CURRENT) == 1;
         mHardwareKeysDisabled = hasForceNavbar && Settings.System.getIntForUser(resolver,
                 Settings.System.HARDWARE_KEYS_DISABLE, 0, UserHandle.USER_CURRENT) == 1;
 
