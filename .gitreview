@@ -1,0 +1,5 @@
+[gerrit]
+host=buildbox.blissroms.com
+port=8081
+project=android_frameworks_base.git
+defaultbranch=lp5.0
