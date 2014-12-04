@@ -42,6 +42,9 @@
   <java-symbol type="drawable" name="ic_lock_power_off_dark" />
   <java-symbol type="drawable" name="ic_lock_reboot_dark" />  
   <java-symbol type="array" name="shutdown_reboot_options" />
-  <java-symbol type="array" name="shutdown_reboot_actions" />  
+  <java-symbol type="array" name="shutdown_reboot_actions" />
+  
+  <!-- Hardware keys on/off option -->
+  <java-symbol type="bool" name="config_hwKeysPref" />    
 
 </resources>
