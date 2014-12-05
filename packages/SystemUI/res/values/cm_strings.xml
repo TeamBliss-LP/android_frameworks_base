@@ -101,4 +101,7 @@
     <string name="wifi_address_changed">Wi\u2011Fi SSID changed to <xliff:g id="name">%s</xliff:g></string>
     <string name="wifi_changed_ticker">Wi\u2011Fi SSID: <xliff:g id="name">%s</xliff:g></string>
 
+    <!-- Navigation bar -->
+    <string name="def_navbar_layout_warning">Empty layout: using default!</string>
+
 </resources>
