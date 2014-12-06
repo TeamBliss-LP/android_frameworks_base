@@ -239,8 +239,6 @@ public class VibratorService extends IVibratorService.Stub
             // longer than milliseconds.
             return;
         }
-        
-        milliseconds = userDuration(milliseconds);
 
         if (DEBUG) {
             Slog.d(TAG, "Vibrating for " + milliseconds + " ms.");
@@ -270,18 +268,6 @@ public class VibratorService extends IVibratorService.Stub
         }
         return true;
     }
-    
-     private long userDuration(long millis) {
-         int userMillis = Settings.System.getIntForUser(
-                 mContext.getContentResolver(),
-                 Settings.System.MINIMUM_VIBRATION_DURATION,
-                 0, UserHandle.USER_CURRENT_OR_SELF);
-         // Set length if <= userMillis && not default
-         if (userMillis != 0 && millis <= userMillis) {
-                 millis = userMillis;
-         }
-         return millis;
-     }    
 
     @Override // Binder call
     public void vibratePattern(int uid, String packageName, long[] pattern, int repeat,
@@ -542,7 +528,6 @@ public class VibratorService extends IVibratorService.Stub
     }
 
     private void doVibratorOn(long millis, int uid, int usageHint) {
-		millis = userDuration(millis);
         synchronized (mInputDeviceVibrators) {
             if (DEBUG) {
                 Slog.d(TAG, "Turning vibrator on for " + millis + " ms.");
