@@ -54,7 +54,7 @@
     <string name="config_statusBarComponent" translatable="false">com.android.systemui.statusbar.phone.PhoneStatusBar</string>
 
     <!-- Whether or not we show the number in the bar. -->
-    <bool name="config_statusBarShowNumber">true</bool>
+    <bool name="config_statusBarShowNumber">false</bool>
 
     <!-- How many icons may be shown at once in the system bar. Includes any
          slots that may be reused for things like IME control. -->
@@ -223,7 +223,7 @@
     <!-- Set to true to enable the classic notification ticker that scrolls
          Notification.tickerText across the status bar for what seems like an
          eternity. -->
-    <bool name="enable_ticker">true</bool>
+    <bool name="enable_ticker">false</bool>
 
     <!-- Set to true to enable the user switcher on the keyguard. -->
     <bool name="config_keyguardUserSwitcher">false</bool>
