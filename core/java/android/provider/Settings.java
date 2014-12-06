@@ -3147,11 +3147,6 @@ public final class Settings {
          */
         public static final String TOAST_ANIMATION = "toast_animation";
 
-        /**
-         * Whether to disable hardware keys
-         * @hide
-         */
-        public static final String HARDWARE_KEYS_DISABLE = "hardware_keys_disable";
 
         /**
          * Disable ads (HFM)
