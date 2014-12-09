@@ -495,7 +495,6 @@ public class AppOpsManager {
             null,
             null,
             null,
-            null,
             OPSTR_MONITOR_LOCATION,
             OPSTR_MONITOR_HIGH_POWER_LOCATION,
             OPSTR_GET_USAGE_STATS,
