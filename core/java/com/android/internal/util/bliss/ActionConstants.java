@@ -16,7 +16,7 @@
 
 package com.android.internal.util.bliss;
 
-public class BlissActionConstants {
+public class ActionConstants {
 
     // key must fit with the values arrays from Settings to use
     // BlissActions.java actions
