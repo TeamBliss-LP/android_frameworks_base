@@ -17,6 +17,7 @@ LOCAL_PROGUARD_FLAG_FILES := proguard.flags
 
 LOCAL_RESOURCE_DIR := \
     frameworks/base/packages/Keyguard/res \
+    $(LOCAL_PATH)/../SystemUIExt/res \
     $(LOCAL_PATH)/res
 LOCAL_AAPT_FLAGS := --auto-add-overlay --extra-packages com.android.keyguard
 

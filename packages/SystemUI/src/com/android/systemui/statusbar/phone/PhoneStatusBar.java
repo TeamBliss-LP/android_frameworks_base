@@ -362,9 +362,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     // Status bar carrier
     private boolean mShowStatusBarCarrier;
 
-    // Status bar Network traffic;
-    private NetworkTraffic mNetworkTraffic;
-
     // position
     int[] mPositionTmp = new int[2];
     boolean mExpandedVisible;
