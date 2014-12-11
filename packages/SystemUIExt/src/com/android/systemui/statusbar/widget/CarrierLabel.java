@@ -20,7 +20,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.mokee.utils.MoKeeUtils;
 import android.os.UserHandle;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
@@ -30,6 +29,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import com.android.internal.util.bliss.BlissUtils;
 import com.android.internal.telephony.TelephonyIntents;
 import com.android.systemui.utils.SpnOverride;
 
@@ -91,7 +91,7 @@ public class CarrierLabel extends TextView {
                         intent.getStringExtra(TelephonyIntents.EXTRA_SPN),
                         intent.getBooleanExtra(TelephonyIntents.EXTRA_SHOW_PLMN, false),
                         intent.getStringExtra(TelephonyIntents.EXTRA_PLMN));
-                isCN = MoKeeUtils.isSupportLanguage(false);
+                isCN = BlissUtils.isChineseLanguage();
             }
         }
     };
