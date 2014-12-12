@@ -490,7 +490,7 @@ public class IWindowManagerImpl implements IWindowManager {
     }
 
     @Override
-    public boolean hasMenuKeyEnabled() {
+    public boolean hasPermanentMenuKey() {
         return true;
     }
 }

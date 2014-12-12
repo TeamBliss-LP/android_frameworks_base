@@ -1186,11 +1186,7 @@ public interface WindowManagerPolicy {
      * Specifies whether there is an on-screen navigation bar separate from the status bar.
      */
     public boolean hasNavigationBar();
-
-    /**
-     * Specifies whether device can generate KEY_ACTION_MENU keypress
-     */
-    public boolean hasMenuKeyEnabled();
+    public boolean hasPermanentMenuKey();
 
     /**
      * Lock the device now.
