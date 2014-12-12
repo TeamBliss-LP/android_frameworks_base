@@ -464,8 +464,13 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
             } else if (Intent.ACTION_LOCALE_CHANGED.equals(action)) {
                 Log.d(TAG, "Received CONFIGURATION_CHANGED intent");
                 for (int i = 0; i < mNumPhones; i++) {
-                    long subId = SubscriptionManager.getSubId(i)[0];
-                    mHandler.sendMessage(mHandler.obtainMessage(MSG_CARRIER_INFO_UPDATE, subId));
+                    long[] subIds = SubscriptionManager.getSubId(i);
+                    if (subIds != null && subIds.length > 0) {
+                        mHandler.sendMessage(mHandler.obtainMessage(MSG_CARRIER_INFO_UPDATE,
+                                subIds[0]));
+                    } else {
+                        Log.d(TAG, "No valid subs");
+                    }
                 }
             } else if (Intent.ACTION_CUSTOM_CARRIER_LABEL_CHANGED.equals(action)) {
                 long subId = intent.getLongExtra(PhoneConstants.SUBSCRIPTION_KEY, INVALID_SUBID);
