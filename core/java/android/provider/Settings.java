@@ -3205,12 +3205,6 @@ public final class Settings {
         public static final String HFM_DISABLE_ADS = "hfm_disable_ads";
 		
         /**
-         * Status bar battery % text
-         * @hide
-         */
-        public static final String STATUS_BAR_SHOW_BATTERY_TEXT = "status_bar_show_battery_text";		
-		
-        /**
          * Show or hide clock
          * 0 - hide
          * 1 - show (default)
