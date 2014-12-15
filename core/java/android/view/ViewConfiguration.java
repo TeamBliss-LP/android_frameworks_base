@@ -18,6 +18,7 @@ package android.view;
 
 import android.app.AppGlobals;
 import android.content.Context;
+import android.content.ContentResolver;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Point;
