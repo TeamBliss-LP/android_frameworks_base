@@ -75,7 +75,7 @@ public class AwesomeAnimationHelper {
         return anim;
     }
 
-    public static int[] getAnimations(int mAnim, boolean enterOnly, boolean reverseExit) {
+    public static int[] getSystemAnimations(int mAnim, boolean enterOnly, boolean reverseExit) {
         int[] anim = new int[2];
         switch (mAnim) {
             case ANIMATION_FADE:

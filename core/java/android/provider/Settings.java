@@ -1371,8 +1371,8 @@ public final class Settings {
          * @return The setting's current value, or 'def' if it is not defined
          * or not a valid boolean.
          */
-        public static boolean getBoolean(ContentResolver cr, String name, boolean def) {
-            String v = getString(cr, name);
+        public static boolean getBoolean(ContentResolver resolver, String name, boolean def) {
+            String v = getString(resolver, name);
             try {
                 if(v != null)
                     return "1".equals(v);
@@ -1396,8 +1396,8 @@ public final class Settings {
          * @param value The new value for the setting.
          * @return true if the value was set, false on database errors
          */
-        public static boolean putBoolean(ContentResolver cr, String name, boolean value) {
-            return putString(cr, name, value ? "1" : "0");
+        public static boolean putBoolean(ContentResolver resolver, String name, boolean value) {
+            return putString(resolver, name, value ? "1" : "0");
         }
 
         /**
@@ -2770,6 +2770,30 @@ public final class Settings {
          * @hide
          */
         public static final String USE_EDGE_SERVICE_FOR_GESTURES = "edge_service_for_gestures";
+        
+        /**
+         * Determine custom scroll friction.
+         * @hide
+         */
+        public static final String CUSTOM_SCROLL_FRICTION = "custom_scroll_friction";
+
+        /**
+         * Determine custom fling velocity.
+         * @hide
+         */
+        public static final String CUSTOM_FLING_VELOCITY = "custom_fling_velocity";
+
+        /**
+         * Determine custom overscroll distance.
+         * @hide
+         */
+        public static final String CUSTOM_OVERSCROLL_DISTANCE = "custom_overscroll_distance";
+
+        /**
+         * Determine custom overfling distance.
+         * @hide
+         */
+        public static final String CUSTOM_OVERFLING_DISTANCE = "custom_overfling_distance";        
 
         /**
          * Show the pending notification counts as overlays on the status bar
@@ -3523,6 +3547,12 @@ public final class Settings {
         public static final String RECENTS_CLEAR_ALL_LOCATION = "recents_clear_all_location";
 
         /**
+         * Whether to dismiss all recents tasks
+         * @hide
+         */
+        public static final String RECENTS_CLEAR_ALL_DISMISS_ALL = "recents_clear_all_dismiss_all";
+
+        /**
           * Volume keys control cursor in text fields (default is 0)
           * 0 - Disabled
           * 1 - Volume up/down moves cursor left/right
@@ -3718,6 +3748,12 @@ public final class Settings {
          * @hide
          */
         public static final String RECENTS_USE_OMNISWITCH = "recents_use_omniswitch";
+
+        /**
+         *
+         * @hide
+         */
+        public static final String ANIMATION_CONTROLS_NO_SCROLL = "animation_controls_no_scroll"; 
 
         /**
          * Settings to backup. This is here so that it's in the same place as the settings
