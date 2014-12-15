@@ -473,7 +473,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                             UserHandle.USER_CURRENT);
                     resetHeadsUpDecayTimer();
             } else if (uri.equals(Settings.System.getUriFor(
-                    Settings.System.HEADS_UP_NOTIFCATION_DECAY))) {
+                    Settings.System.STATUS_BAR_TICKER_ENABLED))) {
                     mTickerEnabled = Settings.System.getIntForUser(
                             mContext.getContentResolver(),
                             Settings.System.STATUS_BAR_TICKER_ENABLED,
