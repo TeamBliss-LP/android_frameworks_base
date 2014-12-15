@@ -2603,6 +2603,12 @@ public final class Settings {
         public static final String USE_EDGE_SERVICE_FOR_GESTURES = "edge_service_for_gestures";
         
         /**
+         *
+         * @hide
+         */
+        public static final String ANIMATION_CONTROLS_NO_SCROLL = "animation_controls_no_scroll";        
+        
+        /**
          * Determine custom scroll friction.
          * @hide
          */
