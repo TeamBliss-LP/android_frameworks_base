@@ -29,4 +29,4 @@
 
 <bitmap xmlns:android="http://schemas.android.com/apk/res/android"
     android:src="@drawable/ic_lock_power_screenshot_alpha"
-    android:tint="?attr/colorControlNormal" />
+    android:tint="@android:color/material_deep_teal_500" />
