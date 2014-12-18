@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.android.internal.util.temasek;
+package com.android.internal.util.bliss;
 
 import android.content.Context;
 
-public class temasekUtils {
+public class blissUtils {
 
     public static boolean isNavBarDefault(Context context) {
         return context.getResources().getBoolean(
