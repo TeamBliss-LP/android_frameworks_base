@@ -63,13 +63,15 @@ public class WeatherControllerImpl implements WeatherController {
         mContext = context;
                 mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
         queryWeather();
+        final IntentFilter filter = new IntentFilter();
+        filter.addAction(ACTION_UPDATE_FINISHED);
+        mContext.registerReceiver(mReceiver, filter);
     }
 
     public void addCallback(Callback callback) {
         if (callback == null || mCallbacks.contains(callback)) return;
         if (DEBUG) Log.d(TAG, "addCallback " + callback);
         mCallbacks.add(callback);
-        mReceiver.setListening(!mCallbacks.isEmpty());
         callback.onWeatherChanged(mCachedInfo); // immediately update with current values
     }
 
@@ -77,7 +79,6 @@ public class WeatherControllerImpl implements WeatherController {
         if (callback == null) return;
         if (DEBUG) Log.d(TAG, "removeCallback " + callback);
         mCallbacks.remove(callback);
-        mReceiver.setListening(!mCallbacks.isEmpty());
     }
 
     @Override
@@ -108,7 +109,6 @@ public class WeatherControllerImpl implements WeatherController {
             callback.onWeatherChanged(mCachedInfo);
         }
     }
-
 
     private final class Receiver extends BroadcastReceiver {
         private boolean mRegistered;

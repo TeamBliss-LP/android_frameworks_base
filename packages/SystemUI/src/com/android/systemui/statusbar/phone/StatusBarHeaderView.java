@@ -28,13 +28,11 @@ import android.provider.Settings;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
-import android.database.ContentObserver;
 import android.graphics.Outline;
 import android.graphics.Rect;
 import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable;
 import android.telephony.TelephonyManager;
-import android.net.Uri;
 import android.provider.AlarmClock;
 import android.provider.CalendarContract;
 import android.os.Handler;
@@ -479,8 +477,14 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
 
     @Override
     public void onWeatherChanged(WeatherController.WeatherInfo info) {
-        mWeatherLine1.setText(mContext.getString(R.string.status_bar_expanded_header_weather_format,
-                info.temp, info.condition));
+        if (info.temp == null || info.condition == null) {
+            mWeatherLine1.setText(null);
+        } else {
+            mWeatherLine1.setText(mContext.getString(
+                    R.string.status_bar_expanded_header_weather_format,
+                    info.temp,
+                    info.condition));
+        }
         mWeatherLine2.setText(info.city);
     }
 
