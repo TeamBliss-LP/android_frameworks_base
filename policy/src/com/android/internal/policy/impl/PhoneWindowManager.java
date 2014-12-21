@@ -406,7 +406,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     boolean mHomeWakeScreen;
     boolean mBackWakeScreen;
     boolean mMenuWakeScreen;
-    boolean mVolumeWakeScreen;
 
     int mPointerLocationMode = 0; // guarded by mLock
 
@@ -414,10 +413,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     // The last window we were told about in focusChanged.
     WindowState mFocusedWindow;
     IApplicationToken mFocusedApp;
-
-    // Behavior of volbtn music controls
-    boolean mVolBtnMusicControls;
-    boolean mIsLongPress;
 
     PointerLocationView mPointerLocationView;
 
@@ -1676,8 +1671,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                     Settings.System.BACK_WAKE_SCREEN, 0, UserHandle.USER_CURRENT) == 1);
             mMenuWakeScreen = (Settings.System.getIntForUser(resolver,
                     Settings.System.MENU_WAKE_SCREEN, 0, UserHandle.USER_CURRENT) == 1);
-            mVolumeWakeScreen = (Settings.System.getIntForUser(resolver,
-                    Settings.System.VOLUME_WAKE_SCREEN, 0, UserHandle.USER_CURRENT) == 1);
 
             // Configure wake gesture.
             boolean wakeGestureEnabledSetting = Settings.Secure.getIntForUser(resolver,
