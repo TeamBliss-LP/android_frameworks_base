@@ -807,6 +807,15 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 mCurrentUserId) == 1;
     }
 
+=======
+            }	
+            update();
+		}
+			
+		
+	}
+	
+>>>>>>> 6ff49ad... [2/2] Left handed navbar during landscape mode
     // ensure quick settings is disabled until the current user makes it through the setup wizard
     private boolean mUserSetup = false;
     private ContentObserver mUserSetupObserver = new ContentObserver(new Handler()) {
