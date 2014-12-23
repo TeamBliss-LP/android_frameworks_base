@@ -2615,6 +2615,12 @@ public final class Settings {
          * @hide
          */
         public static final String ENABLE_HW_KEYS = "enable_hw_keys";
+		
+        /**
+         * Whether navigation bar is placed on the left side in landscape mode
+         * @hide
+         */
+        public static final String NAVBAR_LEFT_IN_LANDSCAPE = "navigation_bar_left";		
 
         /**
          * Date format string

@@ -518,45 +518,12 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             mShowStatusBarCarrier = Settings.System.getIntForUser(resolver,
                 Settings.System.STATUS_BAR_CARRIER, 0, mCurrentUserId) == 1;
             showStatusBarCarrierLabel(mShowStatusBarCarrier);
-/*
-            boolean showInsidePercent = Settings.System.getIntForUser(resolver,
-                    Settings.System.STATUS_BAR_SHOW_BATTERY_PERCENT, 0, mCurrentUserId) == 1;
 
-            //boolean showNextPercent = Settings.System.getIntForUser(resolver,
-            //        Settings.System.STATUS_BAR_SHOW_BATTERY_PERCENT, 0, mCurrentUserId) == 2;
-
-            int batteryStyle = Settings.System.getIntForUser(resolver,
-                    Settings.System.STATUS_BAR_BATTERY_STYLE, 0, mCurrentUserId);
-            BatteryMeterMode meterMode = BatteryMeterMode.BATTERY_METER_ICON_PORTRAIT;
-            switch (batteryStyle) {
-                case 2:
-                    meterMode = BatteryMeterMode.BATTERY_METER_CIRCLE;
-                    break;
-
-                case 4:
-                    meterMode = BatteryMeterMode.BATTERY_METER_GONE;
-                    //showNextPercent = false;
-                    break;
-
-                case 5:
-                    meterMode = BatteryMeterMode.BATTERY_METER_ICON_LANDSCAPE;
-                    break;
-
-                case 6:
-                    meterMode = BatteryMeterMode.BATTERY_METER_TEXT;
-                    showInsidePercent = false;
-                    //showNextPercent = true;
-                    break;
-
-                default:
-                    break;
+            if (mNavigationBarView != null) {
+                boolean navLeftInLandscape = Settings.System.getInt(resolver,
+                        Settings.System.NAVBAR_LEFT_IN_LANDSCAPE, 0) == 1;
+                mNavigationBarView.setLeftInLandscape(navLeftInLandscape);
             }
-
-            // Update Battery
-            mBatteryView.setMode(meterMode);
-            mBatteryView.setShowPercent(showInsidePercent);
-            //mBatteryTextView.setShowPercent(showNextPercent);
-*/
         }
     }
 
