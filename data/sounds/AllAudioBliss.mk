@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-LOCAL_PATH := frameworks/base/data/sounds/slim
+LOCAL_PATH := frameworks/base/data/sounds/bliss
 
 define create-copy-media-files
 $(strip $(foreach fp,\
