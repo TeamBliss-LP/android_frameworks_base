@@ -2263,8 +2263,8 @@ public final class Settings {
          */
         public static final String VOLUME_SYSTEM = "volume_system";
 
-	/**
-	 * Clear Recents in navbar enabler
+    	/**
+	     * Clear Recents in navbar enabler
          * @hide
          */
         public static final String CLEAR_ALL_RECENTS_NAVBAR_ENABLED = "clear_all_recents_navbar_enabled";
@@ -2807,6 +2807,13 @@ public final class Settings {
          * @hide
          */
         public static final String TTY_MODE = "tty_mode";
+
+        /**
+         * Whether noise suppression is enabled. The value is
+         * boolean (1 or 0).
+         * @hide
+         */
+        public static final String NOISE_SUPPRESSION = "noise_suppression";
 
         /**
          * Whether the sounds effects (key clicks, lid open ...) are enabled. The value is
@@ -3813,6 +3820,7 @@ public final class Settings {
             DTMF_TONE_TYPE_WHEN_DIALING,
             HEARING_AID,
             TTY_MODE,
+            NOISE_SUPPRESSION,
             SOUND_EFFECTS_ENABLED,
             HAPTIC_FEEDBACK_ENABLED,
             POWER_SOUNDS_ENABLED,       // moved to global
