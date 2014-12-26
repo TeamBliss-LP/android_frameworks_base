@@ -29,8 +29,6 @@ import android.database.ContentObserver;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Typeface;
@@ -54,7 +52,6 @@ public class BatteryMeterView extends View implements DemoMode,
     private static final String STATUS_BAR_BATTERY_STYLE = "status_bar_battery_style";
     private static final String STATUS_BAR_SHOW_BATTERY_PERCENT = "status_bar_show_battery_percent";
 
-    private static final boolean ENABLE_PERCENT = true;
     private static final boolean SINGLE_DIGIT_PERCENT = false;
     private static final boolean SHOW_100_PERCENT = false;
 
@@ -222,9 +219,9 @@ public class BatteryMeterView extends View implements DemoMode,
         mBatteryController.addStateChangedCallback(this);
         mAttached = true;
         getContext().getContentResolver().registerContentObserver(Settings.System.getUriFor(
-                STATUS_BAR_SHOW_BATTERY_PERCENT), false, mObserver);
-        getContext().getContentResolver().registerContentObserver(Settings.System.getUriFor(
                 STATUS_BAR_BATTERY_STYLE), false, mObserver);
+        getContext().getContentResolver().registerContentObserver(Settings.System.getUriFor(
+                STATUS_BAR_SHOW_BATTERY_PERCENT), false, mObserver);
     }
 
     @Override
@@ -252,6 +249,7 @@ public class BatteryMeterView extends View implements DemoMode,
                 break;
             case 4:
                 meterMode = BatteryMeterMode.BATTERY_METER_GONE;
+                showInsidePercent = false;
                 break;
             case 5:
                 meterMode = BatteryMeterMode.BATTERY_METER_ICON_LANDSCAPE;
@@ -383,10 +381,8 @@ public class BatteryMeterView extends View implements DemoMode,
     }
 
     public void setShowPercent(boolean show) {
-        if (ENABLE_PERCENT) {
-            mShowPercent = show;
-            invalidateIfVisible();
-        }
+        mShowPercent = show;
+        invalidateIfVisible();
     }
 
     public void setMode(BatteryMeterMode mode) {
@@ -665,8 +661,9 @@ public class BatteryMeterView extends View implements DemoMode,
                             mBoltFrame.top + mBoltPoints[1] * mBoltFrame.height());
                 }
 
-                float boltPct = (mBoltFrame.bottom - levelTop) /
-                        (mBoltFrame.bottom - mBoltFrame.top);
+                float boltPct = mHorizontal ?
+                        (mBoltFrame.left - levelTop) / (mBoltFrame.left - mBoltFrame.right) :
+                        (mBoltFrame.bottom - levelTop) / (mBoltFrame.bottom - mBoltFrame.top);
                 boltPct = Math.min(Math.max(boltPct, 0), 1);
                 if (boltPct <= BOLT_LEVEL_THRESHOLD) {
                     // draw the bolt if opaque
@@ -694,7 +691,11 @@ public class BatteryMeterView extends View implements DemoMode,
                 pctText = String.valueOf(SINGLE_DIGIT_PERCENT ? (level/10) : level);
                 pctX = mWidth * 0.5f;
                 pctY = (mHeight + mTextHeight) * 0.47f;
-                pctOpaque = levelTop > pctY;
+                if (mHorizontal) {
+                    pctOpaque = pctX > levelTop;
+                } else {
+                    pctOpaque = levelTop > pctY;
+                }
                 if (!pctOpaque) {
                     mTextPath.reset();
                     mTextPaint.getTextPath(pctText, 0, pctText.length(), pctX, pctY, mTextPath);
@@ -767,8 +768,6 @@ public class BatteryMeterView extends View implements DemoMode,
         private static final boolean SHOW_100_PERCENT = false;
 
         private static final int FULL = 96;
-
-        private static final float BOLT_LEVEL_THRESHOLD = 0.3f;  // opaque bolt below this fraction
 
         public static final float STROKE_WITH = 6.5f;
 
@@ -971,6 +970,7 @@ public class BatteryMeterView extends View implements DemoMode,
         private void initSizeBasedStuff() {
             mCircleSize = Math.min(getMeasuredWidth(), getMeasuredHeight());
             mTextPaint.setTextSize(mCircleSize / 2f);
+            mWarningTextPaint.setTextSize(mCircleSize / 2f);
 
             float strokeWidth = mCircleSize / STROKE_WITH;
             mFrontPaint.setStrokeWidth(strokeWidth);
