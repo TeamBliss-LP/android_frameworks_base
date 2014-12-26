@@ -2192,6 +2192,12 @@ public final class Settings {
          * @hide
          */
         public static final String BATTERY_SAVER_MODE_COLOR = "battery_save_mode_color";
+        
+        /**		
+         * Timeout for ambient display notification
+         * @hide
+         */
+        public static final String DOZE_TIMEOUT = "doze_timeout";        
 
         /**
          * If 1, the activity manager will aggressively finish activities and
@@ -5812,12 +5818,6 @@ public final class Settings {
          * @hide
          */
         public static final String DOZE_ENABLED = "doze_enabled";
-
-        /**		
-         * Timeout for ambient display notification
-         * @hide
-         */
-        public static final String DOZE_TIMEOUT = "doze_timeout";		
 
         /**
          * What happens when the user presses the Home button when the
