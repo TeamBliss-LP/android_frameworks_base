@@ -2031,7 +2031,7 @@ public final class Settings {
         public static final String NEXT_ALARM_FORMATTED = "next_alarm_formatted";
 
         /**
-         * @hide
+         * Option to hide the Alarm icon in the status bar.
          */
         public static final String SHOW_ALARM_ICON = "show_alarm_icon";
 
