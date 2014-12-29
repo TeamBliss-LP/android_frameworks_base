@@ -327,6 +327,10 @@ public class BatteryMeterView extends View implements DemoMode,
             case BATTERY_METER_ICON_LANDSCAPE:
                 return new NormalBatteryMeterDrawable(res, true);
 
+            case BATTERY_METER_TEXT:
+            case BATTERY_METER_GONE:
+                return null;
+
             default:
                 return new NormalBatteryMeterDrawable(res, false);
         }
