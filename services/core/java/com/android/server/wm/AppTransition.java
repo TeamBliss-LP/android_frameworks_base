@@ -1027,7 +1027,7 @@ public class AppTransition implements Dump {
                 case TRANSIT_TASK_OPEN_BEHIND:
                     if (mActivityAnimations[10] != 0) {
                         mIsResId = true;
-                        int[] animArray = AwesomeAnimationHelper.getAnimations(mActivityAnimations[10]);
+                        int[] animArray = AwesomeAnimationHelper.getAnimations(mActivityAnimations[10], mExitOnly, mReverseExit);
                         animAttr = enter
                                 ? animArray[1]
                                 : animArray[0];
