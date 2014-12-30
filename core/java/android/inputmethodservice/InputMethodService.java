@@ -340,6 +340,8 @@ public class InputMethodService extends AbstractInputMethodService {
     private int mAnimationEnterIndex;
     private int mAnimationExitIndex;
     private int mInterpolatorIndex;
+    private boolean mExitOnly;
+    private boolean mReverseExit;
 
     private SettingsObserver mSettingsObserver;
 
@@ -1725,11 +1727,11 @@ public class InputMethodService extends AbstractInputMethodService {
     }
 
     private Animation retrieveAnimation(boolean enter){
-        int[] animArray = AnimationHelper.getAnimations(enter ? mAnimationEnterIndex : mAnimationExitIndex);
+        int[] animArray = AwesomeAnimationHelper.getAnimations(enter ? mAnimationEnterIndex : mAnimationExitIndex, mExitOnly, mReverseExit);
         int animInt = enter ? animArray[1] : animArray[0];
         if (animInt == 0) return null;
         Animation anim = AnimationUtils.loadAnimation(this, animInt);
-        Interpolator intplr= AnimationHelper.getInterpolator(this, mInterpolatorIndex);
+        Interpolator intplr= AwesomeAnimationHelper.getInterpolator(this, mInterpolatorIndex);
         if (intplr != null) anim.setInterpolator(intplr);
         if (mAnimationDuration > 0) {
             anim.setDuration(mAnimationDuration);
