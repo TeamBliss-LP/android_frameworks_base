@@ -298,13 +298,13 @@ public class RecentsActivity extends Activity implements RecentsView.RecentsView
         Resources reso = getResources();
 
         if (Settings.System.getInt(getContentResolver(),
-                    Settings.System.RECENTS_SHOW_HIDE_SEARCH_BAR, 1) != 0) {
+                    Settings.System.RECENTS_SHOW_HIDE_SEARCH_BAR, 0) != 1) {
         RecentsConfiguration.searchBarSpaceHeightPx = 0;
 
 		}
 
         if (Settings.System.getInt(getContentResolver(),
-                    Settings.System.RECENTS_SHOW_HIDE_SEARCH_BAR, 1) != 1) {
+                    Settings.System.RECENTS_SHOW_HIDE_SEARCH_BAR, 1) != 0) {
 	RecentsConfiguration.searchBarSpaceHeightPx = reso.getDimensionPixelSize(R.dimen.recents_search_bar_space_height);
 		}
 
