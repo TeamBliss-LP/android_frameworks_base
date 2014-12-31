@@ -145,8 +145,6 @@
     <string name="app_ops_read_clipboard">read the clipboard</string>
     <string name="app_ops_read_contacts">read your contacts</string>
     <string name="app_ops_read_mms">read your MMS messages</string>
-    <string name="app_ops_read_other_accounts">read other account info</string>
-    <string name="app_ops_read_phone_info">read phone info</string>        
     <string name="app_ops_read_sms">read your SMS messages</string>
     <string name="app_ops_receive_sms">receive an SMS message</string>
     <string name="app_ops_record_audio">record audio</string>
