@@ -20,6 +20,8 @@
   <!-- Config IME switcher -->
   <java-symbol type="bool" name="config_show_IMESwitcher" />
   
+  <java-symbol type="bool" name="config_doze_enabled_by_default" />
+  
   <!-- Themes and styles -->
   <java-symbol type="style" name="Theme.Material.Dialog.Dark" />
   <java-symbol type="style" name="Theme.Material.Dialog.Alert.Dark" />
