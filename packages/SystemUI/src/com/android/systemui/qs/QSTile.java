@@ -62,7 +62,6 @@ public abstract class QSTile<TState extends State> implements Listenable {
     protected final TState mState = newTileState();
     private final TState mTmpState = newTileState();
     private boolean mAnnounceNextStateChange;
-    protected boolean mLargeTile = false;
 
     abstract protected TState newTileState();
     abstract protected void handleClick();
@@ -75,7 +74,7 @@ public abstract class QSTile<TState extends State> implements Listenable {
     }
 
     public boolean supportsDualTargets() {
-        return mLargeTile;
+        return false;
     }
 
     public Host getHost() {

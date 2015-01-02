@@ -243,17 +243,12 @@ public class QSPanel extends ViewGroup {
     }
 
     private void refreshAllTiles() {
-        mUseMainTiles = Settings.Secure.getIntForUser(getContext().getContentResolver(),
-                Settings.Secure.QS_USE_MAIN_TILES, 1, UserHandle.myUserId()) == 1;
-        int i = 0;
-        for (TileRecord r : mRecords) {
-            if(mUseMainTiles && i < 2) {
-                r.tileView.setDual(true);
-            } else {
-                r.tileView.setDual(false);
-            }
+        mUseMainTiles = Settings.System.getIntForUser(getContext().getContentResolver(),
+                Settings.System.QS_USE_MAIN_TILES, 1, UserHandle.myUserId()) == 1;
+        for (int i = 0; i < mRecords.size(); i++) {
+            TileRecord r = mRecords.get(i);
+            r.tileView.setDual(mUseMainTiles && i < 2);
             r.tile.refreshState();
-            i++;
         }
         mFooter.refreshState();
     }
