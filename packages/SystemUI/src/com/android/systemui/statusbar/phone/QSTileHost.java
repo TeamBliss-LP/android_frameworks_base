@@ -25,6 +25,7 @@ import android.net.Uri;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
+import android.provider.Settings;
 import android.provider.Settings.Secure;
 import android.telephony.TelephonyManager;
 import android.util.Log;
@@ -241,11 +242,11 @@ public class QSTileHost implements QSTile.Host {
     private void recreateTiles() {
         if (DEBUG) Log.d(TAG, "Recreating tiles");
         final List<String> tileSpecs = loadTileSpecs();
-        for (QSTile oldTile : mTiles.values()) {
+        for(QSTile oldTile : mTiles.values()) {
             oldTile.destroy();
         }
         final LinkedHashMap<String, QSTile<?>> newTiles = new LinkedHashMap<>();
-        for (String tileSpec : tileSpecs) {
+        for(String tileSpec : tileSpecs) {
             newTiles.put(tileSpec, createTile(tileSpec));
         }
 
@@ -286,7 +287,7 @@ public class QSTileHost implements QSTile.Host {
         final String defaultTileList = res.getString(R.string.quick_settings_tiles_default);
         String tileList = Secure.getStringForUser(mContext.getContentResolver(), TILES_SETTING,
                 mUserTracker.getCurrentUserId());
-        if (DEBUG) Log.d(TAG, "Config string: "+tileList);
+        if(DEBUG) Log.d(TAG, "Config string: "+tileList);
         if (tileList == null) {
             tileList = res.getString(R.string.quick_settings_tiles);
             if (DEBUG) Log.d(TAG, "Loaded tile specs from config: " + tileList);
@@ -322,6 +323,9 @@ public class QSTileHost implements QSTile.Host {
                 mContext.getContentResolver().unregisterContentObserver(this);
             }
             mContext.getContentResolver().registerContentObserver(Secure.getUriFor(TILES_SETTING),
+                    false, this, mUserTracker.getCurrentUserId());
+            mContext.getContentResolver().registerContentObserver(
+                    Secure.getUriFor(Settings.Secure.QS_USE_MAIN_TILES),
                     false, this, mUserTracker.getCurrentUserId());
             mRegistered = true;
         }
