@@ -16,9 +16,7 @@
 package com.android.internal.policy.impl;
 
 import android.app.ActivityManager;
-import android.app.ActivityManager.RunningAppProcessInfo;
 import android.app.ActivityManagerNative;
-import android.app.IActivityManager;
 import android.app.AppOpsManager;
 import android.app.IUiModeManager;
 import android.app.KeyguardManager;
@@ -61,7 +59,6 @@ import android.os.Looper;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.PowerManager;
-import android.os.Process;
 import android.os.RemoteException;
 import android.os.ServiceManager;
 import android.os.SystemClock;
@@ -133,7 +130,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashSet;
-import java.util.List;
 import java.lang.reflect.Constructor;
 import java.util.Random;
 
@@ -415,8 +411,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     boolean mHomeWakeScreen;
     boolean mBackWakeScreen;
     boolean mMenuWakeScreen;
-    boolean mAssistWakeScreen;
-    boolean mAppSwitchWakeScreen;
     boolean mVolumeWakeScreen;
     boolean useHomeWake;
     boolean useBackWake;
@@ -797,12 +791,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.HOME_WAKE_SCREEN), false, this,
                     UserHandle.USER_ALL);
-            resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.ASSIST_WAKE_SCREEN), false, this,
-                    UserHandle.USER_ALL);
-            resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.APP_SWITCH_WAKE_SCREEN), false, this,
-                    UserHandle.USER_ALL);					
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.VOLUME_WAKE_SCREEN), false, this,
                     UserHandle.USER_ALL);
@@ -1746,15 +1734,11 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                     Settings.Secure.RING_HOME_BUTTON_BEHAVIOR_DEFAULT,
                     UserHandle.USER_CURRENT);
             mHomeWakeScreen = (Settings.System.getIntForUser(resolver,
-                    Settings.System.HOME_WAKE_SCREEN, 1, UserHandle.USER_CURRENT) == 1);
+                    Settings.System.HOME_WAKE_SCREEN, 0, UserHandle.USER_CURRENT) == 1);
             mBackWakeScreen = (Settings.System.getIntForUser(resolver,
                     Settings.System.BACK_WAKE_SCREEN, 0, UserHandle.USER_CURRENT) == 1);
             mMenuWakeScreen = (Settings.System.getIntForUser(resolver,
                     Settings.System.MENU_WAKE_SCREEN, 0, UserHandle.USER_CURRENT) == 1);
-            mAssistWakeScreen = (Settings.System.getIntForUser(resolver,
-                    Settings.System.ASSIST_WAKE_SCREEN, 0, UserHandle.USER_CURRENT) == 1);
-            mAppSwitchWakeScreen = (Settings.System.getIntForUser(resolver,
-                    Settings.System.APP_SWITCH_WAKE_SCREEN, 0, UserHandle.USER_CURRENT) == 1);
             mVolumeWakeScreen = (Settings.System.getIntForUser(resolver,
                     Settings.System.VOLUME_WAKE_SCREEN, 0, UserHandle.USER_CURRENT) == 1);
             mVolBtnMusicControls = (Settings.System.getIntForUser(resolver,
@@ -1768,7 +1752,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 mWakeGestureEnabledSetting = wakeGestureEnabledSetting;
                 updateWakeGestureListenerLp();
             }
-
 
             final boolean useEdgeService = Settings.System.getIntForUser(resolver,
                     Settings.System.USE_EDGE_SERVICE_FOR_GESTURES, 1, UserHandle.USER_CURRENT) == 1;
@@ -5569,10 +5552,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 return (mBackWakeScreen && useBackWake);
             case KeyEvent.KEYCODE_MENU:
                 return (mMenuWakeScreen && useMenuWake);
-            case KeyEvent.KEYCODE_ASSIST:
-                return mAssistWakeScreen;
-            case KeyEvent.KEYCODE_APP_SWITCH:
-                return mAppSwitchWakeScreen;
         }
         return true;
     }

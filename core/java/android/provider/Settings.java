@@ -3429,18 +3429,6 @@ public final class Settings {
          * @hide
          */
         public static final String MENU_WAKE_SCREEN = "menu_wake_screen";
-        
-        /**
-         * Whether to wake the screen with the back key, the value is boolean.
-         * @hide
-         */
-        public static final String ASSIST_WAKE_SCREEN = "assist_wake_screen";
-
-        /**
-         * Whether to wake the screen with the menu key, the value is boolean.
-         * @hide
-         */
-        public static final String APP_SWITCH_WAKE_SCREEN = "app_switch_wake_screen";        
 
         /**
          * Whether the phone ringtone should be played in an increasing manner
