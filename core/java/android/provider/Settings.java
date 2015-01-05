@@ -2178,13 +2178,6 @@ public final class Settings {
         public static final String QS_SMART_PULLDOWN = "qs_smart_pulldown";
 
         /**
-         * Whether to enable ticker animation in statusbar
-         *
-         * @hide
-         */
-        public static final String STATUS_BAR_TICKER_ENABLED = "status_bar_ticker_enabled";
-
-        /**
          * Control whether the process CPU usage meter should be shown.
          *
          * @deprecated Use {@link Global#SHOW_PROCESSES} instead
@@ -2767,6 +2760,51 @@ public final class Settings {
         /**
          * Determine custom overscroll distance.
          * @hide
+
+         * Wether to show the ticker on the status bar
+         * @hide
+         */
+        public static final String STATUS_BAR_SHOW_TICKER = "status_bar_show_show_ticker";
+
+        /**
+         * Show the pending notification counts as overlays on the status bar
+         * @hide
+         */
+        public static final String STATUS_BAR_SHOW_NOTIF_COUNT = "status_bar_show_notif_count";
+
+        /**
+         * Wether to colorize the notification icons on the status bar
+         * @hide
+         */
+        public static final String STATUS_BAR_COLORIZE_NOTIF_ICONS = "status_bar_colorize_notif_icons";
+
+        /**
+         * Color of the status bar notification icons
+         * @hide
+         */
+        public static final String STATUS_BAR_NOTIF_SYSTEM_ICON_COLOR = "status_bar_notif_system_icon_color";
+
+        /**
+         * Color of the status bar notification text
+         * @hide
+         */
+        public static final String STATUS_BAR_NOTIF_TEXT_COLOR = "status_bar_notif_text_color";
+
+        /**
+         * Color of the status bar notification count icon
+         * @hide
+         */
+        public static final String STATUS_BAR_NOTIF_COUNT_ICON_COLOR = "status_bar_notif_count_icon_color";
+
+        /**
+         * Color of the status bar notification count text
+         * @hide
+         */
+        public static final String STATUS_BAR_NOTIF_COUNT_TEXT_COLOR = "status_bar_notif_count_text_color";
+
+        /**
+         * Determine custom overscroll distance.
+         * @hide
          */
         public static final String CUSTOM_OVERSCROLL_DISTANCE = "custom_overscroll_distance";
 
@@ -2775,12 +2813,6 @@ public final class Settings {
          * @hide
          */
         public static final String CUSTOM_OVERFLING_DISTANCE = "custom_overfling_distance";        
-
-        /**
-         * Show the pending notification counts as overlays on the status bar
-         * @hide
-         */
-        public static final String STATUS_BAR_NOTIF_COUNT = "status_bar_notif_count";
 
         /**
          * Control the type of rotation which can be performed using the accelerometer
