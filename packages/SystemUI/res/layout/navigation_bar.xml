@@ -23,8 +23,9 @@
     xmlns:systemui="http://schemas.android.com/apk/res/com.android.systemui"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
-    android:background="@drawable/system_bar_background"
+    android:background="@color/navigation_bar_background_opaque"
     >
+  <!-- android:background="@drawable/system_bar_background" -->
 
     <FrameLayout android:id="@+id/rot0"
         android:layout_height="match_parent"
@@ -77,7 +78,7 @@
                 android:src="@drawable/ic_sysbar_back"
                 systemui:keyCode="4"
                 android:layout_weight="0"
-                android:scaleType="center"
+                android:scaleType="centerInside"
                 android:contentDescription="@string/accessibility_back"
                 />
             <com.android.systemui.statusbar.policy.KeyButtonView android:id="@+id/home"
@@ -87,7 +88,7 @@
                 systemui:keyCode="3"
                 systemui:keyRepeat="false"
                 android:layout_weight="0"
-                android:scaleType="center"
+                android:scaleType="centerInside"
                 android:contentDescription="@string/accessibility_home"
                 />
             <com.android.systemui.statusbar.policy.KeyButtonView android:id="@+id/recent_apps"
@@ -95,7 +96,7 @@
                 android:layout_height="match_parent"
                 android:src="@drawable/ic_sysbar_recent"
                 android:layout_weight="0"
-                android:scaleType="center"
+                android:scaleType="centerInside"
                 android:contentDescription="@string/accessibility_recent"
                 />
             <FrameLayout
@@ -139,7 +140,7 @@
                 android:layout_height="match_parent"
                 android:layout_marginStart="@dimen/navigation_side_padding"
                 android:src="@drawable/ic_sysbar_lights_out_dot_small"
-                android:scaleType="center"
+                android:scaleType="centerInside"
                 android:layout_weight="0"
                 />
             <View
@@ -152,7 +153,7 @@
                 android:layout_width="@dimen/navigation_key_width"
                 android:layout_height="match_parent"
                 android:src="@drawable/ic_sysbar_lights_out_dot_large"
-                android:scaleType="center"
+                android:scaleType="centerInside"
                 android:layout_weight="0"
                 />
             <View
@@ -166,7 +167,7 @@
                 android:layout_marginEnd="@dimen/navigation_side_padding"
                 android:layout_height="match_parent"
                 android:src="@drawable/ic_sysbar_lights_out_dot_small"
-                android:scaleType="center"
+                android:scaleType="centerInside"
                 android:layout_weight="0"
                 />
         </LinearLayout>
@@ -257,7 +258,7 @@
                 android:layout_height="@dimen/navigation_key_width"
                 android:layout_width="match_parent"
                 android:src="@drawable/ic_sysbar_recent_land"
-                android:scaleType="center"
+                android:scaleType="centerInside"
                 android:layout_weight="0"
                 android:contentDescription="@string/accessibility_recent"
                 />
@@ -271,7 +272,7 @@
                 android:layout_height="@dimen/navigation_key_width"
                 android:layout_width="match_parent"
                 android:src="@drawable/ic_sysbar_home_land"
-                android:scaleType="center"
+                android:scaleType="centerInside"
                 systemui:keyCode="3"
                 systemui:keyRepeat="false"
                 android:layout_weight="0"
@@ -287,7 +288,7 @@
                 android:layout_height="@dimen/navigation_key_width"
                 android:layout_width="match_parent"
                 android:src="@drawable/ic_sysbar_back_land"
-                android:scaleType="center"
+                android:scaleType="centerInside"
                 systemui:keyCode="4"
                 android:layout_weight="0"
                 android:contentDescription="@string/accessibility_back"
@@ -301,7 +302,7 @@
         </LinearLayout>
 
         <!-- lights out layout to match exactly -->
-        <LinearLayout 
+        <LinearLayout
             android:layout_height="match_parent"
             android:layout_width="match_parent"
             android:orientation="vertical"
@@ -313,7 +314,7 @@
                 android:layout_marginTop="@dimen/navigation_side_padding"
                 android:layout_width="match_parent"
                 android:src="@drawable/ic_sysbar_lights_out_dot_small"
-                android:scaleType="center"
+                android:scaleType="centerInside"
                 android:layout_weight="0"
                 />
             <View
@@ -326,7 +327,7 @@
                 android:layout_height="@dimen/navigation_key_width"
                 android:layout_width="match_parent"
                 android:src="@drawable/ic_sysbar_lights_out_dot_large"
-                android:scaleType="center"
+                android:scaleType="centerInside"
                 android:layout_weight="0"
                 />
             <View
@@ -340,7 +341,7 @@
                 android:layout_marginBottom="@dimen/navigation_side_padding"
                 android:layout_width="match_parent"
                 android:src="@drawable/ic_sysbar_lights_out_dot_small"
-                android:scaleType="center"
+                android:scaleType="centerInside"
                 android:layout_weight="0"
                 />
         </LinearLayout>
