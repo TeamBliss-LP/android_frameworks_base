@@ -167,12 +167,10 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
         mShowSilentToggle = SHOW_SILENT_TOGGLE && !mContext.getResources().getBoolean(
                 com.android.internal.R.bool.config_useFixedVolume);
 
-<<<<<<< HEAD
         mShowScreenRecord = mContext.getResources().getBoolean(
                 com.android.internal.R.bool.config_enableScreenrecordChord);
-=======
+
         updatePowerMenuActions();
->>>>>>> 61f4b8c... Power menu customizations [1/2]
     }
 
     /**
@@ -280,7 +278,6 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
 
         mItems = new ArrayList<Action>();
 
-<<<<<<< HEAD
         // next: screen record, if enabled
         if (mShowScreenRecord) {
             if (Settings.System.getInt(mContext.getContentResolver(),
@@ -308,9 +305,6 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
             }
         }
 
-        String[] defaultActions = mContext.getResources().getStringArray(
-                com.android.internal.R.array.config_globalActionsList);
-=======
         String[] actionsArray;
         if (mActions == null) {
             actionsArray = mContext.getResources().getStringArray(
@@ -318,7 +312,6 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
         } else {
             actionsArray = mActions.split("\\|");
         }
->>>>>>> 61f4b8c... Power menu customizations [1/2]
 
         ArraySet<String> addedKeys = new ArraySet<String>();
         for (int i = 0; i < actionsArray.length; i++) {
