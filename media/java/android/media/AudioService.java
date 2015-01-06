@@ -1144,9 +1144,7 @@ public class AudioService extends IAudioService.Stub {
         int streamTypeAlias = mStreamVolumeAlias[streamType];
         VolumeStreamState streamState = mStreamStates[streamTypeAlias];
 
-        // when adjuststreamvolume, it should be applied on the device that
-        // chosen for the stream being updated, but not the alias one.
-        final int device = getDeviceForStream(streamType);
+        final int device = getDeviceForStream(streamTypeAlias);
 
         int aliasIndex = streamState.getIndex(device);
         boolean adjustVolume = true;
