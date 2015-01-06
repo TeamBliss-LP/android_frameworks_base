@@ -929,7 +929,7 @@ public class GpsLocationProvider implements LocationProviderInterface {
                     Settings.Global.MOBILE_DATA, SubscriptionManager.getDefaultSubId(),
                     1) == 1;
 */
-            boolean dataEnabled = false;
+            boolean dataEnabled = TelephonyManager.getDefault().getDataEnabled();
             boolean networkAvailable = info.isAvailable() && dataEnabled;
             if (mDefaultApn == null) {
                 mDefaultApn = getDefaultApn();
