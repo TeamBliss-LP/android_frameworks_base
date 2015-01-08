@@ -25,14 +25,12 @@ import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProviderInfo;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.UserHandle;
-import android.provider.Settings;
 import android.util.Pair;
 import android.view.KeyEvent;
 import android.view.View;
@@ -324,15 +322,9 @@ public class RecentsActivity extends Activity implements RecentsView.RecentsView
         return mVisible;
     }
 
-    /** Check if Clear All Recents is enabled */
-    public boolean clearAllRecentsNavbarEnabled() {
-        return Settings.System.getInt(getContentResolver(),
-                Settings.System.CLEAR_ALL_RECENTS_NAVBAR_ENABLED, 1) != 0;
-    }
-
     private void updateNavigationBarIcon() {
         if (mVisible) {
-            if (root != null && clearAllRecentsNavbarEnabled()) {
+            if (root != null) {
                 setRecentHints(root.hasTasks());
             } else {
                 setRecentHints(false);
