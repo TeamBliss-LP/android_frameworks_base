@@ -94,7 +94,6 @@ public class CommandQueue extends IStatusBar.Stub {
         public void showRecentApps(boolean triggeredFromAltTab);
         public void hideRecentApps(boolean triggeredFromAltTab, boolean triggeredFromHomeKey);
         public void toggleRecentApps();
-        public void clearRecentApps();
         public void preloadRecentApps();
         public void cancelPreloadRecentApps();
         public void showSearchPanel();

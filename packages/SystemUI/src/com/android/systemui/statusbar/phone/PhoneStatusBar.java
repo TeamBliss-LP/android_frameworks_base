@@ -139,7 +139,6 @@ import com.android.systemui.DemoMode;
 import com.android.systemui.EventLogTags;
 import com.android.systemui.FontSizeUtils;
 import com.android.systemui.R;
-import com.android.systemui.recents.RecentsActivity;
 import com.android.systemui.doze.DozeHost;
 import com.android.systemui.doze.DozeLog;
 import com.android.systemui.keyguard.KeyguardViewMediator;
@@ -871,8 +870,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             }
         });
 
-        RecentsActivity.setNavigationBarView(mNavigationBarView);
-
         // figure out which pixel-format to use for the status bar.
         mPixelFormat = PixelFormat.OPAQUE;
 
@@ -1376,11 +1373,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     private View.OnClickListener mRecentsClickListener = new View.OnClickListener() {
         public void onClick(View v) {
             awakenDreams();
-            if(isRecentAppsVisible() && hasRecentApps()) {
-                clearRecentApps();
-            } else {
-                toggleRecentApps();
-            }
+            toggleRecentApps();
         }
     };
 
