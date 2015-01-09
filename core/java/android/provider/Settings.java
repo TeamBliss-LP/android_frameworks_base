@@ -2669,10 +2669,11 @@ public final class Settings {
         public static final String TIME_12_24 = "time_12_24";
 
         /**
-         * Wether navigation bar is enabled or not
-         * @hide
-         */
-        public static final String NAVIGATION_BAR_SHOW = "navigation_bar_show";
+        * Developer options - Navigation Bar show switch
+        * @hide
+        */
+        public static final String DEV_FORCE_SHOW_NAVBAR = "dev_force_show_navbar";
+
 
         /**
          *
