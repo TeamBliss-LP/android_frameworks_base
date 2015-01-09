@@ -2699,14 +2699,7 @@ public final class Settings {
          */
         public static final String ANIMATION_IME_INTERPOLATOR = "animation_ime_interpolator";
 
-
-        /**
-         * Enable HW keys
-         * @hide
-         */
-        public static final String ENABLE_HW_KEYS = "enable_hw_keys";
-		
-        /**
+	    /**
          * Whether navigation bar is placed on the left side in landscape mode
          * @hide
          */

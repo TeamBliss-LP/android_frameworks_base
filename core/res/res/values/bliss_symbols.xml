@@ -44,8 +44,6 @@
   <java-symbol type="array" name="shutdown_reboot_options" />
   <java-symbol type="array" name="shutdown_reboot_actions" />
   
-  <!-- Hardware keys on/off option -->
-  <java-symbol type="bool" name="config_hwKeysPref" />
   
   <!-- Shortcut actions -->
   <java-symbol type="drawable" name="ic_shortcut_action_silent" />
