@@ -251,6 +251,10 @@ public class NavigationBarView extends LinearLayout {
         mMenuButtonWidth = res.getDimensionPixelSize(R.dimen.navigation_menu_key_width);
         mLayoutChangerWidth = res.getDimensionPixelSize(R.dimen.navigation_layout_changer_width);
 
+        try {
+            mNeedsNav = WindowManagerGlobal.getWindowManagerService().needsNavigationBar();
+        } catch (RemoteException ex) {
+        }
 
         mLegacyMenu = Settings.System.getInt(cr, Settings.System.NAVIGATION_BAR_SIDEKEYS, 1) == 1;
         mImeLayout = Settings.System.getInt(cr, Settings.System.NAVIGATION_BAR_ARROWS, 0) == 1;
