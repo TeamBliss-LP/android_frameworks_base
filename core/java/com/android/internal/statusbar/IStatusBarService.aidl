@@ -66,4 +66,5 @@ interface IStatusBarService
     void showCustomIntentAfterKeyguard(inout Intent intent);
     void hideHeadsUpCandidate(String packageName);
     void scheduleHeadsUpClose();
+    void setPieTriggerMask(int newMask, boolean lock);
 }
