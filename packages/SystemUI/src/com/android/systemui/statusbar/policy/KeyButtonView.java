@@ -62,7 +62,7 @@ import com.android.internal.statusbar.IStatusBarService;
 import com.android.internal.util.bliss.KeyButtonInfo;
 import static com.android.internal.util.bliss.NavbarConstants.*;
 import com.android.internal.util.bliss.NavbarUtils;
-import com.android.internal.util.bliss.VanirActions;
+import com.android.internal.util.bliss.BlissActions;
 import com.android.systemui.R;
 import com.android.internal.util.bliss.DeviceUtils;
 
@@ -97,9 +97,9 @@ public class KeyButtonView extends ImageView {
     public boolean mHasBlankSingleAction = false, mHasDoubleAction, mHasLongAction;
 
     public static PowerManager getPowerManagerService(Context context) {
-		if (mPm == null) mPm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
-		return mPm;
-	}
+        if (mPm == null) mPm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+        return mPm;
+    }
 
     Runnable mCheckLongPress = new Runnable() {
         public void run() {
@@ -135,7 +135,7 @@ public class KeyButtonView extends ImageView {
         mPm = getPowerManagerService(context);
     }
 
-	public void setButtonActions(KeyButtonInfo actions) {
+    public void setButtonActions(KeyButtonInfo actions) {
         this.mActions = actions;
 
         setTag(mActions.singleAction); // should be OK even if it's null
@@ -162,7 +162,7 @@ public class KeyButtonView extends ImageView {
         mLongPressTimeout = lpTimeout;
     }
 
-	/* @hide */
+    /* @hide */
     public void setImage() {
         setImage(getResources());
     }
@@ -261,7 +261,7 @@ public class KeyButtonView extends ImageView {
                 break;
             case MotionEvent.ACTION_CANCEL:
                 setPressed(false);
-				if (mIsDPadAction) {
+                if (mIsDPadAction) {
                     mShouldClick = true;
                     removeCallbacks(mDPadKeyRepeater);
                 }
@@ -308,7 +308,7 @@ public class KeyButtonView extends ImageView {
 
         if (mActions != null) {
             if (mActions.singleAction != null) {
-                VanirActions.launchAction(mContext, mActions.singleAction);
+                BlissActions.launchAction(mContext, mActions.singleAction);
             }
         }
     }
@@ -316,14 +316,14 @@ public class KeyButtonView extends ImageView {
     private void doDoubleTap() {
         if (mHasDoubleAction) {
             removeCallbacks(mSingleTap);
-            VanirActions.launchAction(mContext, mActions.doubleTapAction);
+            BlissActions.launchAction(mContext, mActions.doubleTapAction);
         }
     }
 
     protected void doLongPress() {
         if (mHasLongAction) {
             removeCallbacks(mSingleTap);
-            VanirActions.launchAction(mContext, mActions.longPressAction);
+            BlissActions.launchAction(mContext, mActions.longPressAction);
             performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
             sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_LONG_CLICKED);
         }
@@ -334,7 +334,7 @@ public class KeyButtonView extends ImageView {
         public void run() {
             if (mActions != null) {
                 if (mActions.singleAction != null) {
-                    VanirActions.launchAction(mContext, mActions.singleAction);
+                    BlissActions.launchAction(mContext, mActions.singleAction);
                     // click on the first event since we're handling in MotionEvent.ACTION_DOWN
                     if (mShouldClick) {
                         mShouldClick = false;
@@ -351,9 +351,9 @@ public class KeyButtonView extends ImageView {
         mAudioManager.playSoundEffect(soundConstant, ActivityManager.getCurrentUser());
     };
 
-	public void sendEvent(int action, int flags) {
-		sendEvent(action, flags, SystemClock.uptimeMillis());
-	}
+    public void sendEvent(int action, int flags) {
+        sendEvent(action, flags, SystemClock.uptimeMillis());
+    }
 
     void sendEvent(int action, int flags, long when) {
         final int repeatCount = (flags & KeyEvent.FLAG_LONG_PRESS) != 0 ? 1 : 0;
