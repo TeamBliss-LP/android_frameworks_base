@@ -3997,6 +3997,12 @@ public final class Settings {
          */
         public static final String APP_CIRCLE_BAR_TRIGGER_TOP = "app_circle_bar_trigger_top";
 
+        /** Whether to show the brightness slider in quick settings panel.
+         *
+         * @hide
+         */
+        public static final String QS_SHOW_BRIGHTNESS_SLIDER = "qs_show_brightness_slider";
+
         /**
          * Height of the app circle bar trigger
          *
