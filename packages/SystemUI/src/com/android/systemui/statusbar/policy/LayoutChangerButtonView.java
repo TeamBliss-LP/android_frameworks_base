@@ -34,7 +34,7 @@ import com.android.internal.util.bliss.KeyButtonInfo;
 import com.android.internal.util.bliss.NavbarUtils;
 import com.android.internal.util.bliss.NavbarConstants;
 import static com.android.internal.util.bliss.NavbarConstants.*;
-import com.android.internal.util.bliss.VanirActions;
+import com.android.internal.util.bliss.BlissActions;
 import com.android.systemui.R;
 
 public class LayoutChangerButtonView extends KeyButtonView {
@@ -146,6 +146,6 @@ public class LayoutChangerButtonView extends KeyButtonView {
         if (callOnClick()) {
             sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_CLICKED);
         }
-        VanirActions.launchAction(mContext, mActions.singleAction);
+        BlissActions.launchAction(mContext, mActions.singleAction);
     }
 }

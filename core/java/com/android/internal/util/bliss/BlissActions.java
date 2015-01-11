@@ -55,9 +55,9 @@ import static com.android.internal.util.bliss.NavbarConstants.NavbarConstant;
 import static com.android.internal.util.bliss.NavbarConstants.fromString;
 import com.android.internal.util.cm.ActionUtils;
 
-public class VanirActions {
+public class BlissActions {
 
-    public static final String TAG = "VanirActions";
+    public static final String TAG = "BlissActions";
 
     private static final int LAYOUT_LEFT = -1;
     private static final int LAYOUT_RIGHT = 1;
@@ -70,7 +70,7 @@ public class VanirActions {
 
     private static Handler mHandler = new Handler();
 
-    private VanirActions() {
+    private BlissActions() {
     }
 
     public static void setCurrentUser(int newUserId) {
@@ -89,15 +89,15 @@ public class VanirActions {
                 }
                 break;
 
-			case ACTION_RECENTS:
-				try {
-					IStatusBarService.Stub.asInterface(
-							ServiceManager.getService(mContext.STATUS_BAR_SERVICE))
-							.toggleRecentApps();
-				} catch (RemoteException e) {
-					Log.e(TAG, "RECENTS ACTION FAILED");
-				}
-				break;
+            case ACTION_RECENTS:
+                try {
+                    IStatusBarService.Stub.asInterface(
+                    ServiceManager.getService(mContext.STATUS_BAR_SERVICE))
+                                  .toggleRecentApps();
+                } catch (RemoteException e) {
+                    Log.e(TAG, "RECENTS ACTION FAILED");
+                }
+		break;
 
             case ACTION_BACK:
                 InputManager.triggerVirtualKeypress(KeyEvent.KEYCODE_BACK, STANDARD_FLAGS);
