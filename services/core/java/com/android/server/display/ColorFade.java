@@ -450,7 +450,7 @@ final class ColorFade {
         if (!attachEglContext()) {
             return false;
         }
-
+        SurfaceTexture st = null;
         try {
             if (!mTexNamesGenerated) {
                 GLES20.glGenTextures(1, mTexNames, 0);
@@ -460,17 +460,17 @@ final class ColorFade {
                 mTexNamesGenerated = true;
             }
 
-            final SurfaceTexture st = new SurfaceTexture(mTexNames[0]);
+            st = new SurfaceTexture(mTexNames[0]);
             final Surface s = new Surface(st);
             try {
                 SurfaceControl.screenshot(SurfaceControl.getBuiltInDisplay(
                         SurfaceControl.BUILT_IN_DISPLAY_ID_MAIN), s);
-                st.updateTexImage();
-                st.getTransformMatrix(mTexMatrix);
             } finally {
                 s.release();
-                st.release();
             }
+
+            st.updateTexImage();
+            st.getTransformMatrix(mTexMatrix);
 
             // Set up texture coordinates for a quad.
             // We might need to change this if the texture ends up being
@@ -484,6 +484,9 @@ final class ColorFade {
             GLES20.glViewport(0, 0, mDisplayWidth, mDisplayHeight);
             ortho(0, mDisplayWidth, 0, mDisplayHeight, -1, 1);
         } finally {
+            if (st != null) {
+                st.release();
+            }
             detachEglContext();
         }
         return true;
