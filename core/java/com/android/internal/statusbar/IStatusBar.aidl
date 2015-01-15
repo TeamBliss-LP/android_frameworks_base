@@ -50,6 +50,5 @@ oneway interface IStatusBar
     void hideHeadsUpCandidate(String packageName);
     void scheduleHeadsUpClose();
     void notifyLayoutChange(int direction);
-    void setPieTriggerMask(int newMask, boolean lock);
 }
 

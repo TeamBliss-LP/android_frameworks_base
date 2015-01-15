@@ -458,9 +458,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.ENABLE_NAVIGATION_RING), false, this);
-            resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.PIE_CONTROLS),
-                    false, this, UserHandle.USER_ALL);
             update();
         }
 
@@ -505,9 +502,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                         mBatterySaverWarningColor = mContext.getResources()
                                 .getColor(com.android.internal.R.color.battery_saver_mode_color);
                     }
-            } else if (uri.equals(Settings.System.getUriFor(
-                    Settings.System.PIE_CONTROLS))) {
-                    attachPieContainer(isPieEnabled());
             }
             update();
         }
@@ -570,12 +564,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mNavigationBarView.setDisabledFlags(mDisabled);
         mNavigationBarView.setBar(this);
         addNavigationBar();
-    }
-
-    private boolean isPieEnabled() {
-        return Settings.System.getIntForUser(mContext.getContentResolver(),
-                Settings.System.PIE_CONTROLS, 0,
-                UserHandle.USER_CURRENT) == 1;
     }
 
     // ensure quick settings is disabled until the current user makes it through the setup wizard
@@ -1530,7 +1518,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         prepareNavigationBarView();
 
         mWindowManager.addView(mNavigationBarView, getNavigationBarLayoutParams());
-        mNavigationBarOverlay.setNavigationBar(mNavigationBarView);
     }
 
     private void removeNavigationBar() {
@@ -1700,7 +1687,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         // Recalculate the position of the sliding windows and the titles.
         setAreThereNotifications();
         updateExpandedViewPos(EXPANDED_LEAVE_ALONE);
-        restorePieTriggerMask();
     }
 
     public void displayNotificationFromHeadsUp(StatusBarNotification notification) {
