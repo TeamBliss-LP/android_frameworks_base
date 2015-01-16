@@ -398,7 +398,6 @@ public class NavigationBarView extends LinearLayout
     @Override
     public void setLayoutDirection(int layoutDirection) {
         getIcons(mThemedResources != null ? mThemedResources : getContext().getResources());
-
         super.setLayoutDirection(layoutDirection);
     }
 
@@ -514,14 +513,14 @@ public class NavigationBarView extends LinearLayout
     final Runnable mNotifyImeLayoutChange = new Runnable() {
         @Override
         public void run() {
-            setupNavigationButtons(getButtonsArray(mIMEKeyLayout.split("\\|")));
+            setupNavigationButtons(getButtonsArray(mIMEKeyLayout));
         }
     };
 
     final Runnable mGotStuckLayoutChange = new Runnable() {
         @Override
         public void run() {
-            setupNavigationButtons(getButtonsArray(mDefaultLayout.split("\\|")));
+            setupNavigationButtons(getButtonsArray(mDefaultLayout));
             if (getButtonView(ACTION_BACK) != null)
                     ((ImageView) getButtonView(ACTION_BACK)).setImageResource(R.drawable.ic_sysbar_back_ime);
         }
@@ -755,15 +754,16 @@ public class NavigationBarView extends LinearLayout
                             mContext.getResources().getString(R.string.def_navbar_layout_warning),
                             200).show();
                 }
-                mAllButtonContainers.add(getButtonsArray(mDefaultLayout.split("\\|")));
+                mAllButtonContainers.add(getButtonsArray(mDefaultLayout));
             } else {
-                mAllButtonContainers.add(getButtonsArray(mButtonContainerStrings[j].split("\\|")));
+                mAllButtonContainers.add(getButtonsArray(mButtonContainerStrings[j]));
             }
         }
         setupNavigationButtons(getCurrentButtonArray());
     }
 
-    private ArrayList<KeyButtonInfo> getButtonsArray(final String[] userButtons) {
+    private ArrayList<KeyButtonInfo> getButtonsArray(final String userButtonString) {
+        final String[] userButtons = userButtonString.split("\\|");
         final ArrayList<KeyButtonInfo> mButtonsContainer = new ArrayList<KeyButtonInfo>();
         for (String button : userButtons) {
             final String[] actions = button.split(",", 4);
