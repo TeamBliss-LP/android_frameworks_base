@@ -75,7 +75,6 @@ public class NavigationBarView extends LinearLayout
     final static boolean DEBUG = false;
     final static String TAG = "PhoneStatusBar/NavigationBarView";
 
-    private static final int LONGPRESS_TIMEOUT = ViewConfiguration.getLongPressTimeout();
     private static final int CHANGER_LEFT_SIDE = 0;
     private static final int CHANGER_RIGHT_SIDE = 1;
     private static final int LAYOUT_IME = NavbarConstants.LAYOUT_IME;
@@ -134,7 +133,7 @@ public class NavigationBarView extends LinearLayout
     private boolean mNeedsNav;
     private boolean mLegacyMenu;
     private boolean mImeLayout;
-    private int mLongPressTimeout = LONGPRESS_TIMEOUT;
+    private int mLongPressTimeout;
     private String mIMEKeyLayout;
     private String mDefaultLayout;
     private boolean showingIME;
@@ -275,7 +274,7 @@ public class NavigationBarView extends LinearLayout
         mIMEKeyLayout = NavbarConstants.defaultIMEKeyLayout(mContext);
         mDefaultLayout = NavbarConstants.defaultNavbarLayout(mContext);
         mLongPressTimeout = Settings.System.getInt(cr,
-                Settings.System.SOFTKEY_LONG_PRESS_CONFIGURATION, LONGPRESS_TIMEOUT);
+                Settings.System.SOFTKEY_LONG_PRESS_CONFIGURATION, ViewConfiguration.getLongPressTimeout());
 
         mBarTransitions = new NavigationBarTransitions(this);
     }
@@ -705,11 +704,11 @@ public class NavigationBarView extends LinearLayout
             mSettingsObserver = new ContentObserver(new Handler()) {
                 @Override
                 public void onChange(boolean selfChange, Uri uri) {
-					if (uri.equals(Settings.System.getUriFor(Settings.System.SOFTKEY_LONG_PRESS_CONFIGURATION))) {
-						mLongPressTimeout = Settings.System.getInt(r,
-								Settings.System.SOFTKEY_LONG_PRESS_CONFIGURATION, LONGPRESS_TIMEOUT);
-					} else {
-						mImeLayout = Settings.System.getInt(r, Settings.System.NAVIGATION_BAR_ARROWS, 0) == 1;
+                    if (uri.equals(Settings.System.getUriFor(Settings.System.SOFTKEY_LONG_PRESS_CONFIGURATION))) {
+                        mLongPressTimeout = Settings.System.getInt(r,
+                                Settings.System.SOFTKEY_LONG_PRESS_CONFIGURATION, ViewConfiguration.getLongPressTimeout());
+                    } else {
+                        mImeLayout = Settings.System.getInt(r, Settings.System.NAVIGATION_BAR_ARROWS, 0) == 1;
                         mLegacyMenu = Settings.System.getInt(r, Settings.System.NAVIGATION_BAR_SIDEKEYS, 1) == 1;
 						mButtonLayouts = Settings.System.getInt(r, Settings.System.NAVIGATION_BAR_ALTERNATE_LAYOUTS, 1);
 
