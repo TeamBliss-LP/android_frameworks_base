@@ -397,8 +397,9 @@ public class NavigationBarView extends LinearLayout
     }
 
     @Override
-    getIcons(mThemedResources != null ? mThemedResources : getContext().getResources());
-        getIcons(getContext().getResources());
+    public void setLayoutDirection(int layoutDirection) {
+        getIcons(mThemedResources != null ? mThemedResources : getContext().getResources());
+
         super.setLayoutDirection(layoutDirection);
     }
 

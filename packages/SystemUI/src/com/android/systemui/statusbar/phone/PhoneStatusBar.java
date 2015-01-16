@@ -1601,17 +1601,17 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         return lp;
     }
 
-+    private Resources getNavbarThemedResources() {
-+        String pkgName = mCurrentTheme.getOverlayPkgNameForApp(ThemeConfig.SYSTEMUI_NAVBAR_PKG);
-+        Resources res = null;
-+        try {
-+            res = mContext.getPackageManager().getThemedResourcesForApplication(
-+                    mContext.getPackageName(), pkgName);
-+        } catch (PackageManager.NameNotFoundException e) {
-+            res = mContext.getResources();
-+        }
-+        return res;
-+    }
+    private Resources getNavbarThemedResources() {
+        String pkgName = mCurrentTheme.getOverlayPkgNameForApp(ThemeConfig.SYSTEMUI_NAVBAR_PKG);
+        Resources res = null;
+        try {
+            res = mContext.getPackageManager().getThemedResourcesForApplication(
+                    mContext.getPackageName(), pkgName);
+        } catch (PackageManager.NameNotFoundException e) {
+            res = mContext.getResources();
+        }
+        return res;
+    }
 
     private void addHeadsUpView() {
         if (!mHeadsUpViewAttached) {
