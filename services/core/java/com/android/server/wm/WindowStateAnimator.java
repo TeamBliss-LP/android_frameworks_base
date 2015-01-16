@@ -1293,6 +1293,10 @@ class WindowStateAnimator {
             mDtDx = 0;
             mDsDy = 0;
             mDtDy = mWin.mGlobalScale;
+            if (appTransformation == null) {
+                mHasClipRect = false;
+                mClipRect.setEmpty();
+            }
         }
     }
 
@@ -1384,7 +1388,7 @@ class WindowStateAnimator {
         clipRect.bottom += attrs.surfaceInsets.bottom;
 
         // If we have an animated clip rect, intersect it with the clip rect.
-        if (mHasClipRect) {
+        if (mHasClipRect && (w.mAttrs.flags & LayoutParams.FLAG_LAYOUT_INSET_DECOR) != 0) {
             // NOTE: We are adding a temporary workaround due to the status bar
             // not always reporting the correct system decor rect. In such
             // cases, we take into account the specified content insets as well.
