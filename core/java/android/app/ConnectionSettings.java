@@ -150,8 +150,10 @@ public final class ConnectionSettings implements Parcelable {
                         break;
                     case CM_MODE_4G:
                         intent.putExtra(EXTRA_NETWORK_MODE, RILConstants.NETWORK_MODE_LTE_ONLY);
+                        break;                        
                     case CM_MODE_2G3G:
                         intent.putExtra(EXTRA_NETWORK_MODE, RILConstants.NETWORK_MODE_WCDMA_PREF);
+                        break;                        
                     case CM_MODE_ALL:
                         intent.putExtra(EXTRA_NETWORK_MODE, RILConstants.NETWORK_MODE_LTE_GSM_WCDMA);
                         break;
