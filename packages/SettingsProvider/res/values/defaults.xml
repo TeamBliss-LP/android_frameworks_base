@@ -230,7 +230,7 @@
     <!-- Default for Settings.Secure.STATS_COLLECTION. -->
     <bool name="def_cm_stats_collection">false</bool>
 
-    <!-- Default for Settings.System.STATUS_BAR_BATTERY_STYLE -->
+    <!-- Default for Settings.System.STATUS_BAR_BATTERY_STATUS_STYLE -->
     <integer name="def_battery_style">0</integer>
 
     <!-- Default theme -->

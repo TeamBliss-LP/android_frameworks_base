@@ -2808,12 +2808,6 @@ public final class Settings {
         public static final String CUSTOM_OVERFLING_DISTANCE = "custom_overfling_distance";        
 
         /**
-         * Show the pending notification counts as overlays on the status bar
-         * @hide
-         */
-        public static final String STATUS_BAR_NOTIF_COUNT = "status_bar_notif_count";
-
-        /**
          * Control the type of rotation which can be performed using the accelerometer
          * if ACCELEROMETER_ROTATION is enabled.
          * Value is a bitwise combination of
@@ -3488,25 +3482,171 @@ public final class Settings {
         public static final String STATUS_BAR_AM_PM = "status_bar_am_pm";
 
         /**
-         * Display style of the status bar battery information
-         * 0: Display the battery an icon in portrait mode
-         * 2: Display the battery as a circle
-         * 4: Hide the battery status information
-         * 5: Display the battery an icon in landscape mode
-         * 6: Display the battery as plain text
+         * Battery status style on the status bar
+         * 0 - Icon portrait
+         * 1 - Icon landscape
+         * 2 - Circle
+         * 3 - Text only
+         * 4 - Hidden
          * default: 0
          * @hide
          */
-        public static final String STATUS_BAR_BATTERY_STYLE = "status_bar_battery_style";
+        public static final String STATUS_BAR_BATTERY_STATUS_STYLE = "status_bar_battery_status_style";
 
         /**
-         * Status bar battery %
-         * 0: Hide the battery percentage
-         * 1: Display the battery percentage inside the icon
-         * 2: Display the battery percentage next to the icon
+         * Battery status (text) style on the status bar
+         * 0 - Inside the icon/circle
+         * 1 - Next to the icon/circle
+         * 2 - Hidden
+         * default: 2
          * @hide
          */
-        public static final String STATUS_BAR_SHOW_BATTERY_PERCENT = "status_bar_show_battery_percent";
+        public static final String STATUS_BAR_BATTERY_STATUS_PERCENT_STYLE = "status_bar_battery_status_percent_style";
+
+        /**
+         * Battery charging animation speed on the status bar
+         * 0 - Disabled
+         * 1 - Slow
+         * 3 - Normal (default)
+         * 5 - fast
+         * default: 3
+         * @hide
+         */
+        public static final String STATUS_BAR_BATTERY_STATUS_CHARGING_ANIMATION_SPEED = "status_bar_battery_status_charging_animation_speed";
+
+        /**
+         * Whether to show the Circle battery status dotted on the status bar
+         * @hide
+         */
+        public static final String STATUS_BAR_BATTERY_STATUS_SHOW_CIRCLE_DOTTED = "status_bar_battery_status_show_circle_dotted";
+
+        /**
+         * Length of the Circle battery status dots on the status bar
+         *
+         * Values 0 - 10
+         * default : 3
+         *
+         * @hide
+         */
+        public static final String STATUS_BAR_BATTERY_STATUS_CIRCLE_DOT_LENGTH = "status_bar_battery_status_circle_dot_length";
+
+        /**
+         * Interval of the Circle battery status dots on the status bar
+         *
+         * Values 0 - 10
+         * default : 2
+         *
+         * @hide
+         */
+        public static final String STATUS_BAR_BATTERY_STATUS_CIRCLE_DOT_INTERVAL = "status_bar_battery_status_circle_dot_interval";
+
+        /**
+         *Battery status fill color
+         * @hide
+         */
+        public static final String STATUS_BAR_BATTERY_STATUS_COLOR = "status_bar_battery_status_color";
+
+        /**
+         * Battery status text color
+         * @hide
+         */
+        public static final String STATUS_BAR_BATTERY_STATUS_TEXT_COLOR = "status_bar_battery_status_text_color";
+
+        /**
+         * Wether to colorize the notification icons on the status bar
+         * @hide
+         */
+        public static final String STATUS_BAR_COLORIZE_NOTIF_ICONS = "status_bar_colorize_notif_icons";
+
+        /**
+         * Color of the status bar notification icons
+         * @hide
+         */
+        public static final String STATUS_BAR_NOTIF_SYSTEM_ICON_COLOR = "status_bar_notif_system_icon_color";
+
+        /**
+         * Color of the status bar notification text
+         * @hide
+         */
+        public static final String STATUS_BAR_NOTIF_TEXT_COLOR = "status_bar_notif_text_color";
+
+        /**
+         * Color of the status bar notification count icon
+         * @hide
+         */
+        public static final String STATUS_BAR_NOTIF_COUNT_ICON_COLOR = "status_bar_notif_count_icon_color";
+
+        /**
+         * Color of the status bar notification count text
+         * @hide
+         */
+        public static final String STATUS_BAR_NOTIF_COUNT_TEXT_COLOR = "status_bar_notif_count_text_color";
+
+        /**
+         * Show when WiFi or data mobile is sending/receiving data
+         * @hide
+         */
+        public static final String STATUS_BAR_SHOW_NETWORK_ACTIVITY = "status_bar_show_network_activity";
+
+        /**
+         * Color of the network icons on statusbar
+         * @hide
+         */
+        public static final String STATUS_BAR_NETWORK_ICONS_NORMAL_COLOR = "status_bar_network_icons_normal_color";
+
+        /**
+         * Color of the network icons on statusbar while fully connected
+         * @hide
+         */
+        public static final String STATUS_BAR_NETWORK_ICONS_FULLY_COLOR = "status_bar_network_icons_fully_color";
+
+        /**
+         * Color of the activity indicator on statusbar
+         * @hide
+         */
+        public static final String STATUS_BAR_NETWORK_ACTIVITY_ICONS_NORMAL_COLOR = "status_bar_network_activity_fully_color";
+
+        /**
+         * Color of the activity indicator on statusbar while fully connected
+         * @hide
+         */
+        public static final String STATUS_BAR_NETWORK_ACTIVITY_ICONS_FULLY_COLOR = "status_bar_network_activity_normal_color";
+
+        /**
+         * Color of the airplane mode icon on statusbar
+         * @hide
+         */
+        public static final String STATUS_BAR_AIRPLANE_MODE_ICON_COLOR = "status_bar_airplane_mode_icon_color";
+
+        /**
+         * Boolean value on whether to show weather in the statusbar
+         * @hide
+         */
+        public static final String STATUS_BAR_EXPANDED_HEADER_SHOW_WEATHER = "status_bar_expanded_header_show_weather";
+
+        /**
+         * Whether to show the weather location on the header of the expanded status bar
+         * @hide
+         */
+        public static final String STATUS_BAR_EXPANDED_HEADER_SHOW_WEATHER_LOCATION = "status_bar_expanded_header_show_weather_location";
+
+        /**
+         * Color of the text on the header of the expanded status bar
+         * @hide
+         */
+        public static final String STATUS_BAR_EXPANDED_HEADER_TEXT_COLOR = "status_bar_expanded_header_text_color";
+
+        /**
+         * Color of the icons on the header of the expanded status bar
+         * @hide
+         */
+        public static final String STATUS_BAR_EXPANDED_HEADER_ICON_COLOR = "status_bar_expanded_header_icon_color";
+
+        /**
+         * Show the pending notification counts as overlays on the status bar
+         * @hide
+         */
+        public static final String STATUS_BAR_SHOW_NOTIF_COUNT = "status_bar_show_notif_count";
 
         /**
          * Visibility of SIM icons of unpopulated SIM slots in MSIM mode
@@ -3539,12 +3679,6 @@ public final class Settings {
          * @hide
          */
         public static final String DOUBLE_TAP_SLEEP_GESTURE = "double_tap_sleep_gesture";
-
-        /**
-         * Boolean value on whether to show weather in the statusbar
-         * @hide
-         */
-        public static final String STATUS_BAR_SHOW_WEATHER = "status_bar_show_weather";
 
         /**
          * show clear all recents button
@@ -3888,8 +4022,6 @@ public final class Settings {
             PHONE_BLACKLIST_PRIVATE_NUMBER_MODE,
             PHONE_BLACKLIST_UNKNOWN_NUMBER_MODE,
             PHONE_BLACKLIST_REGEX_ENABLED,
-            STATUS_BAR_BATTERY_STYLE,
-            STATUS_BAR_SHOW_BATTERY_PERCENT,
             INCREASING_RING,
             INCREASING_RING_START_VOLUME,
             INCREASING_RING_RAMP_UP_TIME,

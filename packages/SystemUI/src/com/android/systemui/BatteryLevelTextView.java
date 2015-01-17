@@ -16,32 +16,72 @@
 
 package com.android.systemui;
 
+import android.app.ActivityManager;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.res.Configuration;
+import android.os.Handler;
+import android.os.UserHandle;
+import android.provider.Settings;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.widget.TextView;
 
+import com.android.systemui.cm.UserContentObserver;
 import com.android.systemui.statusbar.policy.BatteryController;
 
 public class BatteryLevelTextView extends TextView implements
         BatteryController.BatteryStateChangeCallback{
 
-    private static final String STATUS_BAR_BATTERY_STYLE = "status_bar_battery_style";
-    private static final String STATUS_BAR_SHOW_BATTERY_PERCENT = "status_bar_show_battery_percent";
+    private static final String STATUS_BAR_BATTERY_STATUS_STYLE =
+            "status_bar_battery_status_style";
+    private static final String STATUS_BAR_BATTERY_STATUS_PERCENT_STYLE =
+            "status_bar_battery_status_percent_style";
 
     private BatteryController mBatteryController;
     private boolean mBatteryCharging;
+    private boolean mShow;
     private boolean mForceShow;
     private boolean mAttached;
     private int mRequestedVisibility;
+	
+	private ContentResolver mResolver;
 
-    private int mStyle;
-    private int mPercentMode;
+    private SettingsObserver mObserver = new SettingsObserver(new Handler());
+
+    private class SettingsObserver extends UserContentObserver {
+        public SettingsObserver(Handler handler) {
+            super(handler);
+        }
+
+        @Override
+        protected void observe() {
+            super.observe();
+
+            mResolver.registerContentObserver(Settings.System.getUriFor(
+                    STATUS_BAR_BATTERY_STATUS_STYLE), false, this, UserHandle.USER_ALL);
+            mResolver.registerContentObserver(Settings.System.getUriFor(
+                    STATUS_BAR_BATTERY_STATUS_PERCENT_STYLE), false, this, UserHandle.USER_ALL);
+        }
+
+        @Override
+        protected void unobserve() {
+            super.unobserve();
+
+            getContext().getContentResolver().unregisterContentObserver(this);
+        }
+
+        @Override
+        public void update() {
+            loadShowBatteryTextSetting();
+        }
+    };
 
     public BatteryLevelTextView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        mResolver = context.getContentResolver();
         mRequestedVisibility = getVisibility();
+        loadShowBatteryTextSetting();
     }
 
     public void setForceShown(boolean forceShow) {
@@ -74,9 +114,10 @@ public class BatteryLevelTextView extends TextView implements
     @Override
     public void onBatteryLevelChanged(int level, boolean pluggedIn, boolean charging) {
         setText(getResources().getString(R.string.battery_level_template, level));
-        if (mBatteryCharging != charging) {
-            mBatteryCharging = charging;
-            updateVisibility();
+        boolean changed = mBatteryCharging != charging;
+        mBatteryCharging = charging;
+        if (changed) {
+            loadShowBatteryTextSetting();
         }
     }
 
@@ -86,19 +127,13 @@ public class BatteryLevelTextView extends TextView implements
     }
 
     @Override
-    public void onBatteryStyleChanged(int style, int percentMode) {
-        mStyle = style;
-        mPercentMode = percentMode;
-        updateVisibility();
-    }
-
-    @Override
     public void onAttachedToWindow() {
         super.onAttachedToWindow();
 
         if (mBatteryController != null) {
             mBatteryController.addStateChangedCallback(this);
         }
+        mObserver.observe();
 
         mAttached = true;
     }
@@ -107,6 +142,7 @@ public class BatteryLevelTextView extends TextView implements
     public void onDetachedFromWindow() {
         super.onDetachedFromWindow();
         mAttached = false;
+        mResolver.unregisterContentObserver(mObserver);
 
         if (mBatteryController != null) {
             mBatteryController.removeStateChangedCallback(this);
@@ -114,18 +150,44 @@ public class BatteryLevelTextView extends TextView implements
     }
 
     private void updateVisibility() {
-        boolean showNextPercent = mPercentMode == BatteryController.PERCENTAGE_MODE_OUTSIDE
-                || (mBatteryCharging && mPercentMode == BatteryController.PERCENTAGE_MODE_INSIDE);
-        if (mStyle == BatteryController.STYLE_GONE) {
-            showNextPercent = false;
-        } else if (mStyle == BatteryController.STYLE_TEXT) {
-            showNextPercent = true;
-        }
-
-        if (showNextPercent || mForceShow) {
+        if (mShow || mForceShow) {
             super.setVisibility(mRequestedVisibility);
         } else {
             super.setVisibility(GONE);
         }
+    }
+
+    public void setTextColor(boolean isHeader) {
+        int headerColor = Settings.System.getInt(mResolver,
+                Settings.System.STATUS_BAR_EXPANDED_HEADER_TEXT_COLOR, 0xffffffff);
+        int color = Settings.System.getInt(mResolver,
+                Settings.System.STATUS_BAR_BATTERY_STATUS_TEXT_COLOR, 0xff000000);
+
+        super.setTextColor(isHeader ? headerColor : color);
+    }
+
+
+    private void loadShowBatteryTextSetting() {
+        int currentUserId = ActivityManager.getCurrentUser();
+        int mode = Settings.System.getIntForUser(mResolver,
+                Settings.System.STATUS_BAR_BATTERY_STATUS_PERCENT_STYLE, 2, currentUserId);
+
+        boolean showNextPercent = mode == 1;
+        int batteryStyle = Settings.System.getIntForUser(mResolver,
+                Settings.System.STATUS_BAR_BATTERY_STATUS_STYLE, 0, currentUserId);
+
+        switch (batteryStyle) {
+            case 3: //BATTERY_METER_TEXT
+                showNextPercent = true;
+                break;
+            case 4: //BATTERY_METER_GONE
+                showNextPercent = false;
+                break;
+            default:
+                break;
+        }
+
+        mShow = showNextPercent;
+        updateVisibility();
     }
 }
