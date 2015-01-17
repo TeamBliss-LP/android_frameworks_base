@@ -434,8 +434,6 @@ public class NavigationBarView extends LinearLayout
 
         mNavigationIconHints = hints;
 
-        ((ImageView)getHomeButton()).setImageDrawable(mVertical ? mHomeLandIcon : mHomeIcon);
-
         if (mImeLayout) {
             if (mLegacyMenu && mButtonLayouts == 1) {
 				// show hard-coded switchers here when written

@@ -22,6 +22,7 @@ import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.DrawableContainer;
+import android.graphics.drawable.VectorDrawable;
 import android.graphics.PorterDuff.Mode;
 import android.os.Handler;
 import android.provider.Settings;
@@ -237,7 +238,10 @@ public abstract class Ticker {
                 if (seg.icon instanceof AnimationDrawable) {
                     ((DrawableContainer)seg.icon).setColorFilter(iconColor,
                            Mode.MULTIPLY);
-
+                    mIconSwitcher.setImageDrawable(seg.icon);
+                } else if (seg.icon instanceof VectorDrawable) {
+                    seg.icon.setColorFilter(iconColor,
+                           Mode.MULTIPLY);
                     mIconSwitcher.setImageDrawable(seg.icon);
                 } else {
                     mIconSwitcher.setImageBitmap(ImageHelper
