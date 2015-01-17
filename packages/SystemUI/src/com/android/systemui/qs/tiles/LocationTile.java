@@ -91,28 +91,27 @@ public class LocationTile extends QSTile<QSTile.BooleanState> {
         // state.visible = !(mKeyguard.isSecure() && mKeyguard.isShowing());
         state.visible = !mKeyguard.isShowing();
         state.value = locationEnabled;
-        if (locationEnabled) {
-            state.iconId = R.drawable.ic_qs_location_on;
-        } else {
-            state.iconId = R.drawable.ic_qs_location_off;
-        }
 
         switch (currentState) {
             case Settings.Secure.LOCATION_MODE_OFF:
                 state.label = mContext.getString(R.string.quick_settings_location_off_label);
                 state.contentDescription = mContext.getString(R.string.accessibility_quick_settings_location_off);
+                state.iconId = R.drawable.ic_qs_location_off;
                 break;
             case Settings.Secure.LOCATION_MODE_BATTERY_SAVING:
                 state.label = mContext.getString(R.string.quick_settings_location_battery_saving_label);
                 state.contentDescription = mContext.getString(R.string.accessibility_quick_settings_location_battery_saving);
+                state.iconId = R.drawable.ic_qs_location_battery_saving;
                 break;
             case Settings.Secure.LOCATION_MODE_SENSORS_ONLY:
                 state.label = mContext.getString(R.string.quick_settings_location_gps_only_label);
                 state.contentDescription = mContext.getString(R.string.accessibility_quick_settings_location_gps_only);
+                state.iconId = R.drawable.ic_qs_location_on;
                 break;
             case Settings.Secure.LOCATION_MODE_HIGH_ACCURACY:
                 state.label = mContext.getString(R.string.quick_settings_location_high_accuracy_label);
                 state.contentDescription = mContext.getString(R.string.accessibility_quick_settings_location_high_accuracy);
+                state.iconId = R.drawable.ic_qs_location_on;
                 break;
             default:
                 state.label = mContext.getString(R.string.quick_settings_location_label);

@@ -29,7 +29,6 @@ import com.android.systemui.statusbar.policy.RotationLockController.RotationLock
 
 /** Quick settings tile: Rotation **/
 public class RotationLockTile extends QSTile<QSTile.BooleanState> {
-
     private static final Intent DISPLAY_SETTINGS = new Intent(Settings.ACTION_DISPLAY_SETTINGS);
     private final RotationLockController mController;
 
