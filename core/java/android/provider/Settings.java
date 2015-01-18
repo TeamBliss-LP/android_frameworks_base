@@ -3819,7 +3819,13 @@ public final class Settings {
          * Whether to include audio when recording a video
          * @hide
          */
-        public static final String SCREEN_RECORDER_RECORD_AUDIO = "screen_recorder_record_audio";		        
+        public static final String SCREEN_RECORDER_RECORD_AUDIO = "screen_recorder_record_audio";
+		
+        /**
+         * Change the screenshot delay
+         * @hide
+         */
+        public static final String SCREENSHOT_DELAY = "screenshot_delay";				        
 
         /**
          * Control the display of the action overflow button within app UI.
