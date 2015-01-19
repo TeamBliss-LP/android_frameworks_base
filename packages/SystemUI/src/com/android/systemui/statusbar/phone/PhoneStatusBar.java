@@ -1,8 +1,12 @@
 /*
  * Copyright (c) 2012-2014 The Linux Foundation. All rights reserved.
  * Not a Contribution.
+<<<<<<< HEAD
  * Copyright (C) 2010 The Android Open Source Project
  * Copyright (C) 2014-2015 The MoKee OpenSource Project
+=======
+ * Copyright (C) 2015 The Fusion Project
+>>>>>>> 28c8207... Fix PIE Controls not sticking after reboot
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -933,9 +937,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
         updateShowSearchHoldoff();
 		
-        addGestureAnywhereView();
-        addAppCircleSidebar();				
-
         try {
             boolean showNav = mWindowManagerService.hasNavigationBar();
             if (DEBUG) Log.v(TAG, "hasNavigationBar=" + showNav);
@@ -966,6 +967,15 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             }
         } catch (RemoteException ex) {
             // no window manager? good luck with that
+        }
+
+        // Setup pie container if enabled
+        attachPieContainer(isPieEnabled());
+
+        if (mRecreating) {
+        } else {
+            addAppCircleSidebar();
+            addGestureAnywhereView();
         }
 
         // figure out which pixel-format to use for the status bar.
