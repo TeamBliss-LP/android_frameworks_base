@@ -87,6 +87,7 @@ public class KeyButtonView extends ImageView {
     private float mQuiescentAlpha = DEFAULT_QUIESCENT_ALPHA;
     private AudioManager mAudioManager;
     private Animator mAnimateToQuiescent = new ObjectAnimator();
+    private KeyButtonRipple mRipple;
     private boolean mShouldClick = true;
 
     private static PowerManager mPm;
@@ -131,7 +132,7 @@ public class KeyButtonView extends ImageView {
         mLongPressTimeout = ViewConfiguration.getLongPressTimeout();
         setLongClickable(false);
         mAudioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
-        setBackground(new KeyButtonRipple(context, this));
+        setBackground(mRipple = new KeyButtonRipple(context, this));
         mPm = getPowerManagerService(context);
     }
 
@@ -261,6 +262,9 @@ public class KeyButtonView extends ImageView {
                 break;
             case MotionEvent.ACTION_CANCEL:
                 setPressed(false);
+                // hack to fix ripple getting stuck. exitHardware() starts an animation,
+                // but sometimes does not finish it.
+                mRipple.exitSoftware();
                 if (mIsDPadAction) {
                     mShouldClick = true;
                     removeCallbacks(mDPadKeyRepeater);
