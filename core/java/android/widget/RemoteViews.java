@@ -30,9 +30,6 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.ColorMatrix;
-import android.graphics.ColorMatrixColorFilter;
 import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
@@ -1604,23 +1601,8 @@ public class RemoteViews implements Parcelable, Filter {
             Drawable d = drawables[index];
             if (d != null) {
                 d.mutate();
-                d.setColorFilter(getColorFilter());
+                d.setColorFilter(color, mode);
             }
-        }
-
-        private ColorMatrixColorFilter getColorFilter() {
-            float r = Color.red(color) / 255f;
-            float g = Color.green(color) / 255f;
-            float b = Color.blue(color) / 255f;
-
-            ColorMatrix cm = new ColorMatrix(new float[] {
-                    r, g, b, 0, 0,
-                    r, g, b, 0, 0,
-                    r, g, b, 0, 0,
-                    0, 0, 0, 1, 0,
-            });
-            ColorMatrixColorFilter cf = new ColorMatrixColorFilter(cm);
-            return cf;
         }
 
         public String getActionName() {
