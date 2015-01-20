@@ -796,7 +796,9 @@ public class Activity extends ContextThemeWrapper
     SharedElementCallback mEnterTransitionListener = SharedElementCallback.NULL_CALLBACK;
     SharedElementCallback mExitTransitionListener = SharedElementCallback.NULL_CALLBACK;
 
-    /** Return the activity handler instance. */
+    /** Return the activity handler instance.
+     * @hide
+     */
     public Handler getHandler() {
         return mHandler;
     }
