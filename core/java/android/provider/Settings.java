@@ -1369,8 +1369,8 @@ public final class Settings {
          * @return The setting's current value, or 'def' if it is not defined
          * or not a valid boolean.
          */
-        public static boolean getBoolean(ContentResolver cr, String name, boolean def) {
-            String v = getString(cr, name);
+        public static boolean getBoolean(ContentResolver resolver, String name, boolean def) {
+            String v = getString(resolver, name);
             try {
                 if(v != null)
                     return "1".equals(v);
@@ -1397,7 +1397,7 @@ public final class Settings {
             return putString(cr, name, value ? "1" : "0");
         }
 
-        /**		
+        /**
          * Look up a name in the database.
          * @param resolver to access the database with
          * @param name to look up in the table
@@ -2264,7 +2264,7 @@ public final class Settings {
          * @hide
          */
         public static final String QS_SMART_PULLDOWN = "qs_smart_pulldown";
-        
+
         /**
          * Deprecated Use {@link android.provider.Settings.Secure.QS_TILES}
          * @hide
@@ -2293,12 +2293,12 @@ public final class Settings {
          * @hide
          */
         public static final String BATTERY_SAVER_MODE_COLOR = "battery_save_mode_color";
-        
-        /**		
+
+        /**
          * Timeout for ambient display notification
          * @hide
          */
-        public static final String DOZE_TIMEOUT = "doze_timeout";        
+        public static final String DOZE_TIMEOUT = "doze_timeout";
 
         /**
          * If 1, the activity manager will aggressively finish activities and
@@ -2406,12 +2406,12 @@ public final class Settings {
          */
         public static final String VOLUME_MASTER_MUTE = "volume_master_mute";
 
-        /**		
+        /**
          * Whether to wake the screen with the volume keys, the value is boolean.
          *
          * @hide
          */
-        public static final String VOLUME_WAKE_SCREEN = "volume_wake_screen";		
+        public static final String VOLUME_WAKE_SCREEN = "volume_wake_screen";
 
         /**
          * Swap volume buttons when the screen is rotated
@@ -2770,7 +2770,7 @@ public final class Settings {
          * Whether navigation bar is placed on the left side in landscape mode
          * @hide
          */
-        public static final String NAVBAR_LEFT_IN_LANDSCAPE = "navigation_bar_left";		
+        public static final String NAVBAR_LEFT_IN_LANDSCAPE = "navigation_bar_left";
 
         /**
          * Date format string
@@ -2822,13 +2822,13 @@ public final class Settings {
          * @hide
          */
         public static final String USE_EDGE_SERVICE_FOR_GESTURES = "edge_service_for_gestures";
-        
+
         /**
          *
          * @hide
          */
-        public static final String ANIMATION_CONTROLS_NO_SCROLL = "animation_controls_no_scroll";        
-        
+        public static final String ANIMATION_CONTROLS_NO_SCROLL = "animation_controls_no_scroll";
+
         /**
          * Determine custom scroll friction.
          * @hide
@@ -2896,7 +2896,7 @@ public final class Settings {
          * Determine custom overfling distance.
          * @hide
          */
-        public static final String CUSTOM_OVERFLING_DISTANCE = "custom_overfling_distance";        
+        public static final String CUSTOM_OVERFLING_DISTANCE = "custom_overfling_distance";
 
         /**
          * Control the type of rotation which can be performed using the accelerometer
@@ -3719,13 +3719,13 @@ public final class Settings {
          * @hide
          */
         public static final String HFM_DISABLE_ADS = "hfm_disable_ads";
-        
+
         /**
          * Display second in the Clock
          * @hide
          */
-        public static final String CLOCK_USE_SECOND = "clock_use_second";        
-		
+        public static final String CLOCK_USE_SECOND = "clock_use_second";
+
         /**
          * Show or hide clock
          * 0 - hide
@@ -3751,12 +3751,12 @@ public final class Settings {
          * @hide
          */
         public static final String STATUSBAR_CLOCK_STYLE = "statusbar_clock_style";
-		
+
         /**
          * Settings for clock font style
          * @hide
 		 */
-        public static final String STATUSBAR_CLOCK_FONT_STYLE = "statusbar_clock_font_style";		 		
+        public static final String STATUSBAR_CLOCK_FONT_STYLE = "statusbar_clock_font_style";
 
         /**
          * Setting for clock color
@@ -3787,7 +3787,7 @@ public final class Settings {
          * @hide
          */
         public static final String STATUSBAR_CLOCK_DATE_FORMAT = "statusbar_clock_date_format";
-        
+
         /**
          * Whether to show the battery bar
          * @hide
@@ -3812,7 +3812,7 @@ public final class Settings {
         /**
          * @hide
          */
-        public static final String STATUSBAR_BATTERY_BAR_ANIMATE = "statusbar_battery_bar_animate";        
+        public static final String STATUSBAR_BATTERY_BAR_ANIMATE = "statusbar_battery_bar_animate";
 
          /**
          * Recents Show/Hide Search Bar
@@ -3831,7 +3831,7 @@ public final class Settings {
          * String.
          */
         public static final String CUSTOM_CARRIER_LABEL = "custom_carrier_label";
-        
+
          /**
          * Whether to dismiss all recents tasks
          * @hide
@@ -3843,7 +3843,7 @@ public final class Settings {
          * @hide
          */
         public static final String STATUS_BAR_CARRIER_COLOR = "status_bar_carrier_color";
-		
+
        /**
          * Width and height of output vide expressed in WxH
          * @hide
@@ -3867,12 +3867,12 @@ public final class Settings {
          * @hide
          */
         public static final String SCREEN_RECORDER_RECORD_AUDIO = "screen_recorder_record_audio";
-		
+
         /**
          * Change the screenshot delay
          * @hide
          */
-        public static final String SCREENSHOT_DELAY = "screenshot_delay";				        
+        public static final String SCREENSHOT_DELAY = "screenshot_delay";
 
         /**
          * Control the display of the action overflow button within app UI.
@@ -4004,7 +4004,7 @@ public final class Settings {
           * @hide
           */
         public static final String LISTVIEW_ANIMATION = "listview_animation";
-        
+
          /**
          * ListView Interpolators
          * 0 == None
@@ -4018,7 +4018,7 @@ public final class Settings {
          * @hide
          */
         public static final String LISTVIEW_INTERPOLATOR = "listview_interpolator";
-        
+
          /**
          * Whether to use gesture anywhere feature.
          * @hide
@@ -4097,8 +4097,8 @@ public final class Settings {
         };
         public static final String ANIMATION_CONTROLS_DURATION = "animation_controls_duration";
         public static final String ANIMATION_CONTROLS_EXIT_ONLY = "animation_controls_exit_only";
-        public static final String ANIMATION_CONTROLS_REVERSE_EXIT = "animation_controls_reverse_exit";		
-		
+        public static final String ANIMATION_CONTROLS_REVERSE_EXIT = "animation_controls_reverse_exit";
+
         /**
          * Whether to display app circle sidebar
          * @hide
@@ -4130,7 +4130,7 @@ public final class Settings {
          *
          * @hide
          */
-        @Deprecated		 
+        @Deprecated
         public static final String QS_SHOW_BRIGHTNESS_SLIDER = "qs_show_brightness_slider";
 
         /**
@@ -6620,7 +6620,7 @@ public final class Settings {
          * @hide
          */
         public static final String STATUS_BAR_LOCKED_ON_SECURE_KEYGUARD
-                = "status_bar_locked_on_secure_keyguard";		
+                = "status_bar_locked_on_secure_keyguard";
 
         /**
          * Whether to use the custom quick unlock screen control
