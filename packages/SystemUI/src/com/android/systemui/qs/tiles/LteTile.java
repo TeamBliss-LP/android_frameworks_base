@@ -55,8 +55,7 @@ public class LteTile extends QSTile<QSTile.BooleanState> {
 
     @Override
     protected void handleUpdateState(BooleanState state, Object arg) {
-        // Hide the tile if device doesn't support LTE
-        // or it supports Dual Sim Dual Active.
+        // Hide the tile if device doesn't support LTE.
         // TODO: Should be spawning off a tile per sim
         if (!QSUtils.deviceSupportsLte(mContext)
                 || QSUtils.deviceSupportsDdsSupported(mContext)) {
