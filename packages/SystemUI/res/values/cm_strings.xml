@@ -108,4 +108,7 @@
     <!-- Navigation bar -->
     <string name="def_navbar_layout_warning">Empty layout: using default!</string>
 
+    <string name="quick_settings_network_adb_enabled_label">Enabled</string>
+    <string name="quick_settings_network_adb_disabled_label">Disabled</string>
+
 </resources>
