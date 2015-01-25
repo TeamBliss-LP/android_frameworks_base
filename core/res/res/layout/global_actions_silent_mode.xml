@@ -37,7 +37,7 @@
             android:layout_marginEnd="8dp"
             android:layout_marginTop="6dp"
             android:layout_marginBottom="6dp"
-            android:src="@drawable/ic_audio_ring_notif_mute"
+            android:src="@drawable/ic_audio_ring_notif_important"
             android:scaleType="center"
             android:duplicateParentState="true"
             android:background="@drawable/silent_mode_indicator"
