@@ -43,7 +43,6 @@ public class NavbarUtils {
             ACTION_RING_VIB,
             ACTION_RING_VIB_SILENT,
             ACTION_NULL,
-            ACTION_POWER,
             ACTION_LAYOUT_LEFT,
             ACTION_LAYOUT_RIGHT,
             ACTION_ARROW_LEFT,
