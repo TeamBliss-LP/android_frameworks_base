@@ -133,6 +133,14 @@
 
   <!-- Last app switch animations -->
   <java-symbol type="anim" name="last_app_in" />
-  <java-symbol type="anim" name="last_app_out" />  
+  <java-symbol type="anim" name="last_app_out" />
+  
+    <!-- Screen Timeout -->
+    <java-symbol type="string" name="hour" />
+    <java-symbol type="string" name="hours" />
+    <java-symbol type="string" name="minute" />
+    <java-symbol type="string" name="minutes" />
+    <java-symbol type="string" name="second" />
+    <java-symbol type="string" name="seconds" />
 
 </resources>
