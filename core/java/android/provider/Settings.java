@@ -1393,8 +1393,8 @@ public final class Settings {
          * @param value The new value for the setting.
          * @return true if the value was set, false on database errors
          */
-        public static boolean putBoolean(ContentResolver cr, String name, boolean value) {
-            return putString(cr, name, value ? "1" : "0");
+        public static boolean putBoolean(ContentResolver resolver, String name, boolean value) {
+            return putString(resolver, name, value ? "1" : "0");
         }
 
         /**
@@ -1851,17 +1851,17 @@ public final class Settings {
          */
         public static final int END_BUTTON_BEHAVIOR_DEFAULT = END_BUTTON_BEHAVIOR_SLEEP;
 
-	/**
-	* Enable blocking wakelock
-	* @hide
-	*/
-	public static final String WAKELOCK_BLOCKING_ENABLED = "wakelock_blocking_enabled";
+	    /**
+	     * Enable blocking wakelock
+	     * @hide
+	     */
+	    public static final String WAKELOCK_BLOCKING_ENABLED = "wakelock_blocking_enabled";
 
-	/**
-	* List of wakelock blocks selected
-	* @hide
-	*/
-	 public static final String WAKELOCK_BLOCKING_LIST = "wakelock_blocking_list";
+	    /**
+	     * List of wakelock blocks selected
+	     * @hide
+	     */
+	    public static final String WAKELOCK_BLOCKING_LIST = "wakelock_blocking_list";
 
         /**
          * Is advanced settings mode turned on. 0 == no, 1 == yes
