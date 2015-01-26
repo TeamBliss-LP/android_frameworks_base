@@ -244,11 +244,7 @@ public class KeyguardBottomAreaView extends FrameLayout implements View.OnClickL
 
     private void updatePhoneVisibility() {
         boolean visible = isPhoneVisible();
-
-        boolean hidePhone = Settings.System.getIntForUser(mContext.getContentResolver(),
-                Settings.System.DIALER_WIDGET_HIDE, 0, UserHandle.USER_CURRENT) == 1;
-
-        mPhoneImageView.setVisibility((visible && !hidePhone) ? View.VISIBLE : View.GONE);
+        mPhoneImageView.setVisibility(visible ? View.VISIBLE : View.GONE);
     }
 
     private boolean isPhoneVisible() {
