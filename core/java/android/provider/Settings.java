@@ -2992,13 +2992,6 @@ public final class Settings {
         public static final String TTY_MODE = "tty_mode";
 
         /**
-         * Whether noise suppression is enabled. The value is
-         * boolean (1 or 0).
-         * @hide
-         */
-        public static final String NOISE_SUPPRESSION = "noise_suppression";
-
-        /**
          * Whether the sounds effects (key clicks, lid open ...) are enabled. The value is
          * boolean (1 or 0).
          */
@@ -4379,7 +4372,6 @@ public final class Settings {
             DTMF_TONE_TYPE_WHEN_DIALING,
             HEARING_AID,
             TTY_MODE,
-            NOISE_SUPPRESSION,
             SOUND_EFFECTS_ENABLED,
             HAPTIC_FEEDBACK_ENABLED,
             POWER_SOUNDS_ENABLED,       // moved to global
