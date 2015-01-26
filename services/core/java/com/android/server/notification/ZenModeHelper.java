@@ -317,7 +317,7 @@ public class ZenModeHelper {
                 }
             } else if ((ringerMode == AudioManager.RINGER_MODE_NORMAL
                     || ringerMode == AudioManager.RINGER_MODE_VIBRATE)
-                    && mZenMode != Global.ZEN_MODE_OFF) {
+                    && mZenMode == Global.ZEN_MODE_NO_INTERRUPTIONS) {
                 newZen = Global.ZEN_MODE_OFF;
             }
             if (newZen != -1) {
