@@ -976,8 +976,11 @@ public abstract class BaseStatusBar extends SystemUI implements
         } else {
             settingsButton.setVisibility(View.GONE);
             appSettingsButton.setVisibility(View.GONE);
+<<<<<<< HEAD
             filterButton.setVisibility(View.GONE);
+=======
             headsUpButton.setVisibility(View.GONE);
+>>>>>>> edf64d3... Frameworks: Slim heads up customizations for LP (1/2)
         }
 
     }
