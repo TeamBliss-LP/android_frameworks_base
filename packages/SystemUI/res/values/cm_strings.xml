@@ -97,9 +97,6 @@
     <!-- Navigation bar -->
     <string name="def_navbar_layout_warning">Empty layout: using default!</string>
 
-    <!-- Timeout tile -->
-    <string name="quick_settings_screen_timeout">Timeout</string>
-    <string name="quick_settings_screen_timeout_summary">%1$d %2$s</string>
 
     <string name="left_shortcut_hint">Swipe right for %1$s</string>
     <string name="right_shortcut_hint">Swipe left for %1$s</string>
