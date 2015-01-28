@@ -296,7 +296,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     private UnlockMethodCache mUnlockMethodCache;
     private DozeServiceHost mDozeServiceHost;
     private boolean mScreenOnComingFromTouch;
-    private boolean mHeadsUpViewAttached;
 
     int mPixelFormat;
     Object mQueueLock = new Object();
@@ -820,12 +819,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mIconPolicy = new PhoneStatusBarPolicy(mContext, mCastController, mSuController);
         mSettingsObserver.onChange(false); // set up
 
-        // If system disabled system wide notification alert
-        // we do not add the view here and will do it later
-        // when StatusBarManager notifies us that the state has changed.
-        if (!mDisableNotificationAlerts) {
-            addHeadsUpView();
-        }
+        addHeadsUpView();
 
         mUnlockMethodCache = UnlockMethodCache.getInstance(mContext);
         startKeyguard();
@@ -1626,35 +1620,29 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     }
 
     private void addHeadsUpView() {
-        if (!mHeadsUpViewAttached) {
-            int headsUpHeight = mContext.getResources()
-                    .getDimensionPixelSize(R.dimen.heads_up_window_height);
-            WindowManager.LayoutParams lp = new WindowManager.LayoutParams(
-                    LayoutParams.MATCH_PARENT, headsUpHeight,
-                    WindowManager.LayoutParams.TYPE_STATUS_BAR_PANEL, // above the status bar!
-                    WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN
-                        | WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
-                        | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
-                        | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-                        | WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM
-                        | WindowManager.LayoutParams.FLAG_SPLIT_TOUCH,
-                    PixelFormat.TRANSLUCENT);
-            lp.flags |= WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED;
-            lp.gravity = Gravity.TOP;
-            lp.setTitle("Heads Up");
-            lp.packageName = mContext.getPackageName();
-            lp.windowAnimations = R.style.Animation_StatusBar_HeadsUp;
+        int headsUpHeight = mContext.getResources()
+                .getDimensionPixelSize(R.dimen.heads_up_window_height);
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams(
+                LayoutParams.MATCH_PARENT, headsUpHeight,
+                WindowManager.LayoutParams.TYPE_STATUS_BAR_PANEL, // above the status bar!
+                WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN
+                    | WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
+                    | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
+                    | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+                    | WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM
+                    | WindowManager.LayoutParams.FLAG_SPLIT_TOUCH,
+                PixelFormat.TRANSLUCENT);
+        lp.flags |= WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED;
+        lp.gravity = Gravity.TOP;
+        lp.setTitle("Heads Up");
+        lp.packageName = mContext.getPackageName();
+        lp.windowAnimations = R.style.Animation_StatusBar_HeadsUp;
 
-            mWindowManager.addView(mHeadsUpNotificationView, lp);
-            mHeadsUpViewAttached = true;
-        }
+        mWindowManager.addView(mHeadsUpNotificationView, lp);
     }
 
     private void removeHeadsUpView() {
-        if (mHeadsUpViewAttached) {
-            mWindowManager.removeView(mHeadsUpNotificationView);
-            mHeadsUpViewAttached = false;
-        }
+        mWindowManager.removeView(mHeadsUpNotificationView);
     }
 
     public void refreshAllStatusBarIcons() {
