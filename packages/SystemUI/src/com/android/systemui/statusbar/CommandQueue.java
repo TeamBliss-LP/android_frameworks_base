@@ -40,7 +40,6 @@ public class CommandQueue extends IStatusBar.Stub {
     private static final int OP_SET_ICON    = 1;
     private static final int OP_REMOVE_ICON = 2;
 
-<<<<<<< HEAD
     private static final int MSG_ICON                               = 1 << MSG_SHIFT;
     private static final int MSG_DISABLE                            = 2 << MSG_SHIFT;
     private static final int MSG_EXPAND_NOTIFICATIONS               = 3 << MSG_SHIFT;
