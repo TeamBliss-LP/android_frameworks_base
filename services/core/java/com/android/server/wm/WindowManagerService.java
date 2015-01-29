@@ -3129,6 +3129,10 @@ public class WindowManagerService extends IWindowManager.Stub
                     winAnimator.mEnterAnimationPending = true;
                 }
                 if (toBeDisplayed) {
+                    if ((win.mAttrs.softInputMode & SOFT_INPUT_MASK_ADJUST)
+                            == SOFT_INPUT_ADJUST_RESIZE) {
+                        win.mLayoutNeeded = true;
+                    }
                     if (win.isDrawnLw() && okToDisplay()) {
                         winAnimator.applyEnterAnimationLocked();
                     }
