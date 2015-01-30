@@ -536,7 +536,7 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
                 return;
             }
             // shutdown by making sure radio and power are handled accordingly.
-            mWindowManagerFuncs.shutdown(true /* confirm */);
+            mWindowManagerFuncs.shutdown(false /* confirm */);
         }
     }
 
