@@ -56,6 +56,7 @@ public class QSConstants {
     public static final String TILE_REBOOT = "reboot";
     public static final String TILE_NAVBAR = "toggleNavBar";
     public static final String TILE_APPCIRCLEBAR = "toggleAppCircleBar";
+    public static final String TILE_USB_TETHER = "usb_tether";
 
     // Order matters
     protected static final ArrayList<String> TILES_DEFAULT = new ArrayList<String>();
@@ -102,5 +103,6 @@ public class QSConstants {
         TILES_AVAILABLE.add(TILE_REBOOT);
         TILES_AVAILABLE.add(TILE_NAVBAR);
         TILES_AVAILABLE.add(TILE_APPCIRCLEBAR);
+        TILES_AVAILABLE.add(TILE_USB_TETHER);
     }
 }
