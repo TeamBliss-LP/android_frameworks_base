@@ -71,6 +71,7 @@ import com.android.systemui.qs.tiles.SyncTile;
 import com.android.systemui.qs.tiles.NavBarTile;
 import com.android.systemui.qs.tiles.HWKeysTile;
 import com.android.systemui.qs.tiles.AppCircleBarTile;
+import com.android.systemui.qs.tiles.UsbTetherTile;
 import com.android.systemui.qs.tiles.WifiTile;
 import com.android.systemui.settings.CurrentUserTracker;
 import com.android.systemui.statusbar.policy.BluetoothController;
@@ -360,6 +361,8 @@ public class QSTileHost implements QSTile.Host {
                 return new AmbientDisplayTile(this);
             case QSConstants.TILE_HWKEYS:
                 return new HWKeysTile(this);
+            case QSConstants.TILE_USB_TETHER:
+                return new UsbTetherTile(this);
             default:
                 throw new IllegalArgumentException("Bad tile spec: " + tileSpec);
         }

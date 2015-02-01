@@ -36,11 +36,10 @@
     
     <string name="gestures_message">Draw your gesture here</string>    
 
-    <!-- Heads up tile -->
+    <!-- Quick Settings Tiles -->
     <string name="quick_settings_heads_up_on">Heads up enabled</string>
     <string name="quick_settings_heads_up_off">No interruptions</string>
-    
-    <!-- HWKeys tile -->
+    <string name="quick_settings_usb_tether">USB tethering</string>
     <string name="quick_settings_hwkeys_on">Hardware Keys Enabled</string>
     <string name="quick_settings_hwkeys_off">Hardware Keys Disabled</string>
     
