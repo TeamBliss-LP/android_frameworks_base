@@ -454,14 +454,13 @@ public class SearchPanelView extends FrameLayout implements StatusBarPanel,
             ImageView target = mTargetViews.get(i);
             String action = mTargetActivities[i];
 
-            Drawable d;
             if ((TextUtils.isEmpty(action) && target == mLogo) || ACTION_ASSIST.equals(action)) {
                 maybeSwapSearchIcon(target);
                 continue;
-            } else {
-                d = NavigationRingHelpers.getTargetDrawable(mContext, mTargetActivities[i]);
             }
-            target.setImageDrawable(d);
+
+            target.setImageDrawable(NavigationRingHelpers.getTargetDrawable(
+                        mContext, mTargetActivities[i]));
         }
         updateTargetVisibility();
     }
@@ -474,12 +473,9 @@ public class SearchPanelView extends FrameLayout implements StatusBarPanel,
                 continue;
             }
             View parent = (View) v.getParent();
-            boolean visible = true;
-            if (!mInEditMode) {
-                if (TextUtils.isEmpty(mTargetActivities[i]) || ACTION_NONE.equals(mTargetActivities[i])) {
-                    visible = false;
-                }
-            }
+            String action = mTargetActivities[i];
+            boolean visible = mInEditMode
+                    || (!TextUtils.isEmpty(action) && !ACTION_NONE.equals(action));
             parent.setVisibility(visible ? View.VISIBLE : View.GONE);
         }
     }

@@ -31,6 +31,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+
 import com.android.systemui.R;
 
 import java.util.ArrayList;
@@ -38,10 +39,8 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.android.systemui.cm.NavigationRingConstants.*;
-import static com.android.systemui.cm.NavigationRingConstants.ACTION_APP;
 
 public class ShortcutPickHelper {
-
     private final Context mContext;
     private final AppPickAdapter mAdapter;
     private final Intent mBaseIntent;
@@ -108,13 +107,14 @@ public class ShortcutPickHelper {
 
     private void pickApp() {
         AlertDialog.Builder builder = new AlertDialog.Builder(mContext)
-                .setTitle(mContext.getString(com.android.systemui.R.string.navbar_dialog_title))
+                .setTitle(R.string.navbar_dialog_title)
                 .setAdapter(mAdapter, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         ResolveInfo resolveInfo = (ResolveInfo) mAdapter.getItem(which);
                         Intent intent = new Intent(mBaseIntent);
-                        intent.setClassName(resolveInfo.activityInfo.packageName, resolveInfo.activityInfo.name);
+                        intent.setClassName(resolveInfo.activityInfo.packageName,
+                                resolveInfo.activityInfo.name);
                         mListener.shortcutPicked(intent.toUri(0));
                         dialog.dismiss();
                     }
@@ -126,6 +126,7 @@ public class ShortcutPickHelper {
                         dialog.cancel();
                     }
                 });
+
         Dialog dialog = builder.create();
         dialog.getWindow().setType(WindowManager.LayoutParams.TYPE_NAVIGATION_BAR_PANEL);
         dialog.setCanceledOnTouchOutside(false);
@@ -141,25 +142,25 @@ public class ShortcutPickHelper {
         AlertDialog.Builder builder = new AlertDialog.Builder(mContext)
                 .setTitle(mContext.getString(R.string.navbar_dialog_title))
                 .setItems(mActions.getEntries(), new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                String item = mActions.getAction(which);
-                                if (item.equals(ACTION_APP)) {
-                                    pickApp();
-                                    dialog.dismiss();
-                                } else {
-                                    mListener.shortcutPicked(item);
-                                }
-                            }
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String item = mActions.getAction(which);
+                        if (item.equals(ACTION_APP)) {
+                            pickApp();
+                            dialog.dismiss();
+                        } else {
+                            mListener.shortcutPicked(item);
                         }
-                ).setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int id) {
-                                mListener.shortcutPicked(null);
-                                dialog.cancel();
-                            }
-                        }
-                );
+                    }
+                })
+                .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        mListener.shortcutPicked(null);
+                        dialog.cancel();
+                    }
+                });
+
         Dialog dialog = builder.create();
         dialog.getWindow().setType(WindowManager.LayoutParams.TYPE_NAVIGATION_BAR_PANEL);
         dialog.setCanceledOnTouchOutside(false);
@@ -185,7 +186,8 @@ public class ShortcutPickHelper {
         Vibrator vibrator = (Vibrator) mContext.getSystemService(Context.VIBRATOR_SERVICE);
         if (vibrator != null && vibrator.hasVibrator()) {
             mActions.addAction(ACTION_VIBRATE, R.string.navring_action_ring_vibrate);
-            mActions.addAction(ACTION_RING_SILENT_VIBRATE, R.string.navring_action_ring_vibrate_silent);
+            mActions.addAction(ACTION_RING_SILENT_VIBRATE,
+                    R.string.navring_action_ring_vibrate_silent);
         }
 
         mActions.addAction(ACTION_KILL_TASK, R.string.navring_action_kill_app);
@@ -241,5 +243,4 @@ public class ShortcutPickHelper {
             return mAvailableEntries.toArray(new CharSequence[mAvailableEntries.size()]);
         }
     }
-
 }
