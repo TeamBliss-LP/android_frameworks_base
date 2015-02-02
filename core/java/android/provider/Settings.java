@@ -3346,7 +3346,7 @@ public final class Settings {
          */
         public static final String LOCK_SCREEN_ICON_COLOR = "lock_screen_icon_color";
 
-        /**
+		/**
          *
          * @hide
          */
@@ -4209,6 +4209,14 @@ public final class Settings {
          * @hide
          */
         public static final String T9_SEARCH_INPUT_LOCALE = "t9_search_input_locale";
+		
+        /**
+         * Show icon when stylus is used?
+         * 0 = no
+         * 1 = yes
+         * @hide
+         */
+        public static final String STYLUS_ICON_ENABLED = "stylus_icon_enabled";		
 		
         /**
          * Enable Stylus Gestures
