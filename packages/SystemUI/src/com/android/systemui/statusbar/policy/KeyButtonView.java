@@ -60,11 +60,12 @@ import java.util.ArrayList;
 
 import com.android.internal.statusbar.IStatusBarService;
 import com.android.internal.util.bliss.KeyButtonInfo;
-import static com.android.internal.util.bliss.NavbarConstants.*;
 import com.android.internal.util.bliss.NavbarUtils;
 import com.android.internal.util.bliss.BlissActions;
 import com.android.systemui.R;
 import com.android.internal.util.bliss.DeviceUtils;
+
+import static com.android.internal.util.bliss.NavbarConstants.*;
 
 import static android.view.accessibility.AccessibilityNodeInfo.ACTION_CLICK;
 import static android.view.accessibility.AccessibilityNodeInfo.ACTION_LONG_CLICK;
@@ -85,12 +86,12 @@ public class KeyButtonView extends ImageView {
     int mTouchSlop;
     private float mDrawingAlpha = 1f;
     private float mQuiescentAlpha = DEFAULT_QUIESCENT_ALPHA;
-    private AudioManager mAudioManager;
     private Animator mAnimateToQuiescent = new ObjectAnimator();
     private KeyButtonRipple mRipple;
     private boolean mShouldClick = true;
 
     private static PowerManager mPm;
+    private static AudioManager mAudioManager;
     KeyButtonInfo mActions;
 
     private boolean mIsDPadAction;
@@ -101,6 +102,11 @@ public class KeyButtonView extends ImageView {
         if (mPm == null) mPm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
         return mPm;
     }
+
+    public static AudioManager getAudioManagerService(Context context) {
+		if (mAudioManager == null) mAudioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+		return mAudioManager;
+	}
 
     Runnable mCheckLongPress = new Runnable() {
         public void run() {
@@ -131,9 +137,9 @@ public class KeyButtonView extends ImageView {
         mTouchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
         mLongPressTimeout = ViewConfiguration.getLongPressTimeout();
         setLongClickable(false);
-        mAudioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
-        setBackground(mRipple = new KeyButtonRipple(context, this));
+        mAudioManager = getAudioManagerService(context);
         mPm = getPowerManagerService(context);
+        setBackground(mRipple = new KeyButtonRipple(context, this));
     }
 
     public void setButtonActions(KeyButtonInfo actions) {
