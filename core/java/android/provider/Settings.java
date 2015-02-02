@@ -2713,6 +2713,11 @@ public final class Settings {
          */
         public static final String ANIMATION_IME_INTERPOLATOR = "animation_ime_interpolator";
 
+		/**
+         * Navigation bar button color
+         * @hide
+         */
+        public static final String NAVIGATION_BAR_TINT = "navigation_bar_tint";
 
         /**
          * Enable HW keys
