@@ -482,6 +482,15 @@ public class StatusBarManagerService extends IStatusBarService.Stub {
         }
     }
 
+    @Override
+    public void toggleScreenshot() {
+        if (mBar != null) {
+            try {
+                mBar.toggleScreenshot();
+            } catch (RemoteException ex) {}
+        }
+    }
+
     /**
      * Ask keyguard to invoke a custom intent after dismissing keyguard
      * @hide
