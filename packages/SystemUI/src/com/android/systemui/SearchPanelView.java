@@ -454,7 +454,8 @@ public class SearchPanelView extends FrameLayout implements StatusBarPanel,
             ImageView target = mTargetViews.get(i);
             String action = mTargetActivities[i];
 
-            if ((TextUtils.isEmpty(action) && target == mLogo) || ACTION_ASSIST.equals(action)) {
+            if (isAssistantAvailable() && ((TextUtils.isEmpty(action) && target == mLogo)
+                    || ACTION_ASSIST.equals(action))) {
                 maybeSwapSearchIcon(target);
                 continue;
             }

@@ -24,6 +24,7 @@ import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
+import android.hardware.TorchManager;
 import android.media.AudioManager;
 import android.os.UserHandle;
 import android.provider.Settings;
@@ -36,9 +37,6 @@ import static com.android.systemui.cm.NavigationRingConstants.*;
 
 public class NavigationRingHelpers {
     public static final int MAX_ACTIONS = 3;
-
-    private static final IntentFilter TORCH_STATE_FILTER =
-            new IntentFilter(TorchConstants.ACTION_STATE_CHANGED);
 
     private NavigationRingHelpers() {
         // Do nothing here
@@ -91,16 +89,9 @@ public class NavigationRingHelpers {
                 .getAssistIntent(context, true, UserHandle.USER_CURRENT) != null;
     }
 
-    // TODO WAIT TILL ROMANS STUFF IS MERGED
     public static boolean isTorchAvailable(Context context) {
-        PackageManager pm = context.getPackageManager();
-        try {
-            return pm.getPackageInfo(TorchConstants.APP_PACKAGE_NAME, 0) != null;
-        } catch (PackageManager.NameNotFoundException e) {
-            // Ignored, just catched so we can return false below
-        }
-
-        return false;
+        TorchManager torchManager = (TorchManager) context.getSystemService(Context.TORCH_SERVICE);
+        return torchManager.isTorchSupported();
     }
 
     public static Drawable getTargetDrawable(Context context, String action) {
@@ -124,6 +115,8 @@ public class NavigationRingHelpers {
             resourceId = R.drawable.ic_navigation_ring_standby;
         } else if (action.equals(ACTION_TORCH)) {
             resourceId = getTorchDrawableResId(context);
+        } else if (action.equals(ACTION_ASSIST)) {
+            resourceId = R.drawable.ic_navigation_ring_search;
         }
 
         if (resourceId < 0) {
@@ -177,10 +170,8 @@ public class NavigationRingHelpers {
     }
 
     private static int getTorchDrawableResId(Context context) {
-        Intent stateIntent = context.registerReceiver(null, TORCH_STATE_FILTER);
-        boolean active = stateIntent != null
-                && stateIntent.getIntExtra(TorchConstants.EXTRA_CURRENT_STATE, 0) != 0;
-
+        TorchManager torchManager = (TorchManager) context.getSystemService(Context.TORCH_SERVICE);
+        boolean active = torchManager.isTorchOn();
         if (active) {
             return R.drawable.ic_navigation_ring_torch_on;
         }
