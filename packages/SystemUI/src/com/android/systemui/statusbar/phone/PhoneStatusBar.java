@@ -3731,8 +3731,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 }
             } else if (Intent.ACTION_KEYGUARD_WALLPAPER_CHANGED.equals(action)) {
                 updateMediaMetaData(true);
-            } else if (Intent.ACTION_TOGGLE_FLASHLIGHT.equals(action)) {
-                mFlashlightController.toggleFlashlight();
             }
         }
     };
