@@ -48,5 +48,6 @@ oneway interface IStatusBar
     void showCustomIntentAfterKeyguard(inout Intent intent);
     void toggleLastApp();
     void toggleKillApp();
+    void toggleScreenshot();
 }
 
