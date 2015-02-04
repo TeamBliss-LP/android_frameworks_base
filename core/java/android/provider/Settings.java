@@ -2282,6 +2282,12 @@ public final class Settings {
          * @hide
          */
         public static final String DOZE_TIMEOUT = "doze_timeout";
+        
+        /**
+         * Motion sensors trigger doze (pick up gesture or significant motion)
+         * @hide
+         */
+        public static final String DOZE_TRIGGER_MOTION = "doze_trigger_motion";        
 
         /**
          * If 1, the activity manager will aggressively finish activities and
