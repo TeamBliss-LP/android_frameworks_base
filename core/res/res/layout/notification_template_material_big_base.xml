@@ -73,7 +73,7 @@
             android:layout_marginTop="10dp"
             android:id="@+id/action_divider"
             android:visibility="gone"
-            android:background="@drawable/notification_template_divider" />
+            android:background="@drawable/notification_template_divider_media" />
         <include
             layout="@layout/notification_material_action_list"
             android:layout_marginStart="-8dp"

@@ -44,7 +44,7 @@
         android:visibility="gone"
         >
         <Button
-            style="?android:attr/buttonBarButtonStyle"
+            style="@style/Widget.Material.Button.ButtonBar.AlertDialog"
             android:textAppearance="@style/TextAppearance.StatusBar.EventContent.Title"
             android:id="@+id/action0"
             android:layout_width="0dp"
@@ -53,7 +53,7 @@
             android:visibility="gone"
             />
         <Button
-            style="?android:attr/buttonBarButtonStyle"
+            style="@style/Widget.Material.Button.ButtonBar.AlertDialog"
             android:textAppearance="@style/TextAppearance.StatusBar.EventContent.Title"
             android:id="@+id/action1"
             android:layout_width="0dp"
@@ -62,7 +62,7 @@
             android:visibility="gone"
             />
         <Button
-            style="?android:attr/buttonBarButtonStyle"
+            style="@style/Widget.Material.Button.ButtonBar.AlertDialog"
             android:textAppearance="@style/TextAppearance.StatusBar.EventContent.Title"
             android:id="@+id/action2"
             android:layout_width="0dp"
