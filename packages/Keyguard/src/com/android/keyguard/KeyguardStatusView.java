@@ -41,7 +41,7 @@ import android.widget.TextView;
 
 import com.android.internal.util.cm.WeatherController;
 import com.android.internal.util.cm.WeatherControllerImpl;
-import com.android.internal.util.darkkat.ImageHelper;
+import com.android.internal.util.bliss.ImageHelper;
 import com.android.internal.widget.LockPatternUtils;
 
 import java.util.Date;
@@ -72,6 +72,10 @@ public class KeyguardStatusView extends GridLayout implements
     private int mIconNameValue = 0;
 
     private WeatherController mWeatherController;
+    //On the first boot, keygard will start to receiver TIME_TICK intent.
+    //And onScreenTurnedOff will not get called if power off when keyguard is not started.
+    //Set initial value to false to skip the above case.
+    private boolean mEnableRefresh = false;
 
     private KeyguardUpdateMonitorCallback mInfoCallback = new KeyguardUpdateMonitorCallback() {
 

@@ -1257,7 +1257,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
         startGlyphRasterizeHack();
         setKeyguardTextAndIconColors();
-        updateClock();
         updateBatteryLevelTextColor();
         return mStatusBarView;
     }
