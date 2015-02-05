@@ -220,4 +220,8 @@ public class KeyguardStatusBarView extends RelativeLayout
     public boolean hasOverlappingRendering() {
         return false;
     }
+
+    public void updateCarrierLabelColor(int color) {
+        mCarrierLabel.setTextColor(color);
+    }
 }

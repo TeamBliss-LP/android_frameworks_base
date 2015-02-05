@@ -435,6 +435,12 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         void observe() {
             ContentResolver resolver = mContext.getContentResolver();
             resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.LOCK_SCREEN_TEXT_COLOR),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.LOCK_SCREEN_ICON_COLOR),
+                    false, this, UserHandle.USER_ALL);			
+            resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_BRIGHTNESS_CONTROL), false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_CARRIER), false, this);
@@ -463,6 +469,11 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         @Override
         public void onChange(boolean selfChange, Uri uri) {
             if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.LOCK_SCREEN_TEXT_COLOR))
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.LOCK_SCREEN_ICON_COLOR))) {
+                setKeyguardTextAndIconColors();
+            } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_BATTERY_STATUS_TEXT_COLOR))) {
                 updateBatteryLevelTextColor();					
             } else if (uri.equals(Settings.System.getUriFor(
@@ -1245,6 +1256,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         resetUserSetupObserver();
 
         startGlyphRasterizeHack();
+        setKeyguardTextAndIconColors();
+        updateClock();
         updateBatteryLevelTextColor();
         return mStatusBarView;
     }
@@ -2356,6 +2369,22 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                             .start();
                 }
             }
+        }
+    }
+
+    public void setKeyguardTextAndIconColors() {
+        int textColor =
+                Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.LOCK_SCREEN_TEXT_COLOR, 0xffffffff);
+        int iconColor =
+                Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.LOCK_SCREEN_ICON_COLOR, 0xffffffff);
+        if (mKeyguardStatusBar != null) {
+            mKeyguardStatusBar.updateCarrierLabelColor(textColor);
+        }
+        if (mKeyguardBottomArea != null) {
+            mKeyguardBottomArea.updateTextColor(textColor);
+            mKeyguardBottomArea.updateIconColor(iconColor);
         }
     }
 
