@@ -18,7 +18,9 @@
 package com.android.systemui.statusbar.phone;
 
 import android.app.ActivityManager;
+import android.app.ActivityManagerNative;
 import android.app.AlarmManager;
+import android.app.IUserSwitchObserver;
 import android.app.PendingIntent;
 import android.content.ContentUris;
 import android.content.ContentResolver;
@@ -35,12 +37,16 @@ import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Handler;
+import android.os.IRemoteCallback;
+import android.os.RemoteException;
+import android.os.UserHandle;
 import android.provider.AlarmClock;
 import android.provider.CalendarContract;
 import android.provider.CalendarContract.Events;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.MathUtils;
 import android.util.TypedValue;
 import android.view.View;
@@ -59,6 +65,7 @@ import com.android.systemui.BatteryMeterView;
 import com.android.systemui.BatteryLevelTextView;
 import com.android.systemui.FontSizeUtils;
 import com.android.systemui.R;
+import com.android.systemui.cm.UserContentObserver;
 import com.android.systemui.qs.QSPanel;
 import com.android.systemui.qs.QSTile;
 import com.android.systemui.statusbar.policy.BatteryController;
@@ -141,9 +148,6 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
     private float mCurrentT;
     private boolean mShowingDetail;
 
-    public StatusBarHeaderView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-    }
 
     private SettingsObserver mSettingsObserver;
     private boolean mShowWeather;
@@ -152,6 +156,11 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
 
     private int mTextColor;
     private int mIconColor;
+	
+
+    public StatusBarHeaderView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+    }
 
     @Override
     protected void onFinishInflate() {
@@ -962,35 +971,41 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
         }
     };
 
-    class SettingsObserver extends ContentObserver {
+    class SettingsObserver extends UserContentObserver {
         SettingsObserver(Handler handler) {
             super(handler);
         }
 
-        void observe() {
+        @Override
+        protected void observe() {
+            super.observe();
+
             ContentResolver resolver = mContext.getContentResolver();
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_BATTERY_STATUS_STYLE),
-                    false, this);
+                    false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_BATTERY_STATUS_PERCENT_STYLE),
-                    false, this);
+                    false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_EXPANDED_HEADER_SHOW_WEATHER),
-                    false, this);
+                    false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_EXPANDED_HEADER_SHOW_WEATHER_LOCATION),
-                    false, this);
+                    false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_EXPANDED_HEADER_TEXT_COLOR),
-                    false, this);
+                    false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_EXPANDED_HEADER_ICON_COLOR),
-                    false, this);
-            updateSettings();
+                    false, this, UserHandle.USER_ALL);
+            update();
         }
 
-        void unobserve() {
+        @Override
+        protected void unobserve() {
+            super.unobserve();
+
             ContentResolver resolver = mContext.getContentResolver();
             resolver.unregisterContentObserver(this);
         }
@@ -1017,7 +1032,7 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
 
         }
 
-        public void updateSettings() {
+        public void update() {
             updateBatteryPercentageSettings();
             updateWeatherSettings();
             updateTextColorSettings();

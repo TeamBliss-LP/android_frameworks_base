@@ -44,6 +44,7 @@ import android.widget.ImageView;
 import com.android.internal.statusbar.StatusBarIcon;
 import com.android.internal.util.bliss.ImageHelper;
 import com.android.systemui.R;
+import com.android.systemui.cm.UserContentObserver;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -350,7 +351,7 @@ public class StatusBarIconView extends AnimatedImageView {
             + " notification=" + mNotification + ")";
     }
 
-    static class GlobalSettingsObserver extends ContentObserver {
+    static class GlobalSettingsObserver extends UserContentObserver {
         private static GlobalSettingsObserver sInstance;
         private ArrayList<StatusBarIconView> mIconViews = new ArrayList<StatusBarIconView>();
         private Context mContext;
@@ -388,7 +389,9 @@ public class StatusBarIconView extends AnimatedImageView {
             }
         }
 
-        void observe() {
+        @Override
+        protected void observe() {
+            super.observe();
             ContentResolver resolver = mContext.getContentResolver();
 
             resolver.registerContentObserver(Settings.System.getUriFor(
@@ -407,11 +410,13 @@ public class StatusBarIconView extends AnimatedImageView {
                     Settings.System.STATUS_BAR_NOTIF_COUNT_TEXT_COLOR),
                     false, this);
         }
-        void unobserve() {
+        @Override
+        protected void unobserve() {
+            super.unobserve();
             mContext.getContentResolver().unregisterContentObserver(this);
         }
         @Override
-        public void onChange(boolean selfChange) {
+        public void update() {
             for (StatusBarIconView sbiv : mIconViews) {
                 sbiv.updateIconsAndText();
                 sbiv.set(sbiv.mIcon, true);
