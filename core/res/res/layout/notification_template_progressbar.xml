@@ -19,5 +19,5 @@
     android:id="@android:id/progress"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    style="@style/Widget.Material.Light.ProgressBar.Horizontal"
+    style="@style/Widget.Material.ProgressBar.Horizontal"
     />
