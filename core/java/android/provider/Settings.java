@@ -4284,14 +4284,6 @@ public final class Settings {
          */
         public static final String PIE_BUTTON_PRESSED_ALPHA = "pie_button_pressed_alpha";
 
-       /**
-         * Allows to disable weather in locskcreen
-         * 1 = use system default (show)
-         * 0 = hide Weather
-         * @hide
-         */
-        public static final String LOCKSCREEN_WEATHER = "lockscreen_weather";
-
         /**
          * Pie background alpha
          * @hide
