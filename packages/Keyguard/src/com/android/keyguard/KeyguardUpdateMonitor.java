@@ -472,9 +472,6 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
                         Log.d(TAG, "No valid subs");
                     }
                 }
-            } else if (Intent.ACTION_CUSTOM_CARRIER_LABEL_CHANGED.equals(action)) {
-                long subId = intent.getLongExtra(PhoneConstants.SUBSCRIPTION_KEY, INVALID_SUBID);
-                mHandler.sendMessage(mHandler.obtainMessage(MSG_CARRIER_INFO_UPDATE, subId));
             }
 
         }
@@ -783,7 +780,6 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
         filter.addAction(TelephonyIntents.ACTION_SUBINFO_CONTENT_CHANGE);
         filter.addAction(TelephonyIntents.ACTION_SERVICE_STATE_CHANGED);
         filter.addAction(Intent.ACTION_LOCALE_CHANGED);
-        filter.addAction(Intent.ACTION_CUSTOM_CARRIER_LABEL_CHANGED);
 
         context.registerReceiver(mBroadcastReceiver, filter);
 
