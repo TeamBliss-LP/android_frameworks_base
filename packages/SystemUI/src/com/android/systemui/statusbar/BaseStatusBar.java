@@ -2375,12 +2375,13 @@ public abstract class BaseStatusBar extends SystemUI implements
                 && isAllowed
                 && !accessibilityForcesLaunch
                 && mPowerManager.isScreenOn()
-                && !isExpanded
                 && !zenBlocksHeadsUp
-                && !isIMEShowing
                 && (!mStatusBarKeyguardViewManager.isShowing()
                         || mStatusBarKeyguardViewManager.isOccluded())
-                && !mStatusBarKeyguardViewManager.isInputRestricted();
+                && !mStatusBarKeyguardViewManager.isInputRestricted()
+                && !keyguardIsShowing
+                && !isExpanded
+                && !isImeShowing();
         try {
             interrupt = interrupt && !mDreamManager.isDreaming();
         } catch (RemoteException e) {
@@ -2430,6 +2431,16 @@ public abstract class BaseStatusBar extends SystemUI implements
                 }
             }
         }
+    }
+
+    /**
+     * @return Whether IME input is showing.
+     */
+    public boolean isImeShowing() {
+        final InputMethodManager inputMethodManager = (InputMethodManager)
+                mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
+
+        return inputMethodManager != null ? inputMethodManager.isImeShowing() : false;
     }
 
     public void setInteracting(int barWindow, boolean interacting) {
