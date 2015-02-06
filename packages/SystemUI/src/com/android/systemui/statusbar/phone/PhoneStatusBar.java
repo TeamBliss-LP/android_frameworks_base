@@ -605,6 +605,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             mUseHeadsUp = ENABLE_HEADS_UP && !mDisableNotificationAlerts && Settings.System.getIntForUser(
                     mContext.getContentResolver(),
                     Settings.System.HEADS_UP_NOTIFICATION, 1, UserHandle.USER_CURRENT) == 1;
+		    animateCollapsePanels();
             mHeadsUpTicker = mUseHeadsUp && 0 != Settings.Global.getInt(
                     mContext.getContentResolver(), SETTING_HEADS_UP_TICKER, 0);
             Log.d(TAG, "heads up is " + (mUseHeadsUp ? "enabled" : "disabled"));
@@ -937,9 +938,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         }
 
         updateShowSearchHoldoff();
-        addAppCircleSidebar();
-        addGestureAnywhereView();        
-		
+
         try {
             boolean showNav = mWindowManagerService.hasNavigationBar();
             if (DEBUG) Log.v(TAG, "hasNavigationBar=" + showNav);
@@ -973,7 +972,13 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         }
 
         // Setup pie container if enabled
-        attachPieContainer(isPieEnabled());
+					attachPieContainer(isPieEnabled());
+        
+        if (mRecreating) {
+        } else {
+            addAppCircleSidebar();
+            addGestureAnywhereView();
+        }
 
         // figure out which pixel-format to use for the status bar.
         mPixelFormat = PixelFormat.OPAQUE;
@@ -1245,7 +1250,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         filter.addAction(Intent.ACTION_SCREEN_OFF);
         filter.addAction(Intent.ACTION_SCREEN_ON);
         filter.addAction(Intent.ACTION_KEYGUARD_WALLPAPER_CHANGED);
-        filter.addAction(Intent.ACTION_TOGGLE_FLASHLIGHT);
         if (DEBUG_MEDIA_FAKE_ARTWORK) {
             filter.addAction("fake_artwork");
         }
@@ -2863,8 +2867,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     private int getExpandedNotificationState() {
         if (mExpandedVisible) {
 
-			boolean expanded = mHeader.getExpanded();
-			boolean visibleSettingsButton = mHeader.getSettingsButtonVisibility();
+        boolean expanded = mHeader.getExpanded();
+        boolean visibleSettingsButton = mHeader.getSettingsButtonVisibility();
 
             // Notification button is on quick settings side
             if (expanded && !visibleSettingsButton) {
