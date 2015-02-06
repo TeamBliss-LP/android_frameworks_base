@@ -616,23 +616,17 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
         return false;
     }
 
-    @Override
-    public boolean onLongClick(View v) {
-        if (v == mSettingsButton) {
-	    mSettingsButton.setLongClickable(true);
-	    Intent intent = new Intent(Intent.ACTION_MAIN);
-	    intent.setClassName("com.android.settings",
-				"com.android.settings.Settings$QSTilesSettingsActivity");
-            mActivityStarter.startActivity(intent,
-                    true /* dismissShade */);
-        }
-        return false;
-    }
-    
     private void startSettingsActivity() {
         mActivityStarter.startActivity(new Intent(android.provider.Settings.ACTION_SETTINGS),
                 true /* dismissShade */);
-    }    
+    }
+
+    private void startSettingsLongClickActivity() {
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+	intent.setClassName("com.android.settings",
+            "com.android.settings.Settings$QSTilesSettingsActivity");
+        mActivityStarter.startActivity(intent, true /* dismissShade */);
+    }
 
     private void startBatteryActivity() {
         mActivityStarter.startActivity(new Intent(Intent.ACTION_POWER_USAGE_SUMMARY),
