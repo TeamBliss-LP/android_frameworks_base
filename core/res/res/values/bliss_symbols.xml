@@ -105,4 +105,5 @@
   <java-symbol type="string" name="global_action_screen_record" />
   <java-symbol type="bool" name="config_enableScreenrecordChord" />
 
+  <java-symbol type="bool" name="config_dozeUseAccelerometer" />
 </resources>
