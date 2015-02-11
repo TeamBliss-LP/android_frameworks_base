@@ -3937,6 +3937,12 @@ public final class Settings {
         public static final String SAFE_HEADSET_VOLUME = "safe_headset_volume";
 
         /**
+         * volume answer.
+         * @hide
+         */
+        public static final String ANSWER_VOLUME_BUTTON_BEHAVIOR_ANSWER = "call_volume_answer";		
+
+        /**
          * Whether to mute annoying notifications
          * @hide
          */
