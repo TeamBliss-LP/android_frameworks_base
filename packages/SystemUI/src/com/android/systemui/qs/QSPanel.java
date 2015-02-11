@@ -150,18 +150,6 @@ public class QSPanel extends ViewGroup {
         return mBrightnessSliderEnabled;
     }
 
-    public boolean isVibrationEnabled() {
-        return (Settings.System.getIntForUser(mContext.getContentResolver(),
-                Settings.System.QUICK_SETTINGS_TILES_VIBRATE, 0, UserHandle.USER_CURRENT) == 1);
-    }
-
-    public void vibrateTile(int duration) {
-        if (!isVibrationEnabled()) { return; }
-        if (mVibrator != null) {
-            if (mVibrator.hasVibrator()) { mVibrator.vibrate(duration); }
-        }
-    }
-	
     /**
      * Use three or four columns.
      */
