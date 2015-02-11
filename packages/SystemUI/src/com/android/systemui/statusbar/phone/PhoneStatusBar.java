@@ -4046,7 +4046,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         });
         // restart the keyguard so it picks up the newly created ScrimController
         startKeyguard();
-
         // if the keyguard was showing while this change occurred we'll need to do some extra work
         if (mState == StatusBarState.KEYGUARD) {
             // this will make sure the keyguard is showing
@@ -4092,6 +4091,11 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 (mCurrentTheme == null || !mCurrentTheme.equals(newTheme))) {
             mCurrentTheme = (ThemeConfig)newTheme.clone();
             recreateStatusBar();
+            mNotificationPanel.resetViews();
+            updateResources();
+            updateNotifications();
+            checkBarModes();
+            repositionNavigationBar();
 
         // detect status bar carrier state when theme change.
         mShowStatusBarCarrier = Settings.System.getInt(
