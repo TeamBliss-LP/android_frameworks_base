@@ -42,20 +42,27 @@ public class LteTile extends QSTile<QSTile.BooleanState> {
     }
 
     @Override
+    protected void handleClick() {
+        toggleLteState();
+        refreshState();
+        qsCollapsePanel();
+    }
+
+    @Override
     protected void handleLongClick() {
         super.handleLongClick();
         mHost.startSettingsActivity(new Intent(Settings.ACTION_DATA_ROAMING_SETTINGS));
     }
 
     @Override
-    protected void handleClick() {
-        toggleLteState();
-        refreshState();
+    protected void handleSecondaryClick() {
+        mHost.startSettingsActivity(new Intent(Settings.ACTION_DATA_ROAMING_SETTINGS));
     }
 
     @Override
     protected void handleUpdateState(BooleanState state, Object arg) {
-        // Hide the tile if device doesn't support LTE.
+        // Hide the tile if device doesn't support LTE
+        // or it supports Dual Sim Dual Active.
         // TODO: Should be spawning off a tile per sim
         if (!QSUtils.deviceSupportsLte(mContext)
                 || QSUtils.deviceSupportsDdsSupported(mContext)) {

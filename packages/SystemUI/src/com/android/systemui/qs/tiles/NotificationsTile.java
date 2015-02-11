@@ -89,11 +89,18 @@ public class NotificationsTile extends QSTile<NotificationsTile.NotificationsSta
     @Override
     protected void handleClick() {
         showDetail(true);
+        qsCollapsePanel();
     }
 
     @Override
-    public void handleLongClick() {
-        mHost.startSettingsActivity(SOUND_SETTINGS);
+    protected void handleLongClick() {
+        super.handleLongClick();
+        mHost.startSettingsActivity(ZenModePanel.ZEN_SETTINGS);
+    }
+
+    @Override
+    protected void handleSecondaryClick() {
+        mHost.startSettingsActivity(ZenModePanel.ZEN_SETTINGS);
     }
 
     @Override
