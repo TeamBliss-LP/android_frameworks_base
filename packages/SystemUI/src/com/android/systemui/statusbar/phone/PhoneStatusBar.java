@@ -2542,7 +2542,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 						mBlissLabel.animate().cancel();
 						mBlissLabel.animate()
 								.alpha(1f)
-								.setDuration(320)
+								.setDuration(500)
 								.setInterpolator(ALPHA_IN)
 								.setStartDelay(50)
 								.withEndAction(new Runnable() {
