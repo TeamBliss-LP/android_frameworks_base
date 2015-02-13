@@ -77,7 +77,7 @@ public class BrightnessTile extends QSTile<QSTile.BooleanState> {
         state.visible = true;
         state.label = mContext.getString(R.string.quick_settings_brightness_label);
         state.iconId = autoBrightness
-                ? R.drawable.ic_qs_brightness_auto_on
+                ? R.drawable.ic_qs_brightness_auto_on_alpha
                 : R.drawable.ic_qs_brightness_auto_off_alpha;
     }
 }
