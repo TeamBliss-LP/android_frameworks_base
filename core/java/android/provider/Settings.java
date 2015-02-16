@@ -3946,6 +3946,12 @@ public final class Settings {
                 "mute_annoying_notifications_threshold";
 
         /**
+         * Timeout for volume panel
+         * @hide
+         */
+        public static final String VOLUME_PANEL_TIMEOUT = "volume_panel_timeout";
+
+        /**
          * show clear all recents button
          *  @hide
          */
