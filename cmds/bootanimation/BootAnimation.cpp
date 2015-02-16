@@ -406,7 +406,6 @@ status_t BootAnimation::readyToRun() {
         mZip = zipFile;
     }
 
-
 #ifdef PRELOAD_BOOTANIMATION
     // Preload the bootanimation zip on memory, so we don't stutter
     // when showing the animation
