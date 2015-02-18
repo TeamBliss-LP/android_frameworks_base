@@ -160,8 +160,21 @@ public class DisplayMetrics {
      */
     public float density;
     /**
-     * The screen density expressed as dots-per-inch.  May be either
-     * {@link #DENSITY_LOW}, {@link #DENSITY_MEDIUM}, or {@link #DENSITY_HIGH}.
+     * <p>
+     * The screen density expressed as dots-per-inch. May correspond to any of
+     * the constants listed below:
+     * </p>
+     * <ul>
+     *     <li>{@link #DENSITY_LOW}</li>
+     *     <li>{@link #DENSITY_MEDIUM}</li>
+     *     <li>{@link #DENSITY_TV}</li>
+     *     <li>{@link #DENSITY_HIGH}</li>
+     *     <li>{@link #DENSITY_XHIGH}</li>
+     *     <li>{@link #DENSITY_400}</li>
+     *     <li>{@link #DENSITY_XXHIGH}</li>
+     *     <li>{@link #DENSITY_560}</li>
+     *     <li>{@link #DENSITY_XXXHIGH}</li>
+     * </ul>
      */
     public int densityDpi;
     /**
