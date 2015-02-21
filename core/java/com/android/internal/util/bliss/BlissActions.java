@@ -47,11 +47,12 @@ import android.widget.Toast;
 import com.android.internal.R;
 import com.android.internal.statusbar.IStatusBarService;
 
-import static com.android.internal.util.bliss.NavbarConstants.*;
-
 import java.net.URISyntaxException;
 import java.util.List;
 
+//import com.android.internal.util.cm.TorchConstants;
+import static com.android.internal.util.bliss.NavbarConstants.NavbarConstant;
+import static com.android.internal.util.bliss.NavbarConstants.fromString;
 import com.android.internal.util.cm.ActionUtils;
 
 public class BlissActions {
@@ -60,8 +61,9 @@ public class BlissActions {
 
     private static final int LAYOUT_LEFT = -1;
     private static final int LAYOUT_RIGHT = 1;
+    private static final int LAYOUT_IME = NavbarConstants.LAYOUT_IME;
 
-    private static final int STANDARD_FLAGS = KeyEvent.FLAG_FROM_SYSTEM | KeyEvent.FLAG_SOFT_KEYBOARD;
+    private static final int STANDARD_FLAGS = KeyEvent.FLAG_FROM_SYSTEM | KeyEvent.FLAG_VIRTUAL_HARD_KEY;
     private static final int CURSOR_FLAGS = KeyEvent.FLAG_SOFT_KEYBOARD | KeyEvent.FLAG_KEEP_TOUCH_MODE;
 
     private static int mCurrentUserId = 0;
@@ -76,7 +78,8 @@ public class BlissActions {
     }
 
     public static boolean launchAction(final Context mContext, final String action) {
-        switch (action) {
+        NavbarConstant AwesomeEnum = fromString(action);
+        switch (AwesomeEnum) {
             case ACTION_HOME:
                 IWindowManager mWindowManagerService = WindowManagerGlobal.getWindowManagerService();
                 try {
