@@ -24,4 +24,9 @@ public class BlissUtils {
     public static boolean isChineseLanguage() {
        return Resources.getSystem().getConfiguration().locale.getLanguage().startsWith(Locale.CHINESE.getLanguage());
     }
+    
+    public static boolean isNavBarDefault(Context context) {
+        return context.getResources().getBoolean(
+                com.android.internal.R.bool.config_showNavigationBar);
+    }    
 }
