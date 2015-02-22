@@ -317,7 +317,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     boolean mHasNavigationBar = false;
     boolean mOverWriteHasNavigationBar = false;
     boolean mHasHwKeysEnabled;
-    boolean mOverWriteHasNavigationBar = false;
     boolean mCanHideNavigationBar = false;
     boolean mNavigationBarCanMove = false; // can the navigation bar ever move to the side?
     boolean mNavigationBarOnBottom = true; // is the navigation bar on the bottom *right now*?
@@ -4086,13 +4085,13 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         if (mHasNavigationBar) {
             if (mNavigationBarOnBottom) {
                 newMask |= EdgeGesturePosition.RIGHT.FLAG;
-                if (isPortrait && mUserNavBarHeight == 0
+                if (isPortrait && mNavigationBarHeight  == 0
                         || !isPortrait && mNavigationBarOnBottom) {
                     newMask |= EdgeGesturePosition.BOTTOM.FLAG;
                 }
             } else {
                 newMask |= EdgeGesturePosition.BOTTOM.FLAG;
-                if (mUserNavBarWidth == 0) {
+                if (mNavigationBarWidth == 0) {
                     newMask |= EdgeGesturePosition.RIGHT.FLAG;
                 }
             }

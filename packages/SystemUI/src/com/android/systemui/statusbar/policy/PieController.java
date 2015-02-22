@@ -66,7 +66,7 @@ import com.android.internal.util.gesture.EdgeServiceConstants;
 import com.android.internal.util.bliss.ActionConfig;
 import com.android.internal.util.bliss.ActionConstants;
 import com.android.internal.util.bliss.ActionHelper;
-import com.android.internal.util.bliss.Converter;
+import com.android.internal.util.bliss.DimensionConverter;
 import com.android.internal.util.bliss.ImageHelper;
 import com.android.internal.util.bliss.Action;
 import com.android.systemui.R;
@@ -573,7 +573,7 @@ public class PieController implements BaseStatusBar.NavigationBarCallback, PieVi
         }
 
         Drawable dResized = ImageHelper.resize(
-                mContext, dOriginal, Converter.pxToDp(mContext, (int) (size * mIconResizeFactor)));
+                mContext, dOriginal, DimensionConverter.pxToDp(mContext, (int) (size * mIconResizeFactor)));
         if (d == null) {
             view.setImageDrawable(dResized);
             return null;

@@ -79,7 +79,7 @@ public class ImageHelper {
             return null;
         }
 
-        int newSize = Converter.dpToPx(context, size);
+        int newSize = DimensionConverter.dpToPx(context, size);
         Bitmap bitmap = ((BitmapDrawable) image).getBitmap();
         Bitmap scaledBitmap = Bitmap.createBitmap(newSize, newSize, Config.ARGB_8888);
 

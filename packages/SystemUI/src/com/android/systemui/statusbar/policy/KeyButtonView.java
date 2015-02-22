@@ -85,10 +85,10 @@ public class KeyButtonView extends ImageView {
     private Animator mAnimateToQuiescent = new ObjectAnimator();
     private KeyButtonRipple mRipple;
 
-    private boolean mShouldTintIcons = true;
-
     private PowerManager mPm;
     private boolean mPerformedLongClick;
+
+    private boolean mShouldTintIcons = true;
 
     private final Runnable mCheckLongPress = new Runnable() {
         public void run() {
@@ -100,13 +100,13 @@ public class KeyButtonView extends ImageView {
                     sendEvent(KeyEvent.ACTION_DOWN, CURSOR_REPEAT_FLAGS,
                             System.currentTimeMillis(), false);
                     postDelayed(mCheckLongPress, ViewConfiguration.getKeyRepeatDelay());
-                } else if (mCode != 0) {
-                    sendEvent(KeyEvent.ACTION_DOWN, KeyEvent.FLAG_LONG_PRESS);
-                    sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_LONG_CLICKED);
                 } else if (isLongClickable()) {
                     // Just an old-fashioned ImageView
-                    mPerformedLongClick = true;					
+                    mPerformedLongClick = true;
                     performLongClick();
+                } else {
+                    sendEvent(KeyEvent.ACTION_DOWN, KeyEvent.FLAG_LONG_PRESS);
+                    sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_LONG_CLICKED);
                 }
             }
         }
@@ -134,8 +134,11 @@ public class KeyButtonView extends ImageView {
         setClickable(true);
         mTouchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
         mAudioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
-        setBackground(new KeyButtonRipple(context, this));
+        setBackground(mRipple = new KeyButtonRipple(context, this));
         mPm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+
+        SettingsObserver settingsObserver = new SettingsObserver(new Handler());
+        settingsObserver.observe();
     }
 
     @Override
@@ -287,7 +290,6 @@ public class KeyButtonView extends ImageView {
                 // hack to fix ripple getting stuck. exitHardware() starts an animation,
                 // but sometimes does not finish it.
                 mRipple.exitSoftware();
-                if (mIsDPadAction) {
                 if (mCode != 0) {
                     sendEvent(KeyEvent.ACTION_UP, KeyEvent.FLAG_CANCELED);
                 }
@@ -318,6 +320,7 @@ public class KeyButtonView extends ImageView {
                 mPerformedLongClick = false;
                 break;
         }
+
         return true;
     }
 
