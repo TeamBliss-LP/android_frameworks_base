@@ -368,6 +368,11 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     // Status bar carrier
     private boolean mShowStatusBarCarrier;
+	
+    // Bliss logo
+    private boolean mBlissLogo;
+    private ImageView blissLogo;
+	
     // battery
     private BatteryMeterView mBatteryView;
     private BatteryLevelTextView mBatteryLevel;
@@ -486,6 +491,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     Settings.System.STATUS_BAR_CLOCK), false, this);
             resolver.registerContentObserver(Settings.Secure.getUriFor(
                     Settings.Secure.RECENTS_LONG_PRESS_ACTIVITY), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_BLISS_LOGO),
+                    false, this, UserHandle.USER_ALL);		
             update();
         }
 
@@ -564,6 +572,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
             // This method reads Settings.Secure.RECENTS_LONG_PRESS_ACTIVITY
             updateCustomRecentsLongPressHandler(false);
+			
+            mBlissLogo = Settings.System.getIntForUser(resolver,
+                    Settings.System.STATUS_BAR_BLISS_LOGO, 0, mCurrentUserId) == 1;
+            showBlissLogo(mBlissLogo);
         }
     }
 
@@ -3785,6 +3797,15 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         View statusBarCarrierLabel = mStatusBarView.findViewById(R.id.status_bar_carrier_label);
         if (statusBarCarrierLabel != null) {
             statusBarCarrierLabel.setVisibility(show ? (mShowStatusBarCarrier ? View.VISIBLE : View.GONE) : View.GONE);
+        }
+    }
+	
+    public void showBlissLogo(boolean show) {
+        if (mStatusBarView == null) return;
+        ContentResolver resolver = mContext.getContentResolver();
+        blissLogo = (ImageView) mStatusBarView.findViewById(R.id.bliss_logo);
+        if (blissLogo != null) {
+            blissLogo.setVisibility(show ? (mBlissLogo ? View.VISIBLE : View.GONE) : View.GONE);
         }
     }
 
