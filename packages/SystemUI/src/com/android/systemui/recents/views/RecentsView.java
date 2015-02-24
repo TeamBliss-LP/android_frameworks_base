@@ -308,6 +308,7 @@ public class RecentsView extends FrameLayout implements TaskStackView.TaskStackV
      */
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        final ContentResolver resolver = mContext.getContentResolver();
         int width = MeasureSpec.getSize(widthMeasureSpec);
         int height = MeasureSpec.getSize(heightMeasureSpec);
 
@@ -328,7 +329,7 @@ public class RecentsView extends FrameLayout implements TaskStackView.TaskStackV
         }
         showMemDisplay();
 
-        boolean showClearAllRecents = Settings.System.getInt(mContext.getContentResolver(),
+        boolean showClearAllRecents = Settings.System.getInt(resolver,
                 Settings.System.SHOW_CLEAR_ALL_RECENTS, 1) == 1;
 
         Rect taskStackBounds = new Rect();
@@ -336,7 +337,7 @@ public class RecentsView extends FrameLayout implements TaskStackView.TaskStackV
                 mConfig.systemInsets.right, taskStackBounds);
 
         if (mFloatingButton != null && showClearAllRecents) {
-            int clearRecentsLocation = Settings.System.getInt(mContext.getContentResolver(),
+            int clearRecentsLocation = Settings.System.getInt(resolver,
                     Settings.System.RECENTS_CLEAR_ALL_LOCATION, Constants.DebugFlags.App.RECENTS_CLEAR_ALL_BOTTOM_RIGHT);
             FrameLayout.LayoutParams params = (FrameLayout.LayoutParams)
                     mFloatingButton.getLayoutParams();
