@@ -426,6 +426,10 @@ public class SignalClusterView
             updateCdma();
             updateData();
             updateDataVoice();
+            mMobile.setColorFilter(mNetworkColor, Mode.MULTIPLY);
+            mMobileActivity.setImageResource(mMobileActivityId);
+            mMobileActivity.setColorFilter(mNetworkActivityColor, Mode.MULTIPLY);
+            mMobileType.setColorFilter(mNetworkColor, Mode.MULTIPLY);
             mMobileGroup.setVisibility(View.VISIBLE);
         } else {
             mMobileGroup.setVisibility(View.GONE);
@@ -482,10 +486,7 @@ public class SignalClusterView
     private void updateMobile() {
         mMobile.setImageResource(mMobileStrengthId);
         mMobileType.setImageResource(mMobileTypeId);
-        mMobileType.setColorFilter(mNetworkColor, Mode.MULTIPLY);
-        mMobile.setColorFilter(mNetworkColor, Mode.MULTIPLY);
         mMobileActivity.setImageResource(mMobileActivityId);
-        mMobileActivity.setColorFilter(mNetworkActivityColor, Mode.MULTIPLY);
         mNoSimSlot.setImageResource(mNoSimIconId);
         mMobileGroup.setContentDescription(mMobileTypeDescription + " " + mMobileDescription);
     }
