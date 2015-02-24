@@ -11629,6 +11629,12 @@ public class WindowManagerService extends IWindowManager.Stub
         requestTraversalLocked();
     }
 
+    /* @hide */
+    @Override
+    public void toggleGlobalMenu() {
+        mPolicy.toggleGlobalMenu();
+    }
+
     @Override
     public Object getWindowManagerLock() {
         return mWindowMap;
