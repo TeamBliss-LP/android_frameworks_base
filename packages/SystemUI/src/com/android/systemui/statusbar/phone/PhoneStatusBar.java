@@ -370,6 +370,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     private boolean mShowCarrierInPanel = false;
 
+    // Bliss logo
+    private boolean mBlissLogo;
+    private ImageView blissLogo;
+
     // battery
     private BatteryMeterView mBatteryView;
     private BatteryLevelTextView mBatteryLevel;
@@ -484,6 +488,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_BATTERY_STATUS_TEXT_COLOR),
                     false, this, UserHandle.USER_ALL);	
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_BLISS_LOGO),
+                    false, this, UserHandle.USER_ALL);
             update();
         }
 
@@ -568,8 +575,12 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
             mBatterySaverBarColor = Settings.System.getInt(
                     resolver, Settings.System.BATTERY_SAVER_MODE_COLOR, 1) == 1;
+            mBlissLogo = Settings.System.getIntForUser(resolver,
+                    Settings.System.STATUS_BAR_BLISS_LOGO, 0, mCurrentUserId) == 1;
+            showBlissLogo(mBlissLogo);
         }
     }
+
 
     void updateClockView() {
         mClockView.setVisibility(View.GONE);
@@ -3777,6 +3788,15 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             }
         }
     };
+
+    public void showBlissLogo(boolean show) {
+        if (mStatusBarView == null) return;
+        ContentResolver resolver = mContext.getContentResolver();
+        blissLogo = (ImageView) mStatusBarView.findViewById(R.id.bliss_logo);
+        if (blissLogo != null) {
+            blissLogo.setVisibility(show ? (mBlissLogo ? View.VISIBLE : View.GONE) : View.GONE);
+        }
+    }
 
     private BroadcastReceiver mPackageBroadcastReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {

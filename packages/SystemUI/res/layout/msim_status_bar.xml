@@ -28,8 +28,7 @@
     android:background="@drawable/system_bar_background"
     android:orientation="vertical"
     android:focusable="true"
-    android:descendantFocusability="afterDescendants"
-    >
+    android:descendantFocusability="afterDescendants">
 
     <ImageView
         android:id="@+id/notification_lights_out"
@@ -39,24 +38,22 @@
         android:paddingBottom="2dip"
         android:src="@drawable/ic_sysbar_lights_out_dot_small"
         android:scaleType="center"
-        android:visibility="gone"
-        />
+        android:visibility="gone" />
 
     <LinearLayout android:id="@+id/status_bar_contents"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingStart="6dip"
         android:paddingEnd="6dip"
-        android:orientation="horizontal"
-        >
+        android:orientation="horizontal">
 
         <com.android.systemui.statusbar.AlphaOptimizedFrameLayout
             android:id="@+id/notification_icon_area"
             android:layout_width="0dip"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:orientation="horizontal"
-            >
+            android:orientation="horizontal">
+
             <!-- The alpha of this area is both controlled from PhoneStatusBarTransitions and
                  PhoneStatusBar (DISABLE_NOTIFICATION_ICONS), so we need two views here. -->
             <com.android.keyguard.AlphaOptimizedLinearLayout
@@ -76,12 +73,23 @@
                     android:visibility="gone"
                     />
 
+                <ImageView
+                    android:id="@+id/bliss_logo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingEnd="1dip"
+                    android:src="@drawable/ic_status_bar_bliss_logo"
+                    android:scaleType="center"
+                    android:visibility="gone"
+                    />  
+
                 <com.android.systemui.statusbar.StatusBarIconView android:id="@+id/moreIcon"
                     android:layout_width="@dimen/status_bar_icon_size"
                     android:layout_height="match_parent"
                     android:src="@drawable/stat_notify_more"
                     android:visibility="gone"
                     />
+
                 <com.android.systemui.statusbar.phone.IconMerger android:id="@+id/notificationIcons"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
