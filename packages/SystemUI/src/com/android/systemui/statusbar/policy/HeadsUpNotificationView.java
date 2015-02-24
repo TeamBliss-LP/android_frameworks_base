@@ -63,6 +63,8 @@ public class HeadsUpNotificationView extends FrameLayout implements SwipeHelper.
 
     private boolean mTouchOutside;
 
+    private static int sRoundedRectCornerRadius = 0;
+
     public HeadsUpNotificationView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
@@ -71,6 +73,8 @@ public class HeadsUpNotificationView extends FrameLayout implements SwipeHelper.
         super(context, attrs, defStyle);
         mTouchSensitivityDelay = getResources().getInteger(R.integer.heads_up_sensitivity_delay);
         if (DEBUG) Log.v(TAG, "create() " + mTouchSensitivityDelay);
+        sRoundedRectCornerRadius = context.getResources().getDimensionPixelSize(
+                R.dimen.notification_material_rounded_rect_radius);
     }
 
     public void updateResources() {
@@ -199,9 +203,10 @@ public class HeadsUpNotificationView extends FrameLayout implements SwipeHelper.
             int outlineTop = view.getPaddingTop();
 
             // Apply padding to shadow.
-            outline.setRect(outlineLeft, outlineTop,
+            outline.setRoundRect(outlineLeft, outlineTop,
                     view.getWidth() - outlineLeft - view.getPaddingRight(),
-                    view.getHeight() - outlineTop - view.getPaddingBottom());
+                    view.getHeight() - outlineTop - view.getPaddingBottom(),
+                    sRoundedRectCornerRadius);
         }
     };
 
