@@ -295,10 +295,5 @@
     <!-- number of saved networks | can be increased with an overlay for wifi only devices -->
     <integer name="wifi_notifications_remembered_connections">8</integer>
 
-   <!-- Sensivity of pie gestures controlls.
-         Must be minimum 1 and maximum 10 (See @EdgeServiceConstants.java).
-         Default for pie is high sensivity -->
-   <integer name="pie_gesture_sensivity">8</integer>
-
 </resources>
 
