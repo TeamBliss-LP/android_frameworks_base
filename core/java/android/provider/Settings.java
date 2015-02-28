@@ -2101,6 +2101,11 @@ public final class Settings {
          * Option to hide the Alarm icon in the status bar.
          */
         public static final String SHOW_ALARM_ICON = "show_alarm_icon";
+		
+		/**		
+         * Option to hide the Bluetooth icon in the status bar when disconnected.
+         */
+        public static final String SHOW_BLUETOOTH_ICON = "show_bluetooth_icon";
 
         /**
          * @hide
