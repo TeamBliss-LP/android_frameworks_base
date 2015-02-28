@@ -4081,6 +4081,14 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             mBlissLogo = Settings.System.getInt(
                     resolver, Settings.System.STATUS_BAR_BLISS_LOGO, 0) == 1;
             showBlissLogo(mBlissLogo);
+            
+            // detect greeting state when theme change.
+            mGreeting = Settings.System.getStringForUser(
+                    resolver, Settings.System.STATUS_BAR_GREETING,
+					UserHandle.USER_CURRENT);
+			if (mGreeting != null && !TextUtils.isEmpty(mGreeting)) {
+				mBlissLabel.setText(mGreeting);
+			}
 
         } else {
             loadDimens();
