@@ -4052,6 +4052,11 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 resolver, Settings.System.STATUS_BAR_CARRIER, 0) == 1;
                 showStatusBarCarrierLabel(mShowStatusBarCarrier);
 
+            // detect bliss logo state when theme change.
+            mBlissLogo = Settings.System.getInt(
+                    resolver, Settings.System.STATUS_BAR_BLISS_LOGO, 0) == 1;
+            showBlissLogo(mBlissLogo);
+
         } else {
             loadDimens();
         }
