@@ -73,5 +73,8 @@
     
     <!-- Kill app toast -->
     <string name="app_killed_message">App Killed</string>
+    
+    <!-- Power menu on navring targets -->
+    <string name="navring_action_power_menu">Power Menu</string>
 
 </resources>
