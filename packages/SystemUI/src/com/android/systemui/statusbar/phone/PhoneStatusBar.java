@@ -384,6 +384,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     private boolean mShowCarrierInPanel = false;
     private boolean mShowLabel;
+    private int mShowLabelTimeout;
 
     // Bliss logo
     private boolean mBlissLogo;
@@ -522,6 +523,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_GREETING),
                     false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_GREETING_TIMEOUT),
+                    false, this, UserHandle.USER_ALL);
             update();
         }
 
@@ -626,6 +630,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             if (mGreeting != null && !TextUtils.isEmpty(mGreeting)) {
                 mBlissLabel.setText(mGreeting);
             }
+
+            mShowLabelTimeout = Settings.System.getIntForUser(resolver,
+                    Settings.System.STATUS_BAR_GREETING_TIMEOUT, 400, mCurrentUserId);
         }
     }
 
@@ -2606,7 +2613,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                         mBlissLabel.animate().cancel();
                         mBlissLabel.animate()
                                 .alpha(1f)
-                                .setDuration(400)
+                                .setDuration(mShowLabelTimeout)
                                 .setInterpolator(ALPHA_IN)
                                 .setStartDelay(50)
                                 .withEndAction(new Runnable() {
