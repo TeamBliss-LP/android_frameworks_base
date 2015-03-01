@@ -31,7 +31,6 @@ import android.graphics.PorterDuff.Mode;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.PowerManager;
-import android.os.UserHandle;
 import android.provider.Settings;
 import android.util.AttributeSet;
 import android.util.MathUtils;
@@ -76,10 +75,6 @@ public class NotificationPanelView extends PanelView implements
     private static final int DOZE_BACKGROUND_COLOR = 0xff000000;
     private static final int TAG_KEY_ANIM = R.id.scrim;
     private static final long DOZE_BACKGROUND_ANIM_DURATION = ScrimController.ANIMATION_DURATION;
-
-    private static final int ONE_FINGER_QS_INTERCEPT_OFF   = 0;
-    private static final int ONE_FINGER_QS_INTERCEPT_END   = 1;
-    private static final int ONE_FINGER_QS_INTERCEPT_START = 2;
 
     private KeyguardAffordanceHelper mAfforanceHelper;
     private StatusBarHeaderView mHeader;
@@ -186,7 +181,7 @@ public class NotificationPanelView extends PanelView implements
     private LockPatternUtils mLockPatternUtils;
     private SettingsObserver mSettingsObserver;
 
-    private int mOneFingerQuickSettingsInterceptMode;
+    private boolean mOneFingerQuickSettingsIntercept;
     private int mQsSmartPullDown;
     private boolean mStatusBarLockedOnSecureKeyguard;
     private boolean mDoubleTapToSleepEnabled;
@@ -676,9 +671,7 @@ public class NotificationPanelView extends PanelView implements
         boolean twoFingerQsEvent = mTwoFingerQsExpandPossible
                 && (event.getActionMasked() == MotionEvent.ACTION_POINTER_DOWN
                 && event.getPointerCount() == 2);
-
-        boolean oneFingerQsOverride =
-                mOneFingerQuickSettingsInterceptMode > ONE_FINGER_QS_INTERCEPT_OFF
+        boolean oneFingerQsOverride = mOneFingerQuickSettingsIntercept
                 && event.getActionMasked() == MotionEvent.ACTION_DOWN
                 && shouldQuickSettingsIntercept(event.getX(), event.getY(), -1, false);
 
@@ -1261,20 +1254,14 @@ public class NotificationPanelView extends PanelView implements
                 && y >= header.getTop() && y <= header.getBottom();
 
         final float w = getMeasuredWidth();
-        float region = (w * (1.f/4.f)); // TODO overlay region fraction?
-
-        boolean showQsOverride = false;
-
-        if (mOneFingerQuickSettingsInterceptMode == ONE_FINGER_QS_INTERCEPT_END) {
-            showQsOverride = isLayoutRtl() ? (x < region) : (w - region < x);
-        } else if (mOneFingerQuickSettingsInterceptMode == ONE_FINGER_QS_INTERCEPT_START) {
-            showQsOverride = isLayoutRtl() ? (w - region < x) : (x < region);
-        }
+        float region = (w * (1.f/3.f)); // TODO overlay region fraction?
+        boolean showQsOverride = isLayoutRtl() ? (x < region) : (w - region < x);
+        showQsOverride = showQsOverride && mStatusBarState == StatusBarState.SHADE;
 
         if (mQsExpanded) {
             return onHeader || (mScrollView.isScrolledToBottom() && yDiff < 0) && isInQsArea(x, y);
         } else {
-            return onHeader || (showQsOverride && mStatusBarState == StatusBarState.SHADE);
+            return onHeader || showQsOverride;
         }
     }
 
@@ -1996,9 +1983,9 @@ public class NotificationPanelView extends PanelView implements
 
         public void update() {
             ContentResolver resolver = mContext.getContentResolver();
-            mOneFingerQuickSettingsInterceptMode = Settings.System.getIntForUser(
-                    resolver, Settings.System.STATUS_BAR_QUICK_QS_PULLDOWN,
-                    ONE_FINGER_QS_INTERCEPT_END, UserHandle.USER_CURRENT);
+            mOneFingerQuickSettingsIntercept = Settings.System.getInt(
+                    resolver, Settings.System.STATUS_BAR_QUICK_QS_PULLDOWN, 1) == 1;
+
             mDoubleTapToSleepEnabled = Settings.System.getIntForUser(
                     resolver, Settings.System.DOUBLE_TAP_SLEEP_GESTURE, 1,
                     UserHandle.USER_CURRENT) == 1;
