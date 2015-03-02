@@ -1260,6 +1260,7 @@ public final class Settings {
             }
             MOVED_TO_SECURE.add(Secure.NAVIGATION_BAR_SHOW);
             MOVED_TO_SECURE.add(Secure.NAVIGATION_BAR_HEIGHT);
+            MOVED_TO_SECURE.add(Secure.NAVIGATION_BAR_HEIGHT_LANDSCAPE);
             MOVED_TO_SECURE.add(Secure.NAVIGATION_BAR_WIDTH);
             MOVED_TO_SECURE.add(Secure.NAVIGATION_BAR_TINT);
             MOVED_TO_SECURE.add(Secure.ENABLE_HW_KEYS);
@@ -4375,30 +4376,35 @@ public final class Settings {
 
         /**
          * Navigation bar height when it is on protrait
+         * @deprecated
          * @hide
          */
         public static final String NAVIGATION_BAR_HEIGHT = Secure.NAVIGATION_BAR_HEIGHT;
 
         /**
          * Navigation bar height when it is on landscape
+         * @deprecated
          * @hide
          */
         public static final String NAVIGATION_BAR_HEIGHT_LANDSCAPE = Secure.NAVIGATION_BAR_HEIGHT_LANDSCAPE;
 
         /**
          * Navigation bar height when it is on landscape at the right
+         * @deprecated
          * @hide
          */
         public static final String NAVIGATION_BAR_WIDTH = Secure.NAVIGATION_BAR_WIDTH;
 
         /**
          * Wether navigation bar is enabled or not
+         * @deprecated
          * @hide
          */
         public static final String NAVIGATION_BAR_SHOW = Secure.NAVIGATION_BAR_SHOW;
         
         /**
          * Navigation bar button color
+         * @deprecated
          * @hide
          */
         public static final String NAVIGATION_BAR_TINT = "navigation_bar_tint";
