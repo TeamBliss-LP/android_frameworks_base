@@ -1042,6 +1042,7 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
         }
 
         public void update() {
+		ContentResolver resolver = mContext.getContentResolver();
             updateBatteryPercentageSettings();
             updateWeatherSettings();
             updateTextColorSettings();

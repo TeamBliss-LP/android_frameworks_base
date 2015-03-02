@@ -4020,6 +4020,12 @@ public final class Settings {
          */
         public static final String VOLUME_PANEL_TIMEOUT = "volume_panel_timeout";
 
+		/**
+         * Force expanded notifications on all apps that support it.
+         * @hide
+         */
+        public static final String FORCE_EXPANDED_NOTIFICATIONS = "force_expanded_notifications";
+
         /**
          * show clear all recents button
          *  @hide
