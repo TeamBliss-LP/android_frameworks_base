@@ -8,7 +8,4 @@
     <color name="fab_color">#ffDC4C3C</color>
     <color name="floating_action_button_icon_color">#ffffff</color>
 
-    <!-- QS Customization -->
-    <color name="qs_background_drawable_color">#ff263238</color>
-
 </resources>
