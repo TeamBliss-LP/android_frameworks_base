@@ -71,6 +71,7 @@ import com.android.systemui.qs.tiles.ScreenshotTile;
 import com.android.systemui.qs.tiles.ScreenTimeoutTile;
 import com.android.systemui.qs.tiles.SyncTile;
 import com.android.systemui.qs.tiles.NavBarTile;
+import com.android.systemui.qs.tiles.HWKeysTile;
 import com.android.systemui.qs.tiles.AppCircleBarTile;
 import com.android.systemui.qs.tiles.UsbTetherTile;
 import com.android.systemui.qs.tiles.WifiTile;
@@ -364,6 +365,8 @@ public class QSTileHost implements QSTile.Host {
                 return new HeadsupTile(this);
             case QSConstants.TILE_SLIMACTION:
                 return new SlimActionTile(this);
+            case QSConstants.TILE_HWKEYS:
+                return new HWKeysTile(this);
             default:
                 throw new IllegalArgumentException("Bad tile spec: " + tileSpec);
         }

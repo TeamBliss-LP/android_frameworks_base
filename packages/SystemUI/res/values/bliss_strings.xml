@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
-
-    <!-- Quick Settings Tiles -->
-    <string name="quick_settings_heads_up_on">Heads up enabled</string>
-    <string name="quick_settings_heads_up_off">No interruptions</string>
-    <string name="quick_settings_usb_tether">USB tethering</string>
+    <!-- Quick Settings Tiles -->		
+	<string name="quick_settings_heads_up_on">Heads up enabled</string>		
+	<string name="quick_settings_heads_up_off">No interruptions</string>		
+	<string name="quick_settings_usb_tether">USB tethering</string>
     <string name="quick_settings_hwkeys_on">Hardware Keys Enabled</string>
     <string name="quick_settings_hwkeys_off">Hardware Keys Disabled</string>
-    <!-- Heads up toast -->
     <string name="heads_up_enabled">Heads up notifications are enabled</string>
     <string name="heads_up_disabled">Heads up notifications are disabled</string>
     
