@@ -154,6 +154,8 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
     private boolean mShowWeatherLocation;
     private boolean mShowBatteryTextExpanded;
 
+    private boolean mQSCSwitch = false;
+	
     private int mTextColor;
     private int mIconColor;
 	
@@ -916,6 +918,8 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
 
         private void handleShowingDetail(final QSTile.DetailAdapter detail) {
             final boolean showingDetail = detail != null;
+            mQSCSwitch = Settings.System.getInt(getContext().getContentResolver(),
+                    Settings.System.QS_COLOR_SWITCH, 0) == 1;
             transition(mClock, !showingDetail);
             transition(mDateGroup, !showingDetail);
             if (mShowWeather) {
@@ -931,7 +935,9 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
                         getContext().getContentResolver(),
                         Settings.System.QS_TEXT_COLOR, 0xffffffff);
                 mQsDetailHeaderTitle.setText(detail.getTitle());
-                mQsDetailHeaderTitle.setTextColor(color);
+                if (mQSCSwitch) {
+                    mQsDetailHeaderTitle.setTextColor(color);
+                }
                 final Boolean toggleState = detail.getToggleState();
                 if (toggleState == null) {
                     mQsDetailHeaderSwitch.setVisibility(INVISIBLE);
@@ -1000,6 +1006,9 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_EXPANDED_HEADER_ICON_COLOR),
                     false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.QS_COLOR_SWITCH), false, this,
+                    UserHandle.USER_ALL);
             update();
         }
 
@@ -1039,6 +1048,9 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
             updateWeatherSettings();
             updateTextColorSettings();
             updateIconColorSettings();
+			
+            mQSCSwitch = Settings.System.getInt(
+                    resolver, Settings.System.QS_COLOR_SWITCH, 0) == 1;
         }
     }
 
