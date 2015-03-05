@@ -3522,11 +3522,6 @@ public class AudioService extends IAudioService.Stub {
                     if (DEBUG_VOL)
                         Log.v(TAG, "getActiveStreamType: Forcing STREAM_MUSIC stream active");
                     return AudioSystem.STREAM_MUSIC;
-                    } else {
-                        if (mVolumeKeysControlMediaStream) {
-                            if (DEBUG_VOL)
-                                Log.v(TAG, "getActiveStreamType: Forcing STREAM_MUSIC b/c default setting");
-                            return AudioSystem.STREAM_MUSIC;
                 } else {
                     switch (mVolumeKeysDefault) {
                         case AudioSystem.STREAM_DEFAULT:
@@ -3537,6 +3532,10 @@ public class AudioService extends IAudioService.Stub {
                             if (DEBUG_VOL)
                                 Log.v(TAG, "getActiveStreamType: Forcing STREAM_MUSIC b/c default setting");
                             return AudioSystem.STREAM_MUSIC;
+                        case AudioSystem.STREAM_NOTIFICATION:
+                            if (DEBUG_VOL)
+                                Log.v(TAG, "getActiveStreamType: Forcing STREAM_NOTIFICATION b/c default setting");
+                            return AudioSystem.STREAM_NOTIFICATION;
                         case AudioSystem.STREAM_RING:
                         default:
                             if (DEBUG_VOL)
@@ -3573,6 +3572,22 @@ public class AudioService extends IAudioService.Stub {
                 if (DEBUG_VOL) Log.v(TAG, "getActiveStreamType: Forcing STREAM_NOTIFICATION");
                 return AudioSystem.STREAM_NOTIFICATION;
             } else if (suggestedStreamType == AudioManager.USE_DEFAULT_STREAM_TYPE) {
+                switch (mVolumeKeysDefault) {
+                case AudioSystem.STREAM_DEFAULT:
+                    if (DEBUG_VOL)
+                        Log.v(TAG, "getActiveStreamType: Forcing STREAM_DEFAULT b/c default setting");
+                    return AudioSystem.STREAM_DEFAULT;
+                case AudioSystem.STREAM_MUSIC:
+                    if (DEBUG_VOL)
+                        Log.v(TAG, "getActiveStreamType: Forcing STREAM_MUSIC b/c default setting");
+                    return AudioSystem.STREAM_MUSIC;
+                case AudioSystem.STREAM_NOTIFICATION:
+                default:
+                    if (DEBUG_VOL)
+                        Log.v(TAG, "getActiveStreamType: Forcing STREAM_NOTIFICATION b/c default setting");
+                    return AudioSystem.STREAM_NOTIFICATION;
+                }
+            } else {
                 if (isAfMusicActiveRecently(StreamOverride.sDelayMs)) {
                     if (DEBUG_VOL) Log.v(TAG, "getActiveStreamType: forcing STREAM_MUSIC");
                     return AudioSystem.STREAM_MUSIC;
@@ -3582,7 +3597,6 @@ public class AudioService extends IAudioService.Stub {
                     return AudioSystem.STREAM_NOTIFICATION;
                 }
             }
-            break;
         }
         if (suggestedStreamType == AudioManager.USE_DEFAULT_STREAM_TYPE) {
             switch (mVolumeKeysDefault) {
