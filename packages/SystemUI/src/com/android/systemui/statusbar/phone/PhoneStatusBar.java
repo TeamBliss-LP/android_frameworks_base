@@ -4079,11 +4079,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         if (shouldUpdateStatusbar(mCurrentTheme, newTheme)) {
             mCurrentTheme = (ThemeConfig)newTheme.clone();
             recreateStatusBar();
-            mNotificationPanel.resetViews();
-            updateResources();
-            updateNotifications();
-            checkBarModes();
-            repositionNavigationBar();
 
         // detect status bar carrier state when theme change.
         mShowStatusBarCarrier = Settings.System.getInt(
