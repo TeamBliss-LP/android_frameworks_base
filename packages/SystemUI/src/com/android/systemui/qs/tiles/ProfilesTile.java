@@ -41,6 +41,10 @@ import java.util.List;
 import java.util.UUID;
 
 public class ProfilesTile extends QSTile<QSTile.State> {
+
+    private static final Intent PROFILES_SETTINGS =
+            new Intent("android.settings.PROFILES_SETTINGS");
+
     private boolean mListening;
     private ProfilesObserver mObserver;
     private ProfileManager mProfileManager;
@@ -65,14 +69,13 @@ public class ProfilesTile extends QSTile<QSTile.State> {
     }
 
     @Override
-    protected void handleLongClick() {
-        super.handleLongClick();
+    protected void handleSecondaryClick() {
         mHost.startSettingsActivity(new Intent("com.android.settings.PROFILES_SETTINGS"));
     }
 
     @Override
-    protected void handleSecondaryClick() {
-        mHost.startSettingsActivity(new Intent("com.android.settings.PROFILES_SETTINGS"));
+    protected void handleLongClick() {
+        mHost.startSettingsActivity(PROFILES_SETTINGS);
     }
 
     @Override
@@ -177,7 +180,7 @@ public class ProfilesTile extends QSTile<QSTile.State> {
 
         @Override
         public Intent getSettingsIntent() {
-            return new Intent("com.android.settings.PROFILES_SETTINGS");
+            return PROFILES_SETTINGS;
         }
 
         @Override
