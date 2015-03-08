@@ -353,7 +353,7 @@ public class KeyButtonView extends ImageView {
         setColorFilter(null);
         if (tint) {
             int color = Settings.System.getInt(mContext.getContentResolver(),
-                    Settings.System.NAVIGATION_BAR_TINT, -1);
+                    Settings.Secure.NAVIGATION_BAR_TINT, -1);
             if (color != -1) {
                 setColorFilter(color);
             }
@@ -369,7 +369,7 @@ public class KeyButtonView extends ImageView {
         void observe() {
             ContentResolver resolver = mContext.getContentResolver();
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.NAVIGATION_BAR_TINT), false, this);
+                    Settings.Secure.NAVIGATION_BAR_TINT), false, this);
             updateSettings();
         }
 

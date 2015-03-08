@@ -4090,11 +4090,11 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
      */
     void updateResources(Configuration newConfig) {
         final Context context = mContext;
-        SettingsObserver observer = new SettingsObserver(mHandler);
-
+        ContentResolver resolver = mContext.getContentResolver();
+ 
         // detect theme change.
         ThemeConfig newTheme = newConfig != null ? newConfig.themeConfig : null;
-        if (shouldUpdateStatusbar(mCurrentTheme, newTheme)) {
+        if ((newTheme != null) && shouldUpdateStatusbar(mCurrentTheme, newTheme)) {
             mCurrentTheme = (ThemeConfig)newTheme.clone();
             recreateStatusBar();
 
@@ -4137,13 +4137,15 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
      * @return True if we should recreate the status bar
      */
     private boolean shouldUpdateStatusbar(ThemeConfig oldTheme, ThemeConfig newTheme) {
-        return newTheme != null && (oldTheme == null || !newTheme.getOverlayForStatusBar()
-                .equals(oldTheme.getOverlayForStatusBar()) ||
-                !newTheme.getFontPkgName()
-                        .equals(oldTheme.getFontPkgName()) ||
-                !newTheme.getIconPackPkgName()
-                        .equals(oldTheme.getIconPackPkgName()) ||
-                newTheme.getLastThemeChangeRequestType() == RequestType.THEME_UPDATED);
+        if (newTheme == null) {
+          return false;
+        }
+        return (newTheme != null) &&
+               ((oldTheme == null) ||
+                (!newTheme.getOverlayForStatusBar().equals(oldTheme.getOverlayForStatusBar()) ||
+                 (newTheme.getFontPkgName() != oldTheme.getFontPkgName()) ||
+                 (newTheme.getIconPackPkgName() != oldTheme.getIconPackPkgName()) ||
+                 newTheme.getLastThemeChangeRequestType() == RequestType.THEME_UPDATED));
     }
 
     private void updateClockSize() {
