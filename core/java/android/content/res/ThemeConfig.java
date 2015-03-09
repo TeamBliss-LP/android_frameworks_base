@@ -139,7 +139,8 @@ public class ThemeConfig implements Cloneable, Parcelable, Comparable<ThemeConfi
             Map<String, AppTheme> newThemes = (o.mThemes == null) ?
                     new HashMap<String, AppTheme>() : o.mThemes;
 
-            return (currThemes.equals(newThemes) &&
+            return (currThemes != null &&
+                    currThemes.equals(newThemes) &&
                     mLastThemeChangeRequestType == o.mLastThemeChangeRequestType);
         }
         return false;
