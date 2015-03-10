@@ -512,9 +512,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_GREETING_TIMEOUT),
                     false, this, UserHandle.USER_ALL);
-            resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.QS_COLOR_SWITCH),
-                    false, this, UserHandle.USER_ALL);
             update();
         }
 
@@ -614,8 +611,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             mShowStatusBarCarrier = Settings.System.getInt(
                     resolver, Settings.System.STATUS_BAR_CARRIER, 0) == 1;
                     showStatusBarCarrierLabel(mShowStatusBarCarrier);
-            mQSCSwitch = Settings.System.getIntForUser(resolver,
-                    Settings.System.QS_COLOR_SWITCH, 0, mCurrentUserId) == 1;
+
             if (mNavigationBarView != null) {
                 boolean navLeftInLandscape = Settings.System.getIntForUser(resolver,
                         Settings.System.NAVBAR_LEFT_IN_LANDSCAPE, 0, UserHandle.USER_CURRENT) == 1;
@@ -4078,11 +4074,13 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             showKeyguard();
             // The following views need to be invisible if the keyguard is showing
             // These views were hidden but re-inflating the status bar changed them back to visible
-			mTickerView.setVisibility(View.INVISIBLE);
-			mCarrierLabel.setVisibility(View.INVISIBLE);
-			mBatteryView.setVisibility(View.INVISIBLE);
+            /*
+            mTickerView.setVisibility(View.INVISIBLE);
+            mCarrierLabel.setVisibility(View.INVISIBLE);
+            mBatteryView.setVisibility(View.INVISIBLE);
             mHeadsUpNotificationView.setVisibility(View.INVISIBLE);
             mCenterClockLayout.setVisibility(View.INVISIBLE);
+            */
             mLeftClockLayout.setVisibility(View.INVISIBLE);
             mNotificationIconArea.setVisibility(View.INVISIBLE);
             mSystemIconArea.setVisibility(View.INVISIBLE);
@@ -4109,18 +4107,20 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
      */
     void updateResources(Configuration newConfig) {
         final Context context = mContext;
-        SettingsObserver observer = new SettingsObserver(mHandler);
 
          // detect theme change.
          ThemeConfig newTheme = newConfig != null ? newConfig.themeConfig : null;
-         if ((newTheme != null) && shouldUpdateStatusbar(mCurrentTheme, newTheme)) {
+         if (shouldUpdateStatusbar(mCurrentTheme, newTheme)) {
+             SettingsObserver observer = new SettingsObserver(mHandler);
              mCurrentTheme = (ThemeConfig)newTheme.clone();
              recreateStatusBar();
-             observer.update();
-
-        } else {
+             if (observer != null) {
+               observer.update();
+             }
+        } /* else {
             loadDimens();
         }
+        */
 
         // Update the quick setting tiles
         if (mQSPanel != null) {
@@ -4159,16 +4159,19 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     private boolean shouldUpdateStatusbar(ThemeConfig oldTheme, ThemeConfig newTheme) {
         // no newTheme, so no need to update status bar
         if (newTheme == null) return false;
+        if (oldTheme == null) return true;
 
-        final String overlay = newTheme.getOverlayForStatusBar();
-        final String icons = newTheme.getIconPackPkgName();
-        final String fonts = newTheme.getFontPkgName();
+        final String overlay    = newTheme.getOverlayForStatusBar();
+        final String icons      = newTheme.getIconPackPkgName();
+        final String fonts      = newTheme.getFontPkgName();
+        final String oldoverlay = oldTheme.getOverlayForStatusBar();
+        final String oldfonts   = oldTheme.getFontPkgName();
+        final String oldicons   = oldTheme.getIconPackPkgName();
 
-        return oldTheme == null ||
-                (overlay != null && !overlay.equals(oldTheme.getOverlayForStatusBar()) ||
-                (fonts != null && !fonts.equals(oldTheme.getFontPkgName())) ||
-                (icons != null && !icons.equals(oldTheme.getIconPackPkgName())) ||
-                newTheme.getLastThemeChangeRequestType() == RequestType.THEME_UPDATED);
+        return (overlay != null && (oldoverlay == null || !overlay.equals(oldoverlay))) ||
+               (fonts != null && (oldfonts == null || !fonts.equals(oldfonts))) ||
+               (icons != null && (oldicons == null || !icons.equals(oldicons))) ||
+               (newTheme.getLastThemeChangeRequestType() == RequestType.THEME_UPDATED);
     }
 
     private void updateClockSize() {
