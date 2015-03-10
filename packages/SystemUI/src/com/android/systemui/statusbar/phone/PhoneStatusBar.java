@@ -380,8 +380,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     private BatteryMeterView mBatteryView;
     private BatteryLevelTextView mBatteryLevel;
 
-    private boolean mQSCSwitch;
-
     // position
     int[] mPositionTmp = new int[2];
     boolean mExpandedVisible;
@@ -4114,7 +4112,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
          ThemeConfig newTheme = newConfig != null ? newConfig.themeConfig : null;
          if ((newTheme != null) && shouldUpdateStatusbar(mCurrentTheme, newTheme)) {
              mCurrentTheme = (ThemeConfig)newTheme.clone();
-             recreateStatusBar()
+             recreateStatusBar();
              observer.update();
 
         } else {
