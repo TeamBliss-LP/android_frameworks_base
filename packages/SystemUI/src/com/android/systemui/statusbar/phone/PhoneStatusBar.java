@@ -1763,7 +1763,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             // usual case: status bar visible & not immersive
 
             // show the ticker if there isn't already a heads up
-            if (mHeadsUpNotificationView.getEntry() == null) {
+            if (mHeadsUpNotificationView != null && mHeadsUpNotificationView.getEntry() == null) {
                 tick(notification, true);
             }
         }
@@ -4077,10 +4077,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             /*
             mTickerView.setVisibility(View.INVISIBLE);
             mCarrierLabel.setVisibility(View.INVISIBLE);
-            mBatteryView.setVisibility(View.INVISIBLE);
             mHeadsUpNotificationView.setVisibility(View.INVISIBLE);
-            mCenterClockLayout.setVisibility(View.INVISIBLE);
             */
+            mBatteryView.setVisibility(View.INVISIBLE);
+            mCenterClockLayout.setVisibility(View.INVISIBLE);
             mLeftClockLayout.setVisibility(View.INVISIBLE);
             mNotificationIconArea.setVisibility(View.INVISIBLE);
             mSystemIconArea.setVisibility(View.INVISIBLE);
