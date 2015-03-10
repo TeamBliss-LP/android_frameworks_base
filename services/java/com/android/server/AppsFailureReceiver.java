@@ -63,6 +63,9 @@ public class AppsFailureReceiver extends BroadcastReceiver {
                     ThemeManager tm =
                             (ThemeManager) context.getSystemService(Context.THEME_SERVICE);
                     final String themePkgName = ThemeConfig.SYSTEM_DEFAULT;
+                    if (themePkgName == null) {
+                        return;
+                    }
                     ThemeChangeRequest.Builder builder = new ThemeChangeRequest.Builder();
                     builder.setOverlay(themePkgName)
                             .setStatusBar(themePkgName)
