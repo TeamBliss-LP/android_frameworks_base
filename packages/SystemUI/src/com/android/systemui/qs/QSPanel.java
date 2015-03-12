@@ -30,10 +30,10 @@ import android.net.Uri;
 import android.graphics.PorterDuff.Mode;
 import android.os.Handler;
 import android.os.Message;
-import android.os.Vibrator;
 import android.os.UserHandle;
 import android.provider.Settings;
 import android.util.AttributeSet;
+import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,6 +43,7 @@ import android.widget.TextView;
 
 import com.android.systemui.FontSizeUtils;
 import com.android.systemui.R;
+import com.android.systemui.cm.UserContentObserver;
 import com.android.systemui.qs.QSTile.DetailAdapter;
 import com.android.systemui.settings.BrightnessController;
 import com.android.systemui.settings.ToggleSlider;
@@ -54,6 +55,9 @@ import java.util.Collection;
 
 /** View that represents the quick settings tile panel. **/
 public class QSPanel extends ViewGroup {
+    public static final int VIBRATION_DURATION_SHORT = 0;
+    public static final int VIBRATION_DURATION_LONG = 1;
+
     private static final float TILE_ASPECT = 1.2f;
     private static final float TILE_ASPECT_SMALL = 0.8f;
 
@@ -102,8 +106,6 @@ public class QSPanel extends ViewGroup {
     private DetailCallback mDetailCallback;
     private int mContainerTop;
 
-    protected Vibrator mVibrator;
-
     private SettingsObserver mSettingsObserver;
 
     public QSPanel(Context context) {
@@ -128,7 +130,6 @@ public class QSPanel extends ViewGroup {
         addView(mBrightnessView);
         addView(mFooter.getView());
         mClipper = new QSDetailClipper(mDetail);
-        mVibrator = (Vibrator) mContext.getSystemService(Context.VIBRATOR_SERVICE);
         mSettingsObserver = new SettingsObserver(mHandler);
         updateResources();
 
@@ -140,9 +141,19 @@ public class QSPanel extends ViewGroup {
             @Override
             public void onClick(View v) {
                 closeDetail();
-                vibrateTile(20);
+                vibrateTile(VIBRATION_DURATION_SHORT);
             }
         });
+    }
+
+    public void vibrateTile(int duration) {
+        if (!mVibrationEnabled) return;
+
+        if (VIBRATION_DURATION_SHORT == duration) {
+            performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
+        } else if (VIBRATION_DURATION_LONG == duration) {
+            performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
+        }
     }
 
     /**
@@ -172,13 +183,6 @@ public class QSPanel extends ViewGroup {
             mNumberOfColumns = res.getInteger(R.integer.quick_settings_num_columns);
         }
         return mNumberOfColumns;
-    }
-
-    public void vibrateTile(int duration) {
-        if (!mVibrationEnabled) { return; }
-        if (mVibrator != null) {
-            if (mVibrator.hasVibrator()) { mVibrator.vibrate(duration); }
-        }
     }
 
     private void updateDetailText() {
@@ -367,7 +371,7 @@ public class QSPanel extends ViewGroup {
             public void onToggleStateChanged(boolean state) {
                 if (mDetailRecord == r) {
                     fireToggleStateChanged(state);
-                    vibrateTile(20);
+                    vibrateTile(VIBRATION_DURATION_SHORT);
                 }
             }
             @Override
@@ -388,21 +392,21 @@ public class QSPanel extends ViewGroup {
             @Override
             public void onClick(View v) {
                 r.tile.click();
-                vibrateTile(20);
+                vibrateTile(VIBRATION_DURATION_SHORT);
             }
         };
         final View.OnClickListener clickSecondary = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 r.tile.secondaryClick();
-                vibrateTile(20);
+                vibrateTile(VIBRATION_DURATION_SHORT);
             }
         };
         final View.OnLongClickListener longClick = new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
                 r.tile.longClick();
-                vibrateTile(20);
+                vibrateTile(VIBRATION_DURATION_SHORT);
                 return true;
             }
         };
@@ -466,7 +470,7 @@ public class QSPanel extends ViewGroup {
                 @Override
                 public void onClick(View v) {
                     mHost.startSettingsActivity(settingsIntent);
-                    vibrateTile(20);
+                    vibrateTile(VIBRATION_DURATION_LONG);
                 }
             });
 
@@ -743,7 +747,7 @@ public class QSPanel extends ViewGroup {
                     Settings.Secure.QS_USE_FOUR_COLUMNS),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.QUICK_SETTINGS_TILES_VIBRATE),
+                    Settings.Secure.QS_TILES_VIBRATE),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.QS_TRANSPARENT_SHADE),
@@ -779,7 +783,7 @@ public class QSPanel extends ViewGroup {
             mContext.getContentResolver(), Settings.Secure.QS_USE_FOUR_COLUMNS,
                 0, UserHandle.USER_CURRENT) == 1;
             mVibrationEnabled = Settings.System.getIntForUser(
-            mContext.getContentResolver(), Settings.System.QUICK_SETTINGS_TILES_VIBRATE,
+            mContext.getContentResolver(), Settings.Secure.QS_TILES_VIBRATE,
                 0, UserHandle.USER_CURRENT) == 1;
             mQSShadeTransparency = Settings.System.getIntForUser(
             mContext.getContentResolver(), Settings.System.QS_TRANSPARENT_SHADE,
