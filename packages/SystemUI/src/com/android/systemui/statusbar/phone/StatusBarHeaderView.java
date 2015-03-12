@@ -584,23 +584,34 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
 
     @Override
     public void onClick(View v) {
+        boolean handledOnClick = false;
+
         if (v == mSettingsButton) {
             startSettingsActivity();
+            handledOnClick = true;
         } else if (v == mSystemIconsSuperContainer) {
             startBatteryActivity();
+            handledOnClick = true;
         } else if (v == mAlarmStatus && mNextAlarm != null) {
             PendingIntent showIntent = mNextAlarm.getShowIntent();
             if (showIntent != null && showIntent.isActivity()) {
                 mActivityStarter.startActivity(showIntent.getIntent(), true /* dismissShade */);
             }
+            handledOnClick = true;
         } else if (v == mClock) {
             startClockActivity();
+            handledOnClick = true;
         } else if (v == mDateGroup) {
             startDateActivity();
+            handledOnClick = true;
         } else if (v == mWeatherContainer) {
             startForecastActivity();
+            handledOnClick = true;
         }
-        mQSPanel.vibrateTile(20);
+
+        if (handledOnClick) {
+            mQSPanel.vibrateTile(QSPanel.VIBRATION_DURATION_SHORT);
+        }
     }
 
     @Override
