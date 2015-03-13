@@ -1909,7 +1909,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
 
             mNavigationBarHeight =
                     Settings.Secure.getIntForUser(mContext.getContentResolver(),
-                            Secure.Secure.NAVIGATION_BAR_HEIGHT, -2,
+                            Settings.Secure.NAVIGATION_BAR_HEIGHT, -2,
                             UserHandle.USER_CURRENT);
             if (mNavigationBarHeight == -2) {
                 mNavigationBarHeight = mContext.getResources().getDimensionPixelSize(
