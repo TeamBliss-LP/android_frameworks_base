@@ -1303,8 +1303,8 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
             callback.onRefreshCarrierInfo(subId, mPlmn.get(subId), mSpn.get(subId));
             callback.onSimStateChanged(subId, mSimState.get(subId));
         }
-        boolean airplaneModeOn = Settings.System.getInt(
-                mContext.getContentResolver(), Settings.System.AIRPLANE_MODE_ON, 0) != 0;
+        boolean airplaneModeOn = Settings.Secure.getInt(
+                mContext.getContentResolver(), Settings.Secure.AIRPLANE_MODE_ON, 0) != 0;
         callback.onAirplaneModeChanged(airplaneModeOn);
     }
 

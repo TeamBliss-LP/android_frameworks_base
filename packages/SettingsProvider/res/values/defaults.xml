@@ -247,5 +247,11 @@
          0. Off
          1. Right
          2. Left -->
-    <integer name="def_qs_quick_pulldown">0</integer>
+    <integer name="def_qs_quick_pulldown">2</integer>
+
+    <!-- Whether the NumKeyPad will change the orders of numbers
+         in a PIN locked lockscreen
+         0 = off | 1 = always | 2 = only on request -->
+    <integer name="lock_numpad_random">0</integer>
+    
 </resources>
