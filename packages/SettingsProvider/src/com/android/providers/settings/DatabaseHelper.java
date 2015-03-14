@@ -2121,9 +2121,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 stmt = db.compileStatement("INSERT OR REPLACE INTO system(name,value)"
                         + " VALUES(?,?);");
 
-                // Set the timeout to 30 minutes in milliseconds
+                // Set the timeout to 2 minutes in milliseconds
                 loadSetting(stmt, Settings.System.SCREEN_OFF_TIMEOUT,
-                        Integer.toString(30 * 60 * 1000));
+                        Integer.toString(2 * 60 * 1000));
             } finally {
                 if (stmt != null) stmt.close();
             }
