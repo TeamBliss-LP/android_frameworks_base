@@ -184,6 +184,10 @@ public final class BatteryStatsImpl extends BatteryStats {
     // is unplugged from power.
     final TimeBase mOnBatteryTimeBase = new TimeBase();
 
+    // These are the objects that will want to do something when the device
+    // is unplugged from power *and* the screen is off.
+    final TimeBase mOnBatteryScreenOffTimeBase = new TimeBase();
+
     // Set to true when we want to distribute CPU across wakelocks for the next
     // CPU update, even if we aren't currently running wake locks.
     boolean mDistributeWakelockCpu;
@@ -2459,7 +2463,7 @@ public final class BatteryStatsImpl extends BatteryStats {
         }
 
         boolean unpluggedScreenOff = unplugged && screenOff;
-        if (unpluggedScreenOff != mOnBatteryTimeBase.isRunning()) {
+        if (unpluggedScreenOff != mOnBatteryScreenOffTimeBase.isRunning()) {
             updateKernelWakelocksLocked();
             requestWakelockCpuUpdate();
             if (!unpluggedScreenOff) {
@@ -2467,7 +2471,7 @@ public final class BatteryStatsImpl extends BatteryStats {
                 // the next CPU update we receive to take them in to account.
                 mDistributeWakelockCpu = true;
             }
-            mOnBatteryTimeBase.setRunning(unpluggedScreenOff, uptime, realtime);
+            mOnBatteryScreenOffTimeBase.setRunning(unpluggedScreenOff, uptime, realtime);
         }
     }
 
@@ -2806,7 +2810,7 @@ public final class BatteryStatsImpl extends BatteryStats {
             return 0;
         }
 
-        if (!mOnBatteryTimeBase.isRunning() && !mDistributeWakelockCpu) {
+        if (!mOnBatteryScreenOffTimeBase.isRunning() && !mDistributeWakelockCpu) {
             return 0;
         }
 
@@ -5739,7 +5743,7 @@ public final class BatteryStatsImpl extends BatteryStats {
             final HashMap<String, Serv> mServiceStats = new HashMap<String, Serv>();
 
             Pkg() {
-                mOnBatteryTimeBase.add(this);
+                mOnBatteryScreenOffTimeBase.add(this);
             }
 
             public void onTimeStarted(long elapsedRealtime, long baseUptime, long baseRealtime) {
@@ -5750,7 +5754,7 @@ public final class BatteryStatsImpl extends BatteryStats {
             }
 
             void detach() {
-                mOnBatteryTimeBase.remove(this);
+                mOnBatteryScreenOffTimeBase.remove(this);
             }
 
             void readFromParcelLocked(Parcel in) {
@@ -6552,7 +6556,7 @@ public final class BatteryStatsImpl extends BatteryStats {
     void initTimes(long uptime, long realtime) {
         mStartClockTime = System.currentTimeMillis();
         mOnBatteryTimeBase.init(uptime, realtime);
-        mOnBatteryTimeBase.init(uptime, realtime);
+        mOnBatteryScreenOffTimeBase.init(uptime, realtime);
         mRealtime = 0;
         mUptime = 0;
         mRealtimeStart = realtime;
@@ -6584,7 +6588,7 @@ public final class BatteryStatsImpl extends BatteryStats {
         mDischargeCurrentLevel = mDischargeUnplugLevel = mDischargePlugLevel
                 = mCurrentBatteryLevel = mHistoryCur.batteryLevel;
         mOnBatteryTimeBase.reset(uptime, realtime);
-        mOnBatteryTimeBase.reset(uptime, realtime);
+        mOnBatteryScreenOffTimeBase.reset(uptime, realtime);
         if ((mHistoryCur.states&HistoryItem.STATE_BATTERY_PLUGGED_FLAG) == 0) {
             if (mScreenState == Display.STATE_ON) {
                 mDischargeScreenOnUnplugLevel = mHistoryCur.batteryLevel;
@@ -7197,12 +7201,12 @@ public final class BatteryStatsImpl extends BatteryStats {
 
     @Override
     public long computeBatteryScreenOffUptime(long curTime, int which) {
-        return mOnBatteryTimeBase.computeUptime(curTime, which);
+        return mOnBatteryScreenOffTimeBase.computeUptime(curTime, which);
     }
 
     @Override
     public long computeBatteryScreenOffRealtime(long curTime, int which) {
-        return mOnBatteryTimeBase.computeRealtime(curTime, which);
+        return mOnBatteryScreenOffTimeBase.computeRealtime(curTime, which);
     }
 
     private long computeTimePerLevel(long[] steps, int numSteps) {
@@ -7784,7 +7788,7 @@ public final class BatteryStatsImpl extends BatteryStats {
         mStartPlatformVersion = in.readString();
         mEndPlatformVersion = in.readString();
         mOnBatteryTimeBase.readSummaryFromParcel(in);
-        mOnBatteryTimeBase.readSummaryFromParcel(in);
+        mOnBatteryScreenOffTimeBase.readSummaryFromParcel(in);
         mDischargeUnplugLevel = in.readInt();
         mDischargePlugLevel = in.readInt();
         mDischargeCurrentLevel = in.readInt();
@@ -8075,7 +8079,7 @@ public final class BatteryStatsImpl extends BatteryStats {
         out.writeString(mStartPlatformVersion);
         out.writeString(mEndPlatformVersion);
         mOnBatteryTimeBase.writeSummaryToParcel(out, NOW_SYS, NOWREAL_SYS);
-        mOnBatteryTimeBase.writeSummaryToParcel(out, NOW_SYS, NOWREAL_SYS);
+        mOnBatteryScreenOffTimeBase.writeSummaryToParcel(out, NOW_SYS, NOWREAL_SYS);
         out.writeInt(mDischargeUnplugLevel);
         out.writeInt(mDischargePlugLevel);
         out.writeInt(mDischargeCurrentLevel);
@@ -8373,7 +8377,7 @@ public final class BatteryStatsImpl extends BatteryStats {
         mOnBattery = in.readInt() != 0;
         mOnBatteryInternal = false; // we are no longer really running.
         mOnBatteryTimeBase.readFromParcel(in);
-        mOnBatteryTimeBase.readFromParcel(in);
+        mOnBatteryScreenOffTimeBase.readFromParcel(in);
 
         mScreenState = Display.STATE_UNKNOWN;
         mScreenOnTimer = new StopwatchTimer(null, -1, null, mOnBatteryTimeBase, in);
@@ -8491,7 +8495,7 @@ public final class BatteryStatsImpl extends BatteryStats {
         for (int i = 0; i < numUids; i++) {
             int uid = in.readInt();
             Uid u = new Uid(uid);
-            u.readFromParcelLocked(mOnBatteryTimeBase, mOnBatteryTimeBase, in);
+            u.readFromParcelLocked(mOnBatteryTimeBase, mOnBatteryScreenOffTimeBase, in);
             mUidStats.append(uid, u);
         }
     }
@@ -8516,7 +8520,7 @@ public final class BatteryStatsImpl extends BatteryStats {
         final long uSecUptime = SystemClock.uptimeMillis() * 1000;
         final long uSecRealtime = SystemClock.elapsedRealtime() * 1000;
         final long batteryRealtime = mOnBatteryTimeBase.getRealtime(uSecRealtime);
-        final long batteryScreenOffRealtime = mOnBatteryTimeBase.getRealtime(uSecRealtime);
+        final long batteryScreenOffRealtime = mOnBatteryScreenOffTimeBase.getRealtime(uSecRealtime);
 
         out.writeInt(MAGIC);
 
@@ -8532,7 +8536,7 @@ public final class BatteryStatsImpl extends BatteryStats {
         out.writeLong(mRealtimeStart);
         out.writeInt(mOnBattery ? 1 : 0);
         mOnBatteryTimeBase.writeToParcel(out, uSecUptime, uSecRealtime);
-        mOnBatteryTimeBase.writeToParcel(out, uSecUptime, uSecRealtime);
+        mOnBatteryScreenOffTimeBase.writeToParcel(out, uSecUptime, uSecRealtime);
 
         mScreenOnTimer.writeToParcel(out, uSecRealtime);
         for (int i=0; i<NUM_SCREEN_BRIGHTNESS_BINS; i++) {
@@ -8658,8 +8662,8 @@ public final class BatteryStatsImpl extends BatteryStats {
         if (DEBUG) {
             pw.println("mOnBatteryTimeBase:");
             mOnBatteryTimeBase.dump(pw, "  ");
-            pw.println("mOnBatteryTimeBase:");
-            mOnBatteryTimeBase.dump(pw, "  ");
+            pw.println("mOnBatteryScreenOffTimeBase:");
+            mOnBatteryScreenOffTimeBase.dump(pw, "  ");
             Printer pr = new PrintWriterPrinter(pw);
             pr.println("*** Screen timer:");
             mScreenOnTimer.logState(pr, "  ");
