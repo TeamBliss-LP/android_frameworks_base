@@ -4144,19 +4144,15 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     void updateResources(Configuration newConfig) {
         final Context context = mContext;
 
-         // detect theme change.
-         ThemeConfig newTheme = newConfig != null ? newConfig.themeConfig : null;
-         if (shouldUpdateStatusbar(mCurrentTheme, newTheme)) {
-             //SettingsObserver observer = new SettingsObserver(mHandler);
-             mCurrentTheme = (ThemeConfig) newTheme.clone();
-             recreateStatusBar();
-             //if (observer != null) {
-             //  observer.update();
-             //}
-        } /* else {
+        // detect theme change.
+        ThemeConfig newTheme = newConfig != null ? newConfig.themeConfig : null;
+        final boolean updateStatusBar = shouldUpdateStatusbar(mCurrentTheme, newTheme);
+        if (newTheme != null) mCurrentTheme = (ThemeConfig) newTheme.clone();
+        if (updateStatusBar) {
+            recreateStatusBar();
+        } else {
             loadDimens();
         }
-        */
 
         // Update the quick setting tiles
         if (mQSPanel != null) {
