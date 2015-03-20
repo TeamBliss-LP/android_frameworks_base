@@ -67,12 +67,13 @@ public class QSConstants {
 
     static {
         TILES_DEFAULT.add(TILE_WIFI);
-        TILES_DEFAULT.add(TILE_BLUETOOTH);
         TILES_DEFAULT.add(TILE_CELLULAR);
+        TILES_DEFAULT.add(TILE_BLUETOOTH);
         TILES_DEFAULT.add(TILE_AIRPLANE);
         TILES_DEFAULT.add(TILE_ROTATION);
         TILES_DEFAULT.add(TILE_FLASHLIGHT);
         TILES_DEFAULT.add(TILE_LOCATION);
+        TILES_DEFAULT.add(TILE_SYNC);
         TILES_DEFAULT.add(TILE_CAST);
     }
 
