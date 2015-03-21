@@ -106,8 +106,6 @@ public class QSPanel extends ViewGroup {
     private DetailCallback mDetailCallback;
     private int mContainerTop;
 
-    private boolean mShouldVibrate;
-
     public QSPanel(Context context) {
         this(context, null);
     }
@@ -147,7 +145,7 @@ public class QSPanel extends ViewGroup {
     }
 
     public void vibrateTile(int duration) {
-        if (!mShouldVibrate) return;
+        if (!mVibrationEnabled) return;
 
         if (VIBRATION_DURATION_SHORT == duration) {
             performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
@@ -732,7 +730,7 @@ public class QSPanel extends ViewGroup {
             resolver.registerContentObserver(Settings.Secure.getUriFor(
                     Settings.Secure.QS_USE_FOUR_COLUMNS),
                     false, this, UserHandle.USER_ALL);
-            resolver.registerContentObserver(Settings.System.getUriFor(
+            resolver.registerContentObserver(Settings.Secure.getUriFor(
                     Settings.Secure.QS_TILES_VIBRATE),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
@@ -763,19 +761,19 @@ public class QSPanel extends ViewGroup {
         public void update() {
             ContentResolver resolver = mContext.getContentResolver();
             mBrightnessSliderEnabled = Settings.Secure.getIntForUser(
-            mContext.getContentResolver(), Settings.Secure.QS_SHOW_BRIGHTNESS_SLIDER,
+                mContext.getContentResolver(), Settings.Secure.QS_SHOW_BRIGHTNESS_SLIDER,
                 1, UserHandle.USER_CURRENT) == 1;
             mUseFourColumns = Settings.Secure.getIntForUser(
-            mContext.getContentResolver(), Settings.Secure.QS_USE_FOUR_COLUMNS,
+                mContext.getContentResolver(), Settings.Secure.QS_USE_FOUR_COLUMNS,
                 0, UserHandle.USER_CURRENT) == 1;
-            mVibrationEnabled = Settings.System.getIntForUser(
-            mContext.getContentResolver(), Settings.Secure.QS_TILES_VIBRATE,
+            mVibrationEnabled = Settings.Secure.getIntForUser(
+                mContext.getContentResolver(), Settings.Secure.QS_TILES_VIBRATE,
                 0, UserHandle.USER_CURRENT) == 1;
             mQSShadeTransparency = Settings.System.getIntForUser(
-            mContext.getContentResolver(), Settings.System.QS_TRANSPARENT_SHADE,
+                mContext.getContentResolver(), Settings.System.QS_TRANSPARENT_SHADE,
                 0, UserHandle.USER_CURRENT) == 1;
             mQSCSwitch = Settings.System.getIntForUser(
-            mContext.getContentResolver(), Settings.System.QS_COLOR_SWITCH,
+                mContext.getContentResolver(), Settings.System.QS_COLOR_SWITCH,
                 0, UserHandle.USER_CURRENT) == 1;
         }
     }
