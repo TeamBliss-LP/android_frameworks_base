@@ -36,7 +36,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.ParcelUuid;
 import android.util.ArrayMap;
-import android.util.ArraySet;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 
@@ -46,6 +45,7 @@ import java.io.FileDescriptor;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Set;
+import java.util.TreeSet;
 
 public class BluetoothControllerImpl implements BluetoothController {
     private static final String TAG = "BluetoothController";
@@ -142,8 +142,8 @@ public class BluetoothControllerImpl implements BluetoothController {
     }
 
     @Override
-    public ArraySet<PairedDevice> getPairedDevices() {
-        final ArraySet<PairedDevice> rt = new ArraySet<>();
+    public Set<PairedDevice> getPairedDevices() {
+        final Set<PairedDevice> rt = new TreeSet<>();
         for (int i = 0; i < mDeviceInfo.size(); i++) {
             final BluetoothDevice device = mDeviceInfo.keyAt(i);
             final DeviceInfo info = mDeviceInfo.valueAt(i);
