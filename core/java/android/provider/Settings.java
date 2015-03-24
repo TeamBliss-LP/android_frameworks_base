@@ -4264,6 +4264,12 @@ public final class Settings {
          */
         public static final String STATUS_BAR_BLISS_LOGO_COLOR = "status_bar_bliss_logo_color";
 
+		/**
+         * Status bar greeting
+         * @hide
+         */
+        public static final String STATUS_BAR_GREETING = "status_bar_greeting";
+
         /**
          * Should the storage removed notification be shown
          *

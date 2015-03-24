@@ -75,4 +75,7 @@
     <!-- Screen record notification error title -->
     <string name="screenrecord_notif_error">Unable to record screen</string>
 
+    <!-- Greeting -->
+    <string name="bliss_label">Welcome to Bliss</string>
+
 </resources>
