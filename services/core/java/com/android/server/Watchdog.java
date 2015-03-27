@@ -71,6 +71,7 @@ public class Watchdog extends Thread {
         "/system/bin/sdcard",
         "/system/bin/surfaceflinger"
     };
+    static final String SYSTEM_EXTRA_STACKS = "sys.extra.stacks";
 
     static Watchdog sWatchdog;
 
@@ -384,7 +385,7 @@ public class Watchdog extends Thread {
                         ArrayList<Integer> pids = new ArrayList<Integer>();
                         pids.add(Process.myPid());
                         ActivityManagerService.dumpStackTraces(true, pids, null, null,
-                                NATIVE_STACKS_OF_INTEREST);
+                                 getNativePidsOfInterest());
                         waitedHalf = true;
                     }
                     continue;
@@ -407,7 +408,7 @@ public class Watchdog extends Thread {
             // Pass !waitedHalf so that just in case we somehow wind up here without having
             // dumped the halfway stacks, we properly re-initialize the trace file.
             final File stack = ActivityManagerService.dumpStackTraces(
-                    !waitedHalf, pids, null, null, NATIVE_STACKS_OF_INTEREST);
+                    !waitedHalf, pids, null, null,  getNativePidsOfInterest());
 
             // Give some extra time to make sure the stack traces get written.
             // The system's been hanging for a minute, another second or two won't hurt much.
@@ -540,6 +541,43 @@ public class Watchdog extends Thread {
 
         native_dumpKernelStacks(tracesPath);
         return new File(tracesPath);
+    }
+
+    public static int[] getNativePidsOfInterest() {
+        ArrayList<Integer> lPids = new ArrayList<Integer>();
+        int[] pids = Process.getPidsForCommands(NATIVE_STACKS_OF_INTEREST);
+        if (pids != null) {
+            for (int pid : pids) {
+                lPids.add(pid);
+            }
+        }
+
+        pids = null;
+        String extraConf = SystemProperties.get(SYSTEM_EXTRA_STACKS, "");
+        if ("binder".equals(extraConf)) {
+            pids = Process.getListOfPids(true, false);
+        } else if ("all".equals(extraConf)) {
+            pids = Process.getListOfPids(false, false);
+        } else if ("binder-native".equals(extraConf)) {
+            pids = Process.getListOfPids(true, true);
+        } else if ("all-native".equals(extraConf)) {
+            pids = Process.getListOfPids(false, true);
+        }
+
+        if (pids != null) {
+            for (int pid : pids) {
+                if (!lPids.contains(pid)) {
+                    lPids.add(pid);
+                }
+            }
+        }
+
+        pids = new int[lPids.size()];
+        int i = 0;
+        for (Integer pid : lPids) {
+            pids[i++] = pid.intValue();
+        }
+        return pids;
     }
 
     private native void native_dumpKernelStacks(String tracesPath);

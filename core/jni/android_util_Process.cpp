@@ -1003,6 +1003,86 @@ jintArray android_os_Process_getPidsForCommands(JNIEnv* env, jobject clazz,
     return pidArray;
 }
 
+jintArray android_os_Process_getListOfPids(JNIEnv* env, jobject clazz,
+        jboolean binder_only, jboolean native_only)
+{
+    Vector<jint> pids;
+    DIR *proc;
+
+    Vector<String8> blackList;
+    blackList.add(String8("/system/bin/debuggerd"));
+    blackList.add(String8("/system/bin/debuggerd64"));
+
+    Vector<String8> managedRunners;
+    managedRunners.add(String8("/system/bin/app_process32"));
+    managedRunners.add(String8("/system/bin/app_process64"));
+
+    if (binder_only) {
+        proc  = opendir("/sys/kernel/debug/binder/proc");
+    } else {
+        proc = opendir("/proc");
+    }
+
+    if (proc == NULL) {
+        fprintf(stderr, "Cannot open source dir: %s\n", strerror(errno));
+        return NULL;
+    }
+
+    struct dirent *d;
+    while ((d = readdir(proc))) {
+        int pid = atoi(d->d_name);
+        if (pid <= 0) {
+            continue;
+        }
+
+        char path[PATH_MAX];
+        char data[PATH_MAX];
+        snprintf(path, sizeof(path), "/proc/%d/exe", pid);
+
+        const int len = readlink(path, data, sizeof(data)-1);
+
+        if (len < 0) {
+            continue;
+        }
+
+        data[len] = 0;
+
+        bool skip = false;
+        for (size_t i=0; i<blackList.size(); i++) {
+            if (blackList[i] == data) {
+                skip = true;
+                break;
+            }
+        }
+        if (native_only && !skip) {
+            for (size_t i=0; i<managedRunners.size(); i++) {
+                if (managedRunners[i] == data) {
+                    skip = true;
+                    break;
+                }
+            }
+        }
+
+        if (!skip) {
+            pids.add(pid);
+        }
+    }
+
+    closedir(proc);
+
+    jintArray pidArray = env->NewIntArray(pids.size());
+    if (pidArray == NULL) {
+        jniThrowException(env, "java/lang/OutOfMemoryError", NULL);
+        return NULL;
+    }
+
+    if (pids.size() > 0) {
+        env->SetIntArrayRegion(pidArray, 0, pids.size(), pids.array());
+    }
+
+    return pidArray;
+}
+
 jint android_os_Process_killProcessGroup(JNIEnv* env, jobject clazz, jint uid, jint pid)
 {
     return killProcessGroup(uid, pid, SIGKILL);
@@ -1039,6 +1119,7 @@ static const JNINativeMethod methods[] = {
     {"getElapsedCpuTime", "()J", (void*)android_os_Process_getElapsedCpuTime},
     {"getPss", "(I)J", (void*)android_os_Process_getPss},
     {"getPidsForCommands", "([Ljava/lang/String;)[I", (void*)android_os_Process_getPidsForCommands},
+    {"getListOfPids", "(ZZ)[I", (void*)android_os_Process_getListOfPids},
     //{"setApplicationObject", "(Landroid/os/IBinder;)V", (void*)android_os_Process_setApplicationObject},
     {"killProcessGroup", "(II)I", (void*)android_os_Process_killProcessGroup},
     {"removeAllProcessGroups", "()V", (void*)android_os_Process_removeAllProcessGroups},

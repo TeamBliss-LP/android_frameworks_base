@@ -28,7 +28,7 @@ import static com.android.internal.util.XmlUtils.readLongAttribute;
 import static com.android.internal.util.XmlUtils.writeBooleanAttribute;
 import static com.android.internal.util.XmlUtils.writeIntAttribute;
 import static com.android.internal.util.XmlUtils.writeLongAttribute;
-import static com.android.server.Watchdog.NATIVE_STACKS_OF_INTEREST;
+import static com.android.server.Watchdog.getNativePidsOfInterest;
 import static org.xmlpull.v1.XmlPullParser.END_DOCUMENT;
 import static org.xmlpull.v1.XmlPullParser.START_TAG;
 import static com.android.server.am.ActivityStackSupervisor.HOME_STACK_ID;
@@ -372,8 +372,9 @@ public final class ActivityManagerService extends ActivityManagerNative
 
     static final String[] EMPTY_STRING_ARRAY = new String[0];
 
-    // How many bytes to write into the dropbox log before truncating
-    static final int DROPBOX_MAX_SIZE = 256 * 1024;
+    // Default maximum kilobytes to write into the dropbox log before truncating
+    static final int DROPBOX_MAX_SIZE = 256;
+    static final String SYSTEM_DROPBOX_MAX_SIZE = "sys.dropbox.max.size";
 
     static final String PROP_REFRESH_THEME = "sys.refresh_theme";
 
@@ -700,6 +701,10 @@ public final class ActivityManagerService extends ActivityManagerNative
      */
     final HashMap<IBinder, ReceiverList> mRegisteredReceivers =
             new HashMap<IBinder, ReceiverList>();
+
+    static int getDropboxMaxSize() {
+        return SystemProperties.getInt(SYSTEM_DROPBOX_MAX_SIZE, DROPBOX_MAX_SIZE) * 1024;
+    }
 
     /**
      * Resolver for broadcast intents to registered receivers.
@@ -4848,11 +4853,11 @@ public final class ActivityManagerService extends ActivityManagerNative
      *    appended to any existing file content.
      * @param firstPids of dalvik VM processes to dump stack traces for first
      * @param lastPids of dalvik VM processes to dump stack traces for last
-     * @param nativeProcs optional list of native process names to dump stack crawls
+     * @param nativeProcs optional list of native process ID's to dump stack crawls
      * @return file containing stack traces, or null if no dump file is configured
      */
     public static File dumpStackTraces(boolean clearTraces, ArrayList<Integer> firstPids,
-            ProcessCpuTracker processCpuTracker, SparseArray<Boolean> lastPids, String[] nativeProcs) {
+            ProcessCpuTracker processCpuTracker, SparseArray<Boolean> lastPids, int[] nativeProcs) {
         String tracesPath = SystemProperties.get("dalvik.vm.stack-trace-file", null);
         if (tracesPath == null || tracesPath.length() == 0) {
             return null;
@@ -4882,7 +4887,7 @@ public final class ActivityManagerService extends ActivityManagerNative
     }
 
     private static void dumpStackTraces(String tracesPath, ArrayList<Integer> firstPids,
-            ProcessCpuTracker processCpuTracker, SparseArray<Boolean> lastPids, String[] nativeProcs) {
+            ProcessCpuTracker processCpuTracker, SparseArray<Boolean> lastPids, int[] nativeProcs) {
         // Use a FileObserver to detect when traces finish writing.
         // The order of traces is considered important to maintain for legibility.
         FileObserver observer = new FileObserver(tracesPath, FileObserver.CLOSE_WRITE) {
@@ -4910,11 +4915,8 @@ public final class ActivityManagerService extends ActivityManagerNative
 
             // Next collect the stacks of the native pids
             if (nativeProcs != null) {
-                int[] pids = Process.getPidsForCommands(nativeProcs);
-                if (pids != null) {
-                    for (int pid : pids) {
-                        Debug.dumpNativeBacktraceToFile(pid, tracesPath);
-                    }
+                for (int pid : nativeProcs) {
+                    Debug.dumpNativeBacktraceToFile(pid, tracesPath);
                 }
             }
 
@@ -5119,7 +5121,7 @@ public final class ActivityManagerService extends ActivityManagerNative
         final ProcessCpuTracker processCpuTracker = new ProcessCpuTracker(true);
 
         File tracesFile = dumpStackTraces(true, firstPids, processCpuTracker, lastPids,
-                NATIVE_STACKS_OF_INTEREST);
+                 getNativePidsOfInterest());
 
         String cpuInfo = null;
         if (MONITOR_CPU_USAGE) {
@@ -12201,7 +12203,7 @@ public final class ActivityManagerService extends ActivityManagerNative
                 }
                 if (logFile != null) {
                     try {
-                        sb.append(FileUtils.readTextFile(logFile, DROPBOX_MAX_SIZE,
+                        sb.append(FileUtils.readTextFile(logFile, getDropboxMaxSize(),
                                     "\n\n[[TRUNCATED]]"));
                     } catch (IOException e) {
                         Slog.e(TAG, "Error reading " + logFile, e);
