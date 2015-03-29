@@ -269,6 +269,10 @@ public class LiveDisplayController {
         }
     }
 
+    public void updateLiveDisplay() {
+        updateLiveDisplay(mCurrentLux);
+    }
+
     public synchronized void updateLiveDisplay(float lux) {
         mCurrentLux = lux;
         mHandler.removeMessages(MSG_UPDATE_LIVE_DISPLAY);
