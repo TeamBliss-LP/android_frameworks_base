@@ -35,8 +35,8 @@
   <string name="global_action_screenshot">Ekran görüntüsü</string>
   <string name="permgrouplab_security">Təhlükəsizlik</string>
   <string name="permgroupdesc_security">Cihaz təhlükəsizlik məlumatı ilə bağlı icazələr.</string>
-  <string name="permlab_accessThemeService">tema xidmətinə giriş</string>
-  <string name="permdesc_accessThemeService">Tətbiqetmənin tema xidmətinə girişinə icazə verər. Normal tətbiqlər üçün buna ehtiyac yoxdur.</string>
+  <string name="permlab_accessThemeService">tema xidmətinə müraciət</string>
+  <string name="permdesc_accessThemeService">Tətbiqetmənin tema xidmətinə müraciətinə icazə verər. Normal tətbiqlər üçün buna ehtiyac yoxdur.</string>
   <string name="permlab_readThemes">tema məlumatını oxu</string>
   <string name="permdesc_readThemesDesc">Tətbiqetmənin temalarınızı oxumasına və hansı temanı tətbiq etdiyinizi müəyyən etməyə icazə verər.</string>
   <string name="permlab_writeThemes">temaları dəyişin</string>
@@ -45,13 +45,13 @@
   <string name="permdesc_readPhoneBlacklist">Tətbiqetmənin gələn zəngləri və ya mesajları əngəllənmiş telefon nömrələri haqqında məlumat oxumasına icazə verər.</string>
   <string name="permlab_changePhoneBlacklist">telefon qara siyahısını dəyişdir</string>
   <string name="permdesc_changePhoneBlacklist">Tətbiqetmənin gələn zəngləri və ya mesajları əngəllənmiş telefon nömrələrini dəyişdirməsinə icazə verər.</string>
-  <string name="permlab_changePrivacyGuardState">Gizlilik Qorumasını aktivləşdir ya da söndür</string>
-  <string name="permdesc_changePrivacyGuardState">Tətbiqetməyə başqa bir tətbiqetmənin Gizlilik Qorumasını işlədib işlədə bilməyəcəyini dəyişmə icazəsi verər. Əgər tətbiqetmə Gizlilik Qoruması ilə işləyərsə şəxslər, zəng qeydləri və ya mesajlar kimi şəxsi məlumatlara daxil ola bilməyəcək.</string>
-  <string name="privacy_guard_notification">Gizlilik Qoruması aktivdir</string>
-  <string name="privacy_guard_notification_detail"><xliff:g id="app">%1$s</xliff:g> məxfi məlumatlara daxil olmayacaq</string>
-  <string name="permlab_useHardwareFramework">təchizat altsistemini işlət</string>
-  <string name="permdesc_useHardwareFramework">Tətbiqetmənin CM təchizat altsisteminə girişinə icazə verər.</string>
-  <string name="permlab_setKeyguardWallpaper">klaviatura divar kağızını nizamla</string>
+  <string name="permlab_changePrivacyGuardState">Gizlilik Qorumasını fəallaşdır ya da ləğv et</string>
+  <string name="permdesc_changePrivacyGuardState">Tətbiqetməyə başqa bir tətbiqetmənin Gizlilik Qorumasını işlədib işlədə bilməyəcəyini müəyyənləşdirmə imkanı verər. Əgər tətbiqetmə Gizlilik Qoruması ilə işləyərsə şəxslər, zəng qeydləri və ya mesajlar kimi şəxsi verilənlərə müraciət edə bilməyəcək.</string>
+  <string name="privacy_guard_notification">Gizlilik Qoruması fəaldır</string>
+  <string name="privacy_guard_notification_detail"><xliff:g id="app">%1$s</xliff:g> şəxsi verilənlərə müraciət edə bilməyəcək</string>
+  <string name="permlab_useHardwareFramework">təchizat infrastrukturundan istifadə et</string>
+  <string name="permdesc_useHardwareFramework">Tətbiqetmənin CM təchizat infrastrukturuna müraciətinə icazə verər.</string>
+  <string name="permlab_setKeyguardWallpaper">klaviatura divar kağızını tənzimlə</string>
   <string name="permdesc_setKeyguardWallpaper">Tətbiqetmənin kilit ekranı divar kağızını dəyişdirməsinə icazə verər.</string>
   <string name="privacy_guard_dialog_title">Gizlilik Qoruması</string>
   <string name="privacy_guard_dialog_summary"><xliff:g id="app">%1$s</xliff:g> <xliff:g id="op">%2$s</xliff:g> icazəsindən istifadə etmək istəyir.</string>
@@ -64,13 +64,25 @@
   <string name="reboot_confirm" product="tablet">Planşetiniz yenidən başladılacaq.</string>
   <string name="reboot_confirm" product="default">Telefonunuz yenidən başlayacaq.</string>
   <string name="reboot_progress">Yenidən başladılır\u2026</string>
-  <string name="adb_net_active_notification_title">ADB şəbəkə üzərindən aktivdir</string>
-  <string name="adb_both_active_notification_title">ADB USB &amp; şəbəkəsi üzərindən aktivdir</string>
-  <string name="adb_active_generic_notification_message">Sazlamanı bağlamaq üçün toxunun.</string>
-  <string name="app_ops_access_camera">kameraya giriş</string>
-  <string name="app_ops_access_location">məkanınıza giriş</string>
+  <string name="app_killed_message">Tətbiq sonlandırıldı</string>
+  <string name="adb_net_active_notification_title">Şəbəkə üzərindən ADB fəaldır</string>
+  <string name="adb_both_active_notification_title">USB &amp; şəbəkə üzərindən ADB fəaldır</string>
+  <string name="adb_active_generic_notification_message">Xəta ayırdetməni ləğv etmək üçün toxunun.</string>
+  <string name="usb_choose_notification_title">USB seçimləri üçün toxunun.</string>
+  <string name="permlab_interceptPackageLaunch">tətbiqetmə başlatmanın qarşısını al</string>
+  <string name="permdesc_interceptPackageLaunch">Tətbiqetməyə digər tətbiqetmələrin başlamasını əngəlləmək icazə verər</string>
+  <string name="app_ops_access_camera">kameraya müraciət</string>
+  <string name="app_ops_access_location">olduğunuz yerə müraciət</string>
   <string name="app_ops_access_notifications">bildirişləri oxu</string>
   <string name="app_ops_alarm_wakeup">cihazı oyandır</string>
+  <string name="app_ops_su">root müraciəti əldə et</string>
+  <string name="app_ops_auto_start">açılanda başla</string>
+  <string name="app_ops_delete_call_log">zəng qeydini sil</string>
+  <string name="app_ops_delete_contacts">şəxsləri sil</string>
+  <string name="app_ops_delete_mms">MMS mesajlarını sil</string>
+  <string name="app_ops_delete_sms">SMS mesajlarını sil</string>
+  <string name="app_ops_draw_on_top">pəncərələri yuxarıda göstər</string>
+  <string name="app_ops_get_usage_stats">tətbiq istifadə statistikalarını al</string>
   <string name="app_ops_keep_device_awake">cihazı oyanıq saxla</string>
   <string name="app_ops_make_phone_call">telefon zəngi edin</string>
   <string name="app_ops_modify_calendar">təqvimi yenilə</string>
@@ -115,4 +127,36 @@
   <string name="theme_install_error_title">Tema yüklənə bilmədi</string>
   <string name="theme_install_error_message">%s yüklənə bilmədi</string>
   <string name="permlab_interceptSmsSent">gedən SMS\'i dayandır</string>
+  <string name="permdesc_interceptSmsSent">Tətbiqetmənin gedən SMS\'i dayandırmasına icazə verər. Zərərli tətbiqetmələr gedən SMS mesajlarının qarşısını almaq üçün bundan istifadə edə bilər.</string>
+  <string name="permlab_accessTorchService">fənər xidmətinə müraciət</string>
+  <string name="permdesc_accessTorchService">Tətbiqetməyə fənər xidmətinə müraciətinə icazə verər. Normal tətbiqetmələr üçün lazım deyil.</string>
+  <string name="permlab_preventpower">güc düyməsinin funksiyasını dəyişdir</string>
+  <string name="permdesc_preventpower">Tətbiqetməyə güc düyməsinin funksiyasını dəyişdirmə icazəsi verər.</string>
+  <string name="usb_extmedia_format_message">USB saxlama (\'%1$s\') yerinizdəki bütün verilənlər silənəcək. Bu hərəkətin geri dönüşü yoxdur!</string>
+  <string name="sd_extmedia_format_message">Kartınızdakı (\'%1$s\') bütün verilənlər silinəcək. Bu hərəkətin geri dönüşü yoxdur!</string>
+  <string name="sd_progress_unmounting">SD kartla əlaqə kəsilir\u2026</string>
+  <string name="sd_progress_erasing">SD kart silinir\u2026</string>
+  <string name="sd_format_error">SD kart silinə bilmədi.</string>
+  <string name="sd_media_bad_removal">SD kart əlaqə kəsilmədən çıxarıldı.</string>
+  <string name="sd_media_checking">SD kart hal-hazırda yoxlanılır.</string>
+  <string name="sd_media_removed">SD kart çıxarıldı.</string>
+  <string name="sd_media_shared">SD kart kompüter tərəfindən istifadə olunur.</string>
+  <string name="usb_progress_unmounting">USD yaddaşla əlaqə kəsilir\u2026</string>
+  <string name="usb_progress_erasing">USD yaddaş silinir\u2026</string>
+  <string name="usb_format_error">USB yaddaş silinə bilmədi.</string>
+  <string name="usb_media_bad_removal">USB yaddaş əlaqə kəsilmədən çıxarıldı.</string>
+  <string name="usb_media_checking">USB yaddaş hal-hazırda yoxlanılır.</string>
+  <string name="usb_media_removed">USB yaddaş çıxarıldı.</string>
+  <string name="usb_media_shared">USB yaddaş kompüter tərəfindən istifadə olunur.</string>
+  <string name="live_display_auto">Avtomatik</string>
+  <string name="live_display_auto_summary">Gün çıxandan və batandan sonra ekranın rəng hərarətini avtomatik tənzimləyər</string>
+  <string name="live_display_off">Bağlı</string>
+  <string name="live_display_off_summary">Bütün tənzimləmələri ləğv et</string>
+  <string name="live_display_day">Gündüz</string>
+  <string name="live_display_day_summary">Yalnız gündüz tənziml. istifadə et</string>
+  <string name="live_display_night">Gecə</string>
+  <string name="live_display_night_summary">Yalnız gecə tənziml. istifadə et</string>
+  <string name="live_display_outdoor">Açıq hava (parlaq günəş)</string>
+  <string name="live_display_outdoor_summary">Yalnız açıq hava tənziml. istifadə et</string>
+  <string name="live_display_hint">LiveDisplay göz yorğunluğunuzu azaldıb gecələri yuxulamağınıza kömək edə bilər. Yoxlamaq üçün bura klikləyin!</string>
 </resources>
