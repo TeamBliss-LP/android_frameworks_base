@@ -68,6 +68,7 @@ import android.graphics.PixelFormat;
 import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.PorterDuff;
+import android.graphics.PorterDuff.Mode;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
@@ -381,6 +382,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     // Bliss logo
     private boolean mBlissLogo;
+    private int mBlissLogoColor;
     private ImageView blissLogo;
 
     // battery
@@ -507,6 +509,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_BLISS_LOGO),
                     false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_BLISS_LOGO_COLOR),
+                    false, this, UserHandle.USER_ALL);
             update();
         }
 
@@ -585,7 +590,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     resolver, Settings.System.BATTERY_SAVER_MODE_COLOR, 1) == 1;
             mBlissLogo = Settings.System.getIntForUser(resolver,
                     Settings.System.STATUS_BAR_BLISS_LOGO, 0, mCurrentUserId) == 1;
-            showBlissLogo(mBlissLogo);
+            mBlissLogoColor = Settings.System.getIntForUser(resolver,
+                    Settings.System.STATUS_BAR_BLISS_LOGO_COLOR, 0xFFFFFFFF, mCurrentUserId);
+            showBlissLogo(mBlissLogo, mBlissLogoColor);
         }
     }
 
@@ -3849,10 +3856,11 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         }
     };
 
-    public void showBlissLogo(boolean show) {
+    public void showBlissLogo(boolean show, int color) {
         if (mStatusBarView == null) return;
         ContentResolver resolver = mContext.getContentResolver();
         blissLogo = (ImageView) mStatusBarView.findViewById(R.id.bliss_logo);
+        blissLogo.setColorFilter(color, Mode.SRC_IN);
         if (blissLogo != null) {
             blissLogo.setVisibility(show ? (mBlissLogo ? View.VISIBLE : View.GONE) : View.GONE);
         }
