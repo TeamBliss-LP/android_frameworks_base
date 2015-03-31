@@ -4389,6 +4389,11 @@ public final class Settings {
         public static final String VOLUME_KEYS_DEFAULT = "volume_keys_default";
 
         /**
+         * Define when Nfc polling is activated.
+         */
+        public static final String NFC_POLLING_MODE = "nfc_polling";
+
+        /**
          * Settings to backup. This is here so that it's in the same place as the settings
          * keys and easy to update.
          *
