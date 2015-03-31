@@ -6578,6 +6578,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                         mBootMsgDialog.setTitle(R.string.android_start_title);
                     }
                     mBootMsgDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                    mBootMsgDialog.setIcon(com.android.internal.R.drawable.boot_logo);
                     mBootMsgDialog.setIndeterminate(true);
                     mBootMsgDialog.getWindow().setType(
                             WindowManager.LayoutParams.TYPE_BOOT_PROGRESS);
@@ -6599,13 +6600,14 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                     // Calculate random text color
                     Random rand = new Random();
                     String randomColor = Integer.toHexString(rand.nextInt(0xFFFFFF) & 0xFCFCFC );
-                    mBootMsgDialog.setMessage(Html.fromHtml(msg +
+                    mBootMsgDialog.setMessage(Html.fromHtml("Powered By Team Bliss\n\n" + msg +
                                                             "<br><b><font color=\"#" + randomColor + "\">" +
                                                             currentPackageName +
-                                                            "</font></b>"));
+                                                            "</font></b>" + "\n\nPlease do not power off or remove from power source.));
                 }
                 else {
-                    mBootMsgDialog.setMessage(msg);
+                    mBootMsgDialog.setMessage("Powered By Team Bliss\n\n" + msg
+                    + "\n\nPlease do not power off or remove from power source.");
                 }
             }
         });
