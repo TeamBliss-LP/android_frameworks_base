@@ -3724,7 +3724,7 @@
       has violated its self-enforced StrictMode policy.</string>
 
     <!-- [CHAR LIMIT=40] Title of dialog that is shown when performing a system upgrade. -->
-    <string name="android_upgrading_title">Android is upgrading\u2026</string>
+    <string name="android_upgrading_title">BlissPop is upgrading\u2026</string>
 
     <!-- [CHAR LIMIT=40] Title of dialog that is shown when system is starting. -->
     <string name="android_start_title">Android is starting\u2026</string>
@@ -3741,7 +3741,7 @@
     <string name="android_upgrading_starting_apps">Starting apps.</string>
 
     <!-- [CHAR LIMIT=NONE] Message to show in upgrading dialog when the bulk of the upgrade work is done. -->
-    <string name="android_upgrading_complete">Finishing boot.</string>
+    <string name="android_upgrading_complete">Welcome to Bliss.</string>
 
     <!-- Notification text to tell the user that a heavy-weight application is running. -->
     <string name="heavy_weight_notification"><xliff:g id="app">%1$s</xliff:g> running</string>
