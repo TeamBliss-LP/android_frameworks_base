@@ -6603,7 +6603,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                     mBootMsgDialog.setMessage(Html.fromHtml("Powered By Team Bliss\n\n" + msg +
                                                             "<br><b><font color=\"#" + randomColor + "\">" +
                                                             currentPackageName +
-                                                            "</font></b>" + "\n\nPlease do not power off or remove from power source.));
+                                                            "</font></b>" + "\n\nPlease do not power off or remove from power source."));
                 }
                 else {
                     mBootMsgDialog.setMessage("Powered By Team Bliss\n\n" + msg
