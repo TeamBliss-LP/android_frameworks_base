@@ -208,6 +208,7 @@ public abstract class BaseStatusBar extends SystemUI implements
     protected boolean mUseHeadsUp = false;
     protected boolean mHeadsUpTicker = false;
     protected boolean mDisableNotificationAlerts = false;
+    protected boolean mHeadsUpUserEnabled = false;
 
     protected DevicePolicyManager mDevicePolicyManager;
     protected IDreamManager mDreamManager;
@@ -248,8 +249,6 @@ public abstract class BaseStatusBar extends SystemUI implements
 
     private ArrayList<String> mDndList;
     private ArrayList<String> mBlacklist;
-
-    protected AppCircleSidebar mAppCircleSidebar;
 
     // which notification is currently being longpress-examined by the user
     private NotificationGuts mNotificationGutsExposed;
@@ -1261,7 +1260,6 @@ public abstract class BaseStatusBar extends SystemUI implements
     }
 
     public abstract void resetHeadsUpDecayTimer();
-    public abstract void hideHeadsUp();
 
     public abstract void scheduleHeadsUpOpen();
 
@@ -2218,6 +2216,12 @@ public abstract class BaseStatusBar extends SystemUI implements
         }
 
         // some predicates to make the boolean logic legible
+        int ZEN_MODE_OFF = Settings.Global.ZEN_MODE_OFF;
+        int ZEN_MODE_NO_INTERRUPTIONS = Settings.Global.ZEN_MODE_NO_INTERRUPTIONS;
+        int asHeadsUp = notification.extras.getInt(Notification.EXTRA_AS_HEADS_UP,
+                Notification.HEADS_UP_ALLOWED);
+        boolean zenBlocksHeadsUp = Settings.Global.getInt(mContext.getContentResolver(),
+                Settings.Global.ZEN_MODE, ZEN_MODE_OFF) == ZEN_MODE_NO_INTERRUPTIONS;
         boolean isNoisy = (notification.defaults & Notification.DEFAULT_SOUND) != 0
                 || (notification.defaults & Notification.DEFAULT_VIBRATE) != 0
                 || notification.sound != null
@@ -2225,32 +2229,32 @@ public abstract class BaseStatusBar extends SystemUI implements
         boolean isHighPriority = sbn.getScore() >= INTERRUPTION_THRESHOLD;
         boolean isFullscreen = notification.fullScreenIntent != null;
         boolean hasTicker = mHeadsUpTicker && !TextUtils.isEmpty(notification.tickerText);
-        int asHeadsUp = notification.extras.getInt(Notification.EXTRA_AS_HEADS_UP,
-                Notification.HEADS_UP_ALLOWED);
-        boolean isAllowed = asHeadsUp != Notification.HEADS_UP_NEVER;
+        boolean isAllowed = notification.extras.getInt(Notification.EXTRA_AS_HEADS_UP,
+                Notification.HEADS_UP_ALLOWED) != Notification.HEADS_UP_NEVER;
         boolean isOngoing = sbn.isOngoing();
         boolean accessibilityForcesLaunch = isFullscreen
                 && mAccessibilityManager.isTouchExplorationEnabled();
-
-        boolean keyguardIsShowing = keyguard.isShowingAndNotOccluded()
-                && keyguard.isInputRestricted();
 
         boolean isExpanded = false;
             if (mStackScroller != null) {
                 isExpanded = mStackScroller.getIsExpanded();
         }
 
-        boolean interrupt = (isFullscreen || (isHighPriority && (isNoisy || hasTicker))
-                || asHeadsUp == Notification.HEADS_UP_REQUESTED)
+        final InputMethodManager inputMethodManager = (InputMethodManager)
+                mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
+
+        boolean isIMEShowing = inputMethodManager.isImeShowing();
+
+        boolean interrupt = (isFullscreen || (isHighPriority && (isNoisy || hasTicker)))
                 && isAllowed
                 && !accessibilityForcesLaunch
                 && mPowerManager.isScreenOn()
+                && !isExpanded
+                && !zenBlocksHeadsUp
+                && !isIMEShowing
                 && (!mStatusBarKeyguardViewManager.isShowing()
                         || mStatusBarKeyguardViewManager.isOccluded())
-                && !mStatusBarKeyguardViewManager.isInputRestricted()
-                && !keyguardIsShowing
-                && !isExpanded
-                && !isImeShowing();
+                && !mStatusBarKeyguardViewManager.isInputRestricted();
         try {
             interrupt = interrupt && !mDreamManager.isDreaming();
         } catch (RemoteException e) {
@@ -2259,7 +2263,8 @@ public abstract class BaseStatusBar extends SystemUI implements
 
         // its below our threshold priority, we might want to always display
         // notifications from certain apps
-        if (!isHighPriority && !isOngoing && !keyguardIsShowing && !isExpanded) {
+        if (!isHighPriority && !isOngoing && !isExpanded
+                    && !zenBlocksHeadsUp && !isIMEShowing) {
             // However, we don't want to interrupt if we're in an application that is
             // in Do Not Disturb
             if (!isPackageInDnd(getTopLevelPackage())) {
@@ -2268,7 +2273,7 @@ public abstract class BaseStatusBar extends SystemUI implements
         }
 
         if (DEBUG) Log.d(TAG, "interrupt: " + interrupt);
-        return interrupt;
+            return interrupt;
     }
 
     private String getTopLevelPackage() {
@@ -2299,16 +2304,6 @@ public abstract class BaseStatusBar extends SystemUI implements
                 }
             }
         }
-    }
-
-    /**
-     * @return Whether IME input is showing.
-     */
-    public boolean isImeShowing() {
-        final InputMethodManager inputMethodManager = (InputMethodManager)
-                mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
-
-        return inputMethodManager != null ? inputMethodManager.isImeShowing() : false;
     }
 
     public void setInteracting(int barWindow, boolean interacting) {

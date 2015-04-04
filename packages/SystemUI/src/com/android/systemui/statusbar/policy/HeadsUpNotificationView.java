@@ -120,7 +120,7 @@ public class HeadsUpNotificationView extends FrameLayout implements SwipeHelper.
 
         mHeadsUp = headsUp;
 
-        if (mBar.isExpandedVisible() || mBar.isImeShowing()) {
+        if (mBar.isExpandedVisible()) {
             releaseAndClose();
             return false; // There is really no need, right?
         }
@@ -351,7 +351,6 @@ public class HeadsUpNotificationView extends FrameLayout implements SwipeHelper.
                 mBar.resetHeadsUpDecayTimer();
                 return mEdgeSwipeHelper.onTouchEvent(ev)
                         || mSwipeHelper.onTouchEvent(ev)
-                        || mExpandHelper.onTouchEvent(ev)
                         || super.onTouchEvent(ev);
         }
     }
@@ -418,7 +417,6 @@ public class HeadsUpNotificationView extends FrameLayout implements SwipeHelper.
         return 1.0f;
     }
 
-    @Override
     public void onChildDismissed(View v, boolean direction) {
         if (DEBUG)  Log.v(TAG, "User swiped heads up to dismiss");
         mBar.onHeadsUpDismissed(direction);
