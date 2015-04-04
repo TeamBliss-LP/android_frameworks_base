@@ -213,7 +213,7 @@
     <string name="def_device_name_simple">%1$s</string>
 
     <!-- Default for Settings.Secure.WAKE_GESTURE_ENABLED -->
-    <bool name="def_wake_gesture_enabled">true</bool>
+    <bool name="def_wake_gesture_enabled">false</bool>
 
     <!-- Default for Settings.Global.GUEST_USER_ENABLED -->
     <bool name="def_guest_user_enabled">true</bool>
