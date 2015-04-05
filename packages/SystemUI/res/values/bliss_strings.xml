@@ -8,6 +8,9 @@
     <string name="quick_settings_usb_tether">USB tethering</string>
     <string name="quick_settings_hwkeys_on">Hardware Keys Enabled</string>
     <string name="quick_settings_hwkeys_off">Hardware Keys Disabled</string>
+    <!-- Heads up toast -->
+    <string name="heads_up_enabled">Heads up notifications are enabled</string>
+    <string name="heads_up_disabled">Heads up notifications are disabled</string>
     
     <!-- mount notifications -->
     <string name="ext_media_mounted_notification_title">mounted</string>
