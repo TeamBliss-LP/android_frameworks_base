@@ -33,10 +33,10 @@ public final class PhoneStatusBarTransitions extends BarTransitions {
     private final PhoneStatusBarView mView;
     private final float mIconAlphaWhenOpaque;
 
-    private View mLeftSide, mStatusIcons, mSignalCluster, mBattery, mClock, mNetworkTraffic,
-	        mBlissLogo;
-
-	private Animator mCurrentAnimation;
+    private View mLeftSide, mStatusIcons, mSignalCluster, mBattery, mClock, mCenterClock, mLeftClock,
+            mNetworkTraffic, mBlissLogo;
+			
+    private Animator mCurrentAnimation;
 
     public PhoneStatusBarTransitions(PhoneStatusBarView view) {
         super(view, R.drawable.status_background, R.color.status_bar_background_opaque,
@@ -59,9 +59,11 @@ public final class PhoneStatusBarTransitions extends BarTransitions {
         mBattery = mView.findViewById(R.id.battery);
         mClock = mView.findViewById(R.id.clock);
         mNetworkTraffic = mView.findViewById(R.id.networkTraffic);
+        mBlissLogo = mView.findViewById(R.id.bliss_logo);
+        mCenterClock = mView.findViewById(R.id.center_clock);
+        mLeftClock = mView.findViewById(R.id.left_clock);		
         applyModeBackground(-1, getMode(), false /*animate*/);
         applyMode(getMode(), false /*animate*/);
-		mBlissLogo = mView.findViewById(R.id.bliss_logo);
     }
 
     public ObjectAnimator animateTransitionTo(View v, float toAlpha) {
@@ -106,6 +108,8 @@ public final class PhoneStatusBarTransitions extends BarTransitions {
                     animateTransitionTo(mNetworkTraffic, newAlpha),
                     animateTransitionTo(mBattery, newAlphaBC),
                     animateTransitionTo(mClock, newAlphaBC),
+                    animateTransitionTo(mCenterClock, newAlphaBC),
+                    animateTransitionTo(mLeftClock, newAlphaBC),
                     animateTransitionTo(mBlissLogo, newAlphaBC)
                     );
             if (mode == MODE_LIGHTS_OUT) {
@@ -120,6 +124,8 @@ public final class PhoneStatusBarTransitions extends BarTransitions {
             mNetworkTraffic.setAlpha(newAlpha);
             mBattery.setAlpha(newAlphaBC);
             mClock.setAlpha(newAlphaBC);
+            mCenterClock.setAlpha(newAlphaBC);
+            mLeftClock.setAlpha(newAlphaBC);
             mBlissLogo.setAlpha(newAlphaBC);
         }
     }
