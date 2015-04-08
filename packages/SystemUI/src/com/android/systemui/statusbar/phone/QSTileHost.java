@@ -49,6 +49,7 @@ import com.android.systemui.qs.tiles.DataTile;
 import com.android.systemui.qs.tiles.DdsTile;
 import com.android.systemui.qs.tiles.ExpandedDesktopTile;
 import com.android.systemui.qs.tiles.FlashlightTile;
+import com.android.systemui.qs.tiles.GestureTile;
 import com.android.systemui.qs.tiles.HeadsupTile;
 import com.android.systemui.qs.tiles.HotspotTile;
 import com.android.systemui.qs.tiles.IntentTile;
@@ -370,6 +371,8 @@ public class QSTileHost implements QSTile.Host {
                 return new SlimActionTile(this);
             case QSConstants.TILE_HWKEYS:
                 return new HWKeysTile(this);
+            case QSConstants.TILE_GESTURE:
+                return new GestureTile(this);
             default:
                 throw new IllegalArgumentException("Bad tile spec: " + tileSpec);
         }
