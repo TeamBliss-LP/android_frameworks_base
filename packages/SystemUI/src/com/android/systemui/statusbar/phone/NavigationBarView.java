@@ -555,6 +555,7 @@ public class NavigationBarView extends LinearLayout {
         final boolean shouldShowAlwaysMenu = (mNavigationIconHints &
                 StatusBarManager.NAVIGATION_HINT_IME_SHOWN) == 0;
         setButtonWithTagVisibility(NavbarEditor.NAVBAR_ALWAYS_MENU, shouldShowAlwaysMenu);
+        setButtonWithTagVisibility(NavbarEditor.NAVBAR_ALWAYS_MENU_2, shouldShowAlwaysMenu);
         setButtonWithTagVisibility(NavbarEditor.NAVBAR_CONDITIONAL_MENU, shouldShow);
     }
 
