@@ -216,6 +216,8 @@
     <string name="phone_label">open phone</string>
     <!-- Click action label for accessibility for the phone button. [CHAR LIMIT=NONE] -->
     <string name="camera_label">open camera</string>
+    <!-- Content description of the power button for accessibility (not shown on the screen). [CHAR LIMIT=NONE] -->
+    <string name="accessibility_power">Power</string>
 
     <!-- Content description of the compatibility zoom button for accessibility (not shown on the screen). [CHAR LIMIT=NONE] -->
     <string name="accessibility_compatibility_zoom_button">Compatibility zoom button.</string>
@@ -931,4 +933,7 @@
     <!-- App Circle Bar tile -->
     <string name="quick_settings_appcirclebar_on">AppCircleBar On</string>
     <string name="quick_settings_appcirclebar_off">AppCircleBar Off</string>
+
+    <!-- Power Button for Navbar -->
+    <string name="navbar_power_button">Power button</string>
 </resources>
