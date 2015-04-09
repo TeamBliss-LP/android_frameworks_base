@@ -1257,6 +1257,11 @@ public final class Settings {
             for (String s : Secure.NAVIGATION_RING_TARGETS) {
                 MOVED_TO_SECURE.add(s);
             }
+            MOVED_TO_SECURE.add(Secure.NAVIGATION_BAR_SHOW);
+            MOVED_TO_SECURE.add(Secure.NAVIGATION_BAR_HEIGHT);
+            MOVED_TO_SECURE.add(Secure.NAVIGATION_BAR_WIDTH);
+            MOVED_TO_SECURE.add(Secure.NAVIGATION_BAR_TINT);
+            MOVED_TO_SECURE.add(Secure.ENABLE_HW_KEYS);
             MOVED_TO_SECURE.add(Secure.KEYBOARD_BRIGHTNESS);
             MOVED_TO_SECURE.add(Secure.BUTTON_BRIGHTNESS);
             MOVED_TO_SECURE.add(Secure.BUTTON_BACKLIGHT_TIMEOUT);
@@ -2744,22 +2749,45 @@ public final class Settings {
         public static final String TIME_12_24 = "time_12_24";
 
         /**
-         * Whether navigation bar is enabled or not
-         * @hide
-         */
-        public static final String NAVIGATION_BAR_SHOW = "navigation_bar_show";
-
-        /**
          * Navigation bar height when it is on protrait
+         * @deprecated Use {@link android.provider.Settings.Secure#NAVIGATION_BAR_HEIGHT} instead
          * @hide
          */
-        public static final String NAVIGATION_BAR_HEIGHT = "navigation_bar_height";
+        @Deprecated
+        public static final String NAVIGATION_BAR_HEIGHT = Secure.NAVIGATION_BAR_HEIGHT;
 
         /**
          * Navigation bar height when it is on landscape at the right
+         * @deprecated Use {@link android.provider.Settings.Secure#NAVIGATION_BAR_WIDTH} instead
          * @hide
          */
-        public static final String NAVIGATION_BAR_WIDTH = "navigation_bar_width";
+        @Deprecated
+        public static final String NAVIGATION_BAR_WIDTH = Secure.NAVIGATION_BAR_WIDTH;
+
+        /**
+         * Wether navigation bar is enabled or not
+         * @deprecated Use {@link android.provider.Settings.Secure#NAVIGATION_BAR_SHOW} instead
+         * @hide
+         */
+        @Deprecated
+        public static final String NAVIGATION_BAR_SHOW = Secure.NAVIGATION_BAR_SHOW;
+        
+        /**
+         * Navigation bar button color
+         * @deprecated Use {@link android.provider.Settings.Secure#NAVIGATION_BAR_TINT} instead
+         * @hide
+         */
+        @Deprecated
+        public static final String NAVIGATION_BAR_TINT = Secure.NAVIGATION_BAR_TINT;
+		
+        /**
+         * Enable HW keys
+         * @deprecated Use {@link android.provider.Settings.Secure#ENABLE_HW_KEYS} instead
+         * @hide
+         */
+        @Deprecated
+        public static final String ENABLE_HW_KEYS = Secure.ENABLE_HW_KEYS;
+
 
         /**
          *
@@ -2784,18 +2812,6 @@ public final class Settings {
          * @hide
          */
         public static final String ANIMATION_IME_INTERPOLATOR = "animation_ime_interpolator";
-
-		/**
-         * Navigation bar button color
-         * @hide
-         */
-        public static final String NAVIGATION_BAR_TINT = "navigation_bar_tint";
-
-        /**
-         * Enable HW keys
-         * @hide
-         */
-        public static final String ENABLE_HW_KEYS = "enable_hw_keys";
 
         /**
          * Date format string
@@ -6808,6 +6824,36 @@ public final class Settings {
          * @hide
          */
         public static final String POWER_MENU_ACTIONS = "power_menu_actions";
+
+        /**
+         * Wether navigation bar is enabled or not
+         * @hide
+         */
+        public static final String NAVIGATION_BAR_SHOW = "navigation_bar_show";
+
+        /**
+         * Navigation bar height when it is on protrait
+         * @hide
+         */
+        public static final String NAVIGATION_BAR_HEIGHT = "navigation_bar_height";
+		
+        /**
+         * Navigation bar height when it is on landscape at the right
+         * @hide
+         */
+        public static final String NAVIGATION_BAR_WIDTH = "navigation_bar_width";
+
+        /**
+         * Navigation bar button color
+         * @hide
+         */
+        public static final String NAVIGATION_BAR_TINT = "navigation_bar_tint";
+
+        /**
+         * Enable HW keys
+         * @hide
+         */
+        public static final String ENABLE_HW_KEYS = "enable_hw_keys";
 
         /**
          * The keyboard brightness to be used while the screen is on.

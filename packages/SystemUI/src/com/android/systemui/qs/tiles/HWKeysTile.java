@@ -74,8 +74,8 @@ public class HWKeysTile extends QSTile<QSTile.BooleanState> {
     }
 
  protected void toggleState() {
-         Settings.System.putInt(mContext.getContentResolver(),
-                        Settings.System.ENABLE_HW_KEYS, !hwkeysEnabled() ? 1 : 0);
+         Settings.Secure.putInt(mContext.getContentResolver(),
+                        Settings.Secure.ENABLE_HW_KEYS, !hwkeysEnabled() ? 1 : 0);
     }
 
 
@@ -93,7 +93,7 @@ public class HWKeysTile extends QSTile<QSTile.BooleanState> {
 
     private boolean hwkeysEnabled() {
         return Settings.Secure.getInt(mContext.getContentResolver(),
-                Settings.System.ENABLE_HW_KEYS, 1) == 1;
+                Settings.Secure.ENABLE_HW_KEYS, 1) == 1;
     }
 
     @Override
@@ -119,7 +119,7 @@ public class HWKeysTile extends QSTile<QSTile.BooleanState> {
 
         public void startObserving() {
             mContext.getContentResolver().registerContentObserver(
-                    Settings.System.getUriFor(Settings.System.ENABLE_HW_KEYS),
+                    Settings.Secure.getUriFor(Settings.System.ENABLE_HW_KEYS),
                     false, this);
         }
 
