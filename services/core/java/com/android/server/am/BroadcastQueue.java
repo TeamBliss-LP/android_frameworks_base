@@ -861,6 +861,23 @@ public final class BroadcastQueue {
                 }
             }
 
+            // Skip disabled receiver
+            if (!skip) {
+                try {
+                    int state = AppGlobals.getPackageManager().getComponentEnabledSetting(
+                            component, UserHandle.getUserId(info.activityInfo.applicationInfo.uid));
+                    if (state == PackageManager.COMPONENT_ENABLED_STATE_DISABLED) {
+                        skip = true;
+                    }
+                } catch (IllegalArgumentException e) {
+                    // package been removed, skip it.
+                    Slog.w(TAG, "Exception getting component enabled setting for " + component
+                           + ": package been removed, skip delivery", e);
+                    skip = true;
+                } catch (RemoteException e) {
+                }
+            }
+
             if (skip) {
                 if (DEBUG_BROADCAST)  Slog.v(TAG,
                         "Skipping delivery of ordered ["
