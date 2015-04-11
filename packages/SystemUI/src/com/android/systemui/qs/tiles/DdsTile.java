@@ -100,10 +100,10 @@ public class DdsTile extends QSTile<QSTile.State> {
             if (DEBUG) Log.d(TAG, "mobile data is on.");
             switch(dataPhoneId) {
                 case PhoneConstants.SUB1:
-                    state.iconId = R.drawable.ic_qs_data_on_1;
+                    state.icon = ResourceIcon.get(R.drawable.ic_qs_data_on_1);
                     break;
                 case PhoneConstants.SUB2:
-                    state.iconId = R.drawable.ic_qs_data_on_2;
+                    state.icon = ResourceIcon.get(R.drawable.ic_qs_data_on_2);
                     break;
                 case PhoneConstants.SUB3:
                 default:
