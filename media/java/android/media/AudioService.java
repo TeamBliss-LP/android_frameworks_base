@@ -3584,7 +3584,8 @@ public class AudioService extends IAudioService.Stub {
                             StreamOverride.sDelayMs)) {
                 if (DEBUG_VOL) Log.v(TAG, "getActiveStreamType: Forcing STREAM_NOTIFICATION");
                 return AudioSystem.STREAM_NOTIFICATION;
-            } else if (suggestedStreamType == AudioManager.USE_DEFAULT_STREAM_TYPE) {
+            } else if (suggestedStreamType == AudioManager.USE_DEFAULT_STREAM_TYPE &&
+                           !isAfMusicActiveRecently(StreamOverride.sDelayMs)) {
                 switch (mVolumeKeysDefault) {
                 case AudioSystem.STREAM_DEFAULT:
                     if (DEBUG_VOL)
