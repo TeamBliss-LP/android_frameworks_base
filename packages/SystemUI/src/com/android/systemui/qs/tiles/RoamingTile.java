@@ -87,11 +87,11 @@ public class RoamingTile extends QSTile<QSTile.BooleanState> {
         state.visible = true;
         state.label = mContext.getString(R.string.quick_settings_roaming_label);
         if (roaming && !isAirplaneModeOn()) {
-            state.iconId = R.drawable.ic_qs_roaming_on;
+            state.icon = ResourceIcon.get(R.drawable.ic_qs_roaming_on);
             state.contentDescription = mContext.getString(
                     R.string.accessibility_quick_settings_roaming_on);
         } else {
-            state.iconId = R.drawable.ic_qs_roaming_off;
+            state.icon = ResourceIcon.get(R.drawable.ic_qs_roaming_off);
             state.contentDescription = mContext.getString(
                     R.string.accessibility_quick_settings_roaming_off);
         }
