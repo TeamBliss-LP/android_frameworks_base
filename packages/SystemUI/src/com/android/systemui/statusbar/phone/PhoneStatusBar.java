@@ -4151,16 +4151,19 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     private boolean shouldUpdateStatusbar(ThemeConfig oldTheme, ThemeConfig newTheme) {
         // no newTheme, so no need to update status bar
         if (newTheme == null) return false;
+        if (oldTheme == null) return true;
 
-        final String overlay = newTheme.getOverlayForStatusBar();
-        final String icons = newTheme.getIconPackPkgName();
-        final String fonts = newTheme.getFontPkgName();
+        final String overlay    = newTheme.getOverlayForStatusBar();
+        final String icons      = newTheme.getIconPackPkgName();
+        final String fonts      = newTheme.getFontPkgName();
+        final String oldoverlay = oldTheme.getOverlayForStatusBar();
+        final String oldfonts   = oldTheme.getFontPkgName();
+        final String oldicons   = oldTheme.getIconPackPkgName();
 
-        return oldTheme == null ||
-                (overlay != null && !overlay.equals(oldTheme.getOverlayForStatusBar()) ||
-                (fonts != null && !fonts.equals(oldTheme.getFontPkgName())) ||
-                (icons != null && !icons.equals(oldTheme.getIconPackPkgName())) ||
-                newTheme.getLastThemeChangeRequestType() == RequestType.THEME_UPDATED);
+        return (overlay != null && (oldoverlay == null || !overlay.equals(oldoverlay))) ||
+               (fonts != null && (oldfonts == null || !fonts.equals(oldfonts))) ||
+               (icons != null && (oldicons == null || !icons.equals(oldicons))) ||
+               (newTheme.getLastThemeChangeRequestType() == RequestType.THEME_UPDATED);
     }
 
     private void updateClockSize() {
@@ -4170,6 +4173,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             FontSizeUtils.updateFontSize(clock, R.dimen.status_bar_clock_size);
         }
     }
+
     protected void loadDimens() {
         final Resources res = mContext.getResources();
 
@@ -4207,7 +4211,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
         mKeyguardMaxNotificationCount = res.getInteger(R.integer.keyguard_max_notification_count);
 
-        if (DEBUG) Log.v(TAG, "updateResources");
+        if (DEBUG) Log.v(TAG, "loadDimens");
     }
 
     // Visibility reporting
