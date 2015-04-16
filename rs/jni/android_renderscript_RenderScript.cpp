@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#define LOG_TAG "libRS_jni"
+#define LOG_TAG "RenderScript_jni"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -1107,6 +1107,9 @@ nScriptForEachV(JNIEnv *_env, jobject _this, jlong con,
     rsScriptForEach((RsContext)con, (RsScript)script, slot, (RsAllocation)ain, (RsAllocation)aout, ptr, len, NULL, 0);
     _env->ReleaseByteArrayElements(params, ptr, JNI_ABORT);
 }
+    //if (kLogApi) {
+    //    ALOGD("nScriptForEach, con(%p), s(%p), slot(%i) ains(%p) aout(%lli)", (RsContext)con, (void *)script, slot, ains, aout);
+    //}
 
 static void
 nScriptForEachClipped(JNIEnv *_env, jobject _this, jlong con,
