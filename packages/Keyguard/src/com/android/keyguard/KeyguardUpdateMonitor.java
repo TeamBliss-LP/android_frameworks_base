@@ -1385,8 +1385,8 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
                     + ", slotId = " + slotId + ", simState = " + mSimState.get(slotId));
             callback.onSimStateChanged(subId, mSimState.get(slotId));
         }
-        boolean airplaneModeOn = Settings.System.getInt(
-                mContext.getContentResolver(), Settings.System.AIRPLANE_MODE_ON, 0) != 0;
+        boolean airplaneModeOn = Settings.Global.getInt(
+                mContext.getContentResolver(), Settings.Global.AIRPLANE_MODE_ON, 0) != 0;
         callback.onAirplaneModeChanged(airplaneModeOn);
     }
 

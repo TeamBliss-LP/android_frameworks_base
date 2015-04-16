@@ -188,9 +188,9 @@ public class WifiTile extends QSTile<QSTile.SignalState> {
     }
 
     public boolean isRadioProhibited() {
-        boolean airModeOn = (android.provider.Settings.System.getInt(
+        boolean airModeOn = (android.provider.Settings.Global.getInt(
                 mContext.getContentResolver(),
-                android.provider.Settings.System.AIRPLANE_MODE_ON, 0) != 0);
+                android.provider.Settings.Global.AIRPLANE_MODE_ON, 0) != 0);
         boolean disable = mContext.getResources().getBoolean(R.bool.config_disableWifiAndBluetooth);
         return disable && airModeOn;
     }
