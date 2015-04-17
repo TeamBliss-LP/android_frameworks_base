@@ -206,6 +206,7 @@ public class ScreenTimeoutTile extends QSTile<ScreenTimeoutTile.TimeoutState> {
             case 0:
             case 15000:
             case 30000:
+            case 45000:
                 // Default
                 d = mMediumReverse;
                 if (nextBucket == Bucket.MEDIUM) {

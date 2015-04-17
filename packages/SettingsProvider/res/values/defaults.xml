@@ -18,7 +18,7 @@
 -->
 <resources>
     <bool name="def_dim_screen">true</bool>
-    <integer name="def_screen_off_timeout">60000</integer>
+    <integer name="def_screen_off_timeout">120000</integer>
     <integer name="def_sleep_timeout">-1</integer>
     <bool name="def_airplane_mode_on">false</bool>
     <bool name="def_theater_mode_on">false</bool>
@@ -260,5 +260,5 @@
          0. Off
          1. Right
          2. Left -->
-    <integer name="def_qs_quick_pulldown">0</integer>
+    <integer name="def_qs_quick_pulldown">2</integer>
 </resources>
