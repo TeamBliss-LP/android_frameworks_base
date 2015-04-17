@@ -69,13 +69,13 @@ public class QSConstants {
 
     static {
         TILES_DEFAULT.add(TILE_WIFI);
-        TILES_DEFAULT.add(TILE_BLUETOOTH);
         TILES_DEFAULT.add(TILE_CELLULAR);
+        TILES_DEFAULT.add(TILE_BLUETOOTH);
         TILES_DEFAULT.add(TILE_AIRPLANE);
         TILES_DEFAULT.add(TILE_ROTATION);
         TILES_DEFAULT.add(TILE_FLASHLIGHT);
         TILES_DEFAULT.add(TILE_LOCATION);
-        TILES_DEFAULT.add(TILE_CAST);
+        TILES_DEFAULT.add(TILE_SYNC);
     }
 
     protected static final ArrayList<String> TILES_AVAILABLE = new ArrayList<String>();
@@ -102,7 +102,7 @@ public class QSConstants {
         TILES_AVAILABLE.add(TILE_LIVE_DISPLAY);
         TILES_AVAILABLE.add(TILE_SCREENSHOT);
         TILES_AVAILABLE.add(TILE_SCREENRECORD);
-        TILES_AVAILABLE.add(TILE_SYNC);
+        TILES_AVAILABLE.add(TILE_CAST);
         TILES_AVAILABLE.add(TILE_BRIGHTNESS);
         TILES_AVAILABLE.add(TILE_BATTERY_SAVER);
         TILES_AVAILABLE.add(TILE_SCREEN_OFF);
