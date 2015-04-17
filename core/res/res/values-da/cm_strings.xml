@@ -200,6 +200,9 @@
   <string name="usb_ext_media_nomedia_notification_title">USB-hukommelse fjernet</string>
   <string name="usb_ext_media_nomedia_notification_message">USB-hukommelse fjernet. Indsæt nyt medie.</string>
   <string name="live_display_auto">Automatisk</string>
+  <string name="live_display_auto_summary">Justerer automatisk farvetemperaturen på skærmen efter solnedgang og solopgang</string>
+  <string name="live_display_off">Fra</string>
+  <string name="live_display_off_summary">Deaktivere alle justeringer</string>
   <string name="live_display_day">Dag</string>
   <string name="live_display_day_summary">Brug kun dag-indstillinger</string>
   <string name="live_display_night">Nat</string>

@@ -198,6 +198,9 @@
   <string name="usb_ext_media_nomedia_notification_title">USB-Speicher entfernt</string>
   <string name="usb_ext_media_nomedia_notification_message">USB-Speicher entfernt. Fügen Sie einen neuen Datenträger ein.</string>
   <string name="live_display_auto">Automatisch</string>
+  <string name="live_display_auto_summary">Farbtemperatur des Bildschirms nach Sonnenaufgang und Sonnenuntergang automatisch anpassen</string>
+  <string name="live_display_off">Aus</string>
+  <string name="live_display_off_summary">Alle Anpassungen deaktiviert</string>
   <string name="live_display_day">Tag</string>
   <string name="live_display_day_summary">Nur Tag-Modus verwenden</string>
   <string name="live_display_night">Nacht</string>
