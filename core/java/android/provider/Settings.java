@@ -4124,7 +4124,7 @@ public final class Settings {
          *
          * @hide
          */
-        public static final String QUICK_SETTINGS_TILES_VIBRATE = "quick_settings_vibrate";
+        public static final String QUICK_SETTINGS_TILES_VIBRATE = "qs_tiles_vibrate";
 
         /**
          * Whether or not to hide the network traffic indicator when there is no activity
