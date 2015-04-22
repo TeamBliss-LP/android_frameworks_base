@@ -81,8 +81,9 @@ public class ZenModeHelper implements AudioManagerInternal.RingerModeDelegate {
     private int mPreviousRingerMode = -1;
     private boolean mEffectsSuppressed;
     private boolean mNoneIsSilent;
-
+    private int mPreviousZenMode = -1;
     public ZenModeHelper(Context context, Looper looper) {
+
         mContext = context;
         mHandler = new H(looper);
         mAppOps = (AppOpsManager) context.getSystemService(Context.APP_OPS_SERVICE);
