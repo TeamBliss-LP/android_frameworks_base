@@ -239,8 +239,9 @@ public class ZenModeHelper implements AudioManagerInternal.RingerModeDelegate {
         Global.putInt(mContext.getContentResolver(), Global.ZEN_MODE, mZenMode);
         if (setRingerMode) {
             applyZenToRingerMode();
-		    }
-        	   applyRestrictions();
+        }
+        applyRestrictions();
+        mPreviousZenMode = mZenMode;
         mHandler.postDispatchOnZenModeChanged();
     }
 
