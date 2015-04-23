@@ -2152,8 +2152,21 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             mNavigationBarLeftInLandscape = Settings.System.getIntForUser(resolver,
                     Settings.System.NAVBAR_LEFT_IN_LANDSCAPE, 0, UserHandle.USER_CURRENT) == 1;
 
-            hasHwKeysEnabled();
-            updateKeyAssignments();
+
+            // navigation bar custom height
+            int  mNavigationBarHeight = Settings.Secure.getInt(resolver,
+                    Settings.Secure.NAVIGATION_BAR_HEIGHT, 48);
+            mNavigationBarHeightForRotation[mPortraitRotation] =
+            mNavigationBarHeightForRotation[mUpsideDownRotation] =
+                    mNavigationBarHeight * DisplayMetrics.DENSITY_DEVICE/DisplayMetrics.DENSITY_DEFAULT;
+            mNavigationBarHeightForRotation[mLandscapeRotation] =
+            mNavigationBarHeightForRotation[mSeascapeRotation] =
+                    mNavigationBarHeight * DisplayMetrics.DENSITY_DEVICE/DisplayMetrics.DENSITY_DEFAULT;
+            mNavigationBarWidthForRotation[mPortraitRotation] =
+            mNavigationBarWidthForRotation[mUpsideDownRotation] =
+            mNavigationBarWidthForRotation[mLandscapeRotation] =
+            mNavigationBarWidthForRotation[mSeascapeRotation] =
+                (mNavigationBarHeight - 6) * DisplayMetrics.DENSITY_DEVICE/DisplayMetrics.DENSITY_DEFAULT;
 
             // Configure rotation lock.
             int userRotation = Settings.System.getIntForUser(resolver,
@@ -2175,6 +2188,10 @@ public class PhoneWindowManager implements WindowManagerPolicy {
 
             mUserRotationAngles = Settings.System.getInt(resolver,
                     Settings.System.ACCELEROMETER_ROTATION_ANGLES, -1);
+
+            hasHwKeysEnabled();
+            updateKeyAssignments();
+
 
             // Navbr on/off and custom dimensions
             setHasNavigationBar();
