@@ -833,7 +833,7 @@ public class VolumePanel extends Handler implements DemoMode {
                 if (control != null && control.streamType != mActiveStreamType) {
                     control.group.setVisibility(View.GONE);
                     control.expandPanel.setVisibility(View.GONE);
-                    updateSlider(control, true);
+                    updateSlider(control, false);
                 }
             }
         }
