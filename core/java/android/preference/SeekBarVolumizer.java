@@ -104,14 +104,13 @@ public class SeekBarVolumizer implements OnSeekBarChangeListener, Handler.Callba
     }
 
     private boolean isNotificationOrRing(int stream) {
-        boolean linkeNotifications = Settings.Secure.getInt(mContext.getContentResolver(),
-                        Settings.Secure.VOLUME_LINK_NOTIFICATION, 1) == 1;
-        if (!linkeNotifications) {
-            return stream == AudioManager.STREAM_RING;
-        } else {
-            return stream == AudioManager.STREAM_RING
-                || stream == AudioManager.STREAM_NOTIFICATION;
-        }
+        return stream == AudioManager.STREAM_RING
+                || (stream == AudioManager.STREAM_NOTIFICATION && isNotificationStreamLinked());
+    }
+
+    private boolean isNotificationStreamLinked() {
+        return Settings.Secure.getInt(mContext.getContentResolver(),
+                Settings.Secure.VOLUME_LINK_NOTIFICATION, 1) == 1;
     }
 
     public void setSeekBar(SeekBar seekBar) {
