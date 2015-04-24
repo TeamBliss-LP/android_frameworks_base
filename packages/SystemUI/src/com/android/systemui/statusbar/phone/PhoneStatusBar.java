@@ -386,7 +386,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     private boolean mShowCarrierInPanel = false;
     private boolean mShowLabel;
-    private int mShowLabelTimeout;
+    private int mShowLabelTimeout = 1000;
 
     // Bliss logo
     private boolean mBlissLogo;
@@ -643,7 +643,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             }
 
             mShowLabelTimeout = Settings.System.getIntForUser(resolver,
-                    Settings.System.STATUS_BAR_GREETING_TIMEOUT, 400, mCurrentUserId);
+                    Settings.System.STATUS_BAR_GREETING_TIMEOUT, 1000, mCurrentUserId);
         }
     }
 
