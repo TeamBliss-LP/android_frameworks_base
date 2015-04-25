@@ -4542,12 +4542,6 @@ public final class Settings {
         public static final String ALLOW_LIGHTS = "allow_lights";
 
         /**
-         * This preference enables showing the power menu on LockScreen.
-         * @hide
-         */
-        public static final String LOCKSCREEN_ENABLE_POWER_MENU = "lockscreen_enable_power_menu";
-
-        /**
          * Settings to backup. This is here so that it's in the same place as the settings
          * keys and easy to update.
          *
@@ -7062,18 +7056,23 @@ public final class Settings {
          */
         public static final String QS_LOCATION_ADVANCED = "qs_location_advanced";
 
-		/**
+        /**
          * Whether to vibrate when quick settings tile is pressed
          * @hide
          */
         public static final String QS_TILES_VIBRATE = "qs_tiles_vibrate";
 
-        /**		
+        /**
          * Whether user is allowed to pull down quick settings on secure keyguard.
          * @hide
          */
-        public static final String STATUS_BAR_LOCKED_ON_SECURE_KEYGUARD
-                = "status_bar_locked_on_secure_keyguard";		
+        public static final String STATUS_BAR_LOCKED_ON_SECURE_KEYGUARD = "block_on_secure_keyguard";
+
+        /**
+         * This preference enables showing the power menu on LockScreen.
+         * @hide
+         */
+        public static final String LOCKSCREEN_ENABLE_POWER_MENU = "lockscreen_enable_power_menu";
 
         /**
          * Whether to show four tiles per row.

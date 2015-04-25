@@ -625,10 +625,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             // This method reads Settings.Secure.RECENTS_LONG_PRESS_ACTIVITY
             updateCustomRecentsLongPressHandler(false);
 
-            mShowStatusBarCarrier = Settings.System.getIntForUser(resolver,
-                    Settings.System.STATUS_BAR_CARRIER, 0, mCurrentUserId) == 1;
-            showStatusBarCarrierLabel(mShowStatusBarCarrier);
-
             mBlissLogo = Settings.System.getIntForUser(resolver,
                     Settings.System.STATUS_BAR_BLISS_LOGO, 0, mCurrentUserId) == 1;
             mBlissLogoColor = Settings.System.getIntForUser(resolver,
@@ -644,6 +640,11 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
             mShowLabelTimeout = Settings.System.getIntForUser(resolver,
                     Settings.System.STATUS_BAR_GREETING_TIMEOUT, 1000, mCurrentUserId);
+
+            mShowStatusBarCarrier = Settings.System.getIntForUser(resolver,
+                    Settings.System.STATUS_BAR_CARRIER, 0, mCurrentUserId) == 1;
+            showStatusBarCarrierLabel(mShowStatusBarCarrier);
+
         }
     }
 
