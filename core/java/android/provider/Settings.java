@@ -7187,7 +7187,7 @@ public final class Settings {
         public static final String SEARCH_PANEL_ENABLED = "search_panel_enabled";
 
         /**
-         * These are the settings to be backed up.
+         * This are the settings to be backed up.
          *
          * NOTE: Settings are backed up and restored in the order they appear
          *       in this array. If you have one setting depending on another,
@@ -7240,8 +7240,7 @@ public final class Settings {
             PRIVACY_GUARD_DEFAULT,
             ADVANCED_REBOOT,
             DEVELOPMENT_SHORTCUT,
-            STATUS_BAR_LOCKED_ON_SECURE_KEYGUARD,
-            LOCKSCREEN_ENABLE_POWER_MENU
+            STATUS_BAR_LOCKED_ON_SECURE_KEYGUARD
         };
 
         /**
