@@ -468,6 +468,8 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     // post keypressed.
     boolean mVolumeWakeTriggered;
 
+    boolean mPowerMenuOnLockscreen;
+
     int mPointerLocationMode = 0; // guarded by mLock
 
     int mLongPressPoweronTime = DEFAULT_LONG_PRESS_POWERON_TIME;
@@ -948,6 +950,9 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.LID_CONTROLS_SLEEP), false, this,
                     UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.Secure.LOCKSCREEN_ENABLE_POWER_MENU), false, this,
+                    UserHandle.USER_ALL);
 
             updateSettings();
         }
@@ -1205,6 +1210,11 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 || mScreenshotChordVolumeUpKeyTriggered;
         if (!mPowerKeyHandled) {
             if (interactive) {
+                if (mShowingLockscreen && !mPowerMenuOnLockscreen) {
+                    mIncallPowerBehavior = LONG_PRESS_POWER_NOTHING;
+                    cancelPendingPowerKeyAction();
+                    return;
+                }
                 // When interactive, we're already awake.
                 // Wait for a long press or for the button to be released to decide what to do.
                 if (hasLongPressOnPowerBehavior()) {
@@ -1350,7 +1360,12 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     }
 
     private void powerLongPress() {
-        final int behavior = getResolvedLongPressOnPowerBehavior();
+        int behavior = getResolvedLongPressOnPowerBehavior();
+        if (mShowingLockscreen && !mPowerMenuOnLockscreen) {
+            mIncallPowerBehavior = LONG_PRESS_POWER_NOTHING;
+            cancelPendingPowerKeyAction();
+            return;
+        }
         switch (behavior) {
         case LONG_PRESS_POWER_NOTHING:
             break;
@@ -1460,20 +1475,8 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     private final Runnable mGlobalMenu = new Runnable() {
         @Override
         public void run() {
-            // The context isn't read
-            if (mLongPressOnPowerBehavior < 0) {
-                mLongPressOnPowerBehavior = mContext.getResources().getInteger(
-                        com.android.internal.R.integer.config_longPressOnPowerBehavior);
-            }
-            int resolvedBehavior = mLongPressOnPowerBehavior;
-            KeyguardManager km = (KeyguardManager) mContext.getSystemService(Context.KEYGUARD_SERVICE);
-            boolean locked = km.inKeyguardRestrictedInputMode();
-            boolean globalActionsOnLockScreen = Settings.Secure.getInt(
-                    mContext.getContentResolver(), Settings.Secure.LOCKSCREEN_ENABLE_POWER_MENU, 1) == 1;
-            if (!locked || globalActionsOnLockScreen) {
-                sendCloseSystemWindows(SYSTEM_DIALOG_REASON_GLOBAL_ACTIONS);
-                showGlobalActionsInternal();
-            }
+            sendCloseSystemWindows(SYSTEM_DIALOG_REASON_GLOBAL_ACTIONS);
+            showGlobalActionsInternal();
         }
     };
 
@@ -2285,6 +2288,10 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                     1, UserHandle.USER_CURRENT) != 0;
             mLidControlsWake = Settings.System.getIntForUser(resolver,
                     Settings.System.LID_CONTROLS_WAKE,
+                    1, UserHandle.USER_CURRENT) != 0;
+
+            mPowerMenuOnLockscreen = Settings.System.getIntForUser(resolver,
+                    Settings.Secure.LOCKSCREEN_ENABLE_POWER_MENU,
                     1, UserHandle.USER_CURRENT) != 0;
 
             WindowManagerPolicyControl.reloadFromSetting(mContext);

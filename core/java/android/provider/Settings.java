@@ -2848,7 +2848,7 @@ public final class Settings {
          */
         @Deprecated
         public static final String NAVIGATION_BAR_TINT = Secure.NAVIGATION_BAR_TINT;
-		
+
         /**
          * Enable HW keys
          * @deprecated Use {@link android.provider.Settings.Secure#ENABLE_HW_KEYS} instead
@@ -2856,7 +2856,6 @@ public final class Settings {
          */
         @Deprecated
         public static final String ENABLE_HW_KEYS = Secure.ENABLE_HW_KEYS;
-
 
         /**
          *
@@ -7252,7 +7251,8 @@ public final class Settings {
             PRIVACY_GUARD_DEFAULT,
             ADVANCED_REBOOT,
             DEVELOPMENT_SHORTCUT,
-            STATUS_BAR_LOCKED_ON_SECURE_KEYGUARD
+            STATUS_BAR_LOCKED_ON_SECURE_KEYGUARD,
+            LOCKSCREEN_ENABLE_POWER_MENU
         };
 
         /**
