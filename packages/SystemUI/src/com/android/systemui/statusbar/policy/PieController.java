@@ -63,12 +63,12 @@ import android.widget.ImageView;
 
 import com.android.internal.util.gesture.EdgeGesturePosition;
 import com.android.internal.util.gesture.EdgeServiceConstants;
-import com.android.internal.util.temasek.ActionConfig;
-import com.android.internal.util.temasek.ActionConstants;
-import com.android.internal.util.temasek.ActionHelper;
-import com.android.internal.util.temasek.Converter;
-import com.android.internal.util.temasek.ImageHelper;
-import com.android.internal.util.temasek.Action;
+import com.android.internal.util.bliss.ActionConfig;
+import com.android.internal.util.bliss.ActionConstants;
+import com.android.internal.util.bliss.ActionHelper;
+import com.android.internal.util.bliss.Converter;
+import com.android.internal.util.bliss.ImageHelper;
+import com.android.internal.util.bliss.Action;
 import com.android.systemui.R;
 import com.android.systemui.statusbar.BaseStatusBar;
 import com.android.systemui.statusbar.phone.NavigationBarOverlay;
