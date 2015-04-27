@@ -3168,25 +3168,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             }
         }
 
-        // If the boot mode is power off alarm, we should not dispatch the several physical key
-        // in power off alarm UI.
-        String isAlarmBoot = Settings.System.getString(mContext.getContentResolver(),
-                POWER_OFF_ALARM_MODE);
-        if (DEBUG_INPUT) { Log.d(TAG, "intercept Dispatching isAlarmBoot = " + isAlarmBoot); }
-
-        if (isAlarmBoot!= null && isAlarmBoot.equals("true") && (keyCode == KeyEvent.KEYCODE_HOME
-                || keyCode == KeyEvent.KEYCODE_SEARCH
-                || keyCode == KeyEvent.KEYCODE_MENU)) {
-            if (isAlarmViewTopActivity()) {
-                return -1;  // ignore the physical key here
-            } else {
-                // Since power off alarm UI is not top activity, we should not ignore physical key
-                // dispatch, even it is still power off alarm mode.
-                Settings.System.putString(mContext.getContentResolver(), POWER_OFF_ALARM_MODE,
-                        "false");
-            }
-        }
-
         // If we think we might have a volume down & power key chord on the way
         // but we're not sure, then tell the dispatcher to wait a little while and
         // try again later before dispatching.
