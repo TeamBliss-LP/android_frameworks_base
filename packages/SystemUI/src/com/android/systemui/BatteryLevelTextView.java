@@ -31,10 +31,10 @@ import android.util.TypedValue;
 import android.widget.TextView;
 
 import com.android.internal.util.bliss.ColorHelper;
-
-
 import com.android.systemui.cm.UserContentObserver;
 import com.android.systemui.statusbar.policy.BatteryController;
+
+import java.text.NumberFormat;
 
 public class BatteryLevelTextView extends TextView implements
         BatteryController.BatteryStateChangeCallback{
@@ -46,6 +46,7 @@ public class BatteryLevelTextView extends TextView implements
 
     private BatteryController mBatteryController;
     private boolean mBatteryCharging;
+    private int mBatteryLevel = 0;
     private boolean mShow;
     private boolean mForceShow;
     private boolean mAttached;
@@ -128,7 +129,9 @@ public class BatteryLevelTextView extends TextView implements
 
     @Override
     public void onBatteryLevelChanged(int level, boolean pluggedIn, boolean charging) {
-        setText(getResources().getString(R.string.battery_level_template, level));
+        mBatteryLevel = level;
+        String percentage = NumberFormat.getPercentInstance().format((double) mBatteryLevel / 100.0);
+        setText(percentage);
         boolean changed = mBatteryCharging != charging;
         mBatteryCharging = charging;
         if (changed) {
@@ -181,8 +184,12 @@ public class BatteryLevelTextView extends TextView implements
         if (isHeader) {
             setTextColor(headerColor);
         } else {
-            if (mOldColor != mNewColor) {
-                mColorTransitionAnimator.start();
+            if (!mBatteryCharging && mBatteryLevel > 16) {
+                if (mOldColor != mNewColor) {
+                    mColorTransitionAnimator.start();
+                }
+            } else {
+                setTextColor(mNewColor);
             }
         }
     }
