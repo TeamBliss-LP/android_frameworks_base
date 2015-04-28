@@ -653,7 +653,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             mGreeting = Settings.System.getStringForUser(resolver,
                     Settings.System.STATUS_BAR_GREETING,
                     UserHandle.USER_CURRENT);
-            if (mGreeting != null && !TextUtils.isEmpty(mGreeting)) {
+            if (mGreeting != null && mBlissLabel != null && !TextUtils.isEmpty(mGreeting)) {
                 mBlissLabel.setText(mGreeting);
             }
 
@@ -662,7 +662,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
             mShowStatusBarCarrier = Settings.System.getIntForUser(resolver,
                     Settings.System.STATUS_BAR_CARRIER, 0, mCurrentUserId) == 1;
-            showStatusBarCarrierLabel(mShowStatusBarCarrier);
+            if (mStatusBarView != null) {
+                showStatusBarCarrierLabel(mShowStatusBarCarrier);
+            }
 
         }
     }
@@ -2676,7 +2678,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 }
                 animateStatusBarHide(mNotificationIconArea, animate);
             } else {
-                if (mGreeting != null && !TextUtils.isEmpty(mGreeting) && mShowLabel) {
+                if (mGreeting != null && mBlissLabel != null 
+                    && !TextUtils.isEmpty(mGreeting) && mShowLabel) {
                     if (animate) {
                         mBlissLabel.setVisibility(View.VISIBLE);
                         mBlissLabel.animate().cancel();
@@ -2712,6 +2715,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
      * Animates {@code v}, a view that is part of the status bar, out.
      */
     private void animateStatusBarHide(final View v, boolean animate) {
+        if (v == null) {
+            return;
+        }
         v.animate().cancel();
         if (!animate) {
             v.setAlpha(0f);
@@ -2735,6 +2741,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
      * Animates {@code v}, a view that is part of the status bar, in.
      */
     private void animateStatusBarShow(View v, boolean animate) {
+        if (v == null) {
+            return;
+        }
         v.animate().cancel();
         v.setVisibility(View.VISIBLE);
         if (!animate) {
@@ -2763,6 +2772,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     }
 
     protected void labelAnimatorFadeOut(final boolean animate) {
+        if (mBlissLabel == null) {
+            return;
+        }
         mBlissLabel.animate().cancel();
         mBlissLabel.animate()
                 .alpha(0f)
@@ -4069,7 +4081,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     };
 
     public void showStatusBarCarrierLabel(boolean show) {
-        if (mStatusBarView == null) return;
+        if (mStatusBarView == null || mContext == null) return;
         ContentResolver resolver = mContext.getContentResolver();
         View statusBarCarrierLabel = mStatusBarView.findViewById(R.id.status_bar_carrier_label);
         if (statusBarCarrierLabel != null) {
