@@ -1210,11 +1210,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 || mScreenshotChordVolumeUpKeyTriggered;
         if (!mPowerKeyHandled) {
             if (interactive) {
-                if (mShowingLockscreen && !mPowerMenuOnLockscreen) {
-                    mIncallPowerBehavior = LONG_PRESS_POWER_NOTHING;
-                    cancelPendingPowerKeyAction();
-                    return;
-                }
                 // When interactive, we're already awake.
                 // Wait for a long press or for the button to be released to decide what to do.
                 if (hasLongPressOnPowerBehavior()) {
