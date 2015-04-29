@@ -2700,26 +2700,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                         labelAnimatorFadeOut(animate);
                     }
                     mShowLabel = false;
-                } else 
-                if (mGreeting != null && !TextUtils.isEmpty(mGreeting) && mShowLabel) {
-                    if (animate) {
-                        mBlissLabel.setVisibility(View.VISIBLE);
-                        mBlissLabel.animate().cancel();
-                        mBlissLabel.animate()
-                                .alpha(1f)
-                                .setDuration(400)
-                                .setInterpolator(ALPHA_IN)
-                                .setStartDelay(50)
-                                .withEndAction(new Runnable() {
-                            @Override
-                            public void run() {
-                                labelAnimatorFadeOut(animate);
-                            }
-                        });
-                    } else {
-                        labelAnimatorFadeOut(animate);
-                    }
-                    mShowLabel = false;
                 } else {
                     animateStatusBarShow(mNotificationIconArea, animate);
                 }
