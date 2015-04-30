@@ -405,12 +405,12 @@ public class AssetAtlasService extends IAssetAtlas.Stub {
             new ComputeWorker(MIN_SIZE, MAX_SIZE, STEP, bitmaps, pixelCount, results, null).run();
         } else {
             int start = MIN_SIZE;
-            int end = MAX_SIZE - (cpuCount - 1) * STEP;
+            int end = MAX_SIZE;
             int step = STEP * cpuCount;
 
             final CountDownLatch signal = new CountDownLatch(cpuCount);
 
-            for (int i = 0; i < cpuCount; i++, start += STEP, end += STEP) {
+            for (int i = 0; i < cpuCount; i++, start += STEP) {
                 ComputeWorker worker = new ComputeWorker(start, end, step,
                         bitmaps, pixelCount, results, signal);
                 new Thread(worker, "Atlas Worker #" + (i + 1)).start();
