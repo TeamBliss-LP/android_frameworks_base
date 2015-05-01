@@ -23,18 +23,21 @@ import android.app.ActivityManager;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.res.Configuration;
+import android.database.ContentObserver;
+import android.net.Uri;
 import android.os.Handler;
 import android.os.UserHandle;
 import android.provider.Settings;
 import android.util.AttributeSet;
 import android.util.TypedValue;
+import android.view.View;
 import android.widget.TextView;
 
 import com.android.internal.util.bliss.ColorHelper;
 
-
-import com.android.systemui.cm.UserContentObserver;
 import com.android.systemui.statusbar.policy.BatteryController;
+
+import java.text.NumberFormat;
 
 public class BatteryLevelTextView extends TextView implements
         BatteryController.BatteryStateChangeCallback{
@@ -46,42 +49,20 @@ public class BatteryLevelTextView extends TextView implements
 
     private BatteryController mBatteryController;
     private boolean mBatteryCharging;
+    private int mBatteryLevel = 0;
     private boolean mShow;
     private boolean mForceShow;
     private boolean mAttached;
     private int mRequestedVisibility;
+
     private int mNewColor;
     private int mOldColor;
     private Animator mColorTransitionAnimator;
-	
-	private ContentResolver mResolver;
 
-    private SettingsObserver mObserver = new SettingsObserver(new Handler());
+    private ContentResolver mResolver;
 
-    private class SettingsObserver extends UserContentObserver {
-        public SettingsObserver(Handler handler) {
-            super(handler);
-        }
-
-        @Override
-        protected void observe() {
-            super.observe();
-
-            mResolver.registerContentObserver(Settings.System.getUriFor(
-                    STATUS_BAR_BATTERY_STATUS_STYLE), false, this, UserHandle.USER_ALL);
-            mResolver.registerContentObserver(Settings.System.getUriFor(
-                    STATUS_BAR_BATTERY_STATUS_PERCENT_STYLE), false, this, UserHandle.USER_ALL);
-        }
-
-        @Override
-        protected void unobserve() {
-            super.unobserve();
-
-            getContext().getContentResolver().unregisterContentObserver(this);
-        }
-
-        @Override
-        public void update() {
+    private ContentObserver mObserver = new ContentObserver(new Handler()) {
+        public void onChange(boolean selfChange, Uri uri) {
             loadShowBatteryTextSetting();
         }
     };
@@ -128,7 +109,9 @@ public class BatteryLevelTextView extends TextView implements
 
     @Override
     public void onBatteryLevelChanged(int level, boolean pluggedIn, boolean charging) {
-        setText(getResources().getString(R.string.battery_level_template, level));
+        mBatteryLevel = level;
+        String percentage = NumberFormat.getPercentInstance().format((double) mBatteryLevel / 100.0);
+        setText(percentage);
         boolean changed = mBatteryCharging != charging;
         mBatteryCharging = charging;
         if (changed) {
@@ -148,8 +131,10 @@ public class BatteryLevelTextView extends TextView implements
         if (mBatteryController != null) {
             mBatteryController.addStateChangedCallback(this);
         }
-        mObserver.observe();
-
+        mResolver.registerContentObserver(Settings.System.getUriFor(
+                STATUS_BAR_BATTERY_STATUS_STYLE), false, mObserver);
+        mResolver.registerContentObserver(Settings.System.getUriFor(
+                STATUS_BAR_BATTERY_STATUS_PERCENT_STYLE), false, mObserver);
         mAttached = true;
     }
 
@@ -181,8 +166,12 @@ public class BatteryLevelTextView extends TextView implements
         if (isHeader) {
             setTextColor(headerColor);
         } else {
-            if (mOldColor != mNewColor) {
-                mColorTransitionAnimator.start();
+            if (!mBatteryCharging && mBatteryLevel > 16) {
+                if (mOldColor != mNewColor) {
+                    mColorTransitionAnimator.start();
+                }
+            } else {
+                setTextColor(mNewColor);
             }
         }
     }
