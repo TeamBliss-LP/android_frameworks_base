@@ -22,6 +22,7 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.content.res.ThemeConfig;
+import android.database.ContentObserver;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
@@ -78,7 +79,6 @@ public class StatusBarIconView extends AnimatedImageView {
         mNumberPaint.setAntiAlias(true);
         mNumberPaint.setTypeface(Typeface.DEFAULT_BOLD);
         mNumberPaint.setTextSize(scaledPx);
-        setNotification(notification);
 
         mObserver = GlobalSettingsObserver.getInstance(context);
 
@@ -155,15 +155,6 @@ public class StatusBarIconView extends AnimatedImageView {
         if (!numberEquals || force) {
             if (icon.number > 0 && mShowNotifCount) {
                 if (mNumberBackground == null) {
-                    final Resources res = mContext.getResources();
-                    final float densityMultiplier = res.getDisplayMetrics().density;
-                    final float scaledPx = 8 * densityMultiplier;
-                    mNumberPaint = new Paint();
-                    mNumberPaint.setTextAlign(Paint.Align.CENTER);
-                    mNumberPaint.setColor(res.getColor(R.drawable.notification_number_text_color));
-                    mNumberPaint.setAntiAlias(true);
-                    mNumberPaint.setTypeface(Typeface.DEFAULT_BOLD);
-                    mNumberPaint.setTextSize(scaledPx);
                     mNumberBackground = getContext().getResources().getDrawable(
                             R.drawable.ic_notification_overlay);
                 }
@@ -174,7 +165,6 @@ public class StatusBarIconView extends AnimatedImageView {
             } else {
                 mNumberBackground = null;
                 mNumberText = null;
-                mNumberPaint = null;
             }
             invalidate();
         }
