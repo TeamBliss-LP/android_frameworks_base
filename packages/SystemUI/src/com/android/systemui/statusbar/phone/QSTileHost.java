@@ -80,7 +80,6 @@ import com.android.systemui.qs.tiles.AppCircleBarTile;
 import com.android.systemui.qs.tiles.UsbTetherTile;
 import com.android.systemui.qs.tiles.WifiTile;
 import com.android.systemui.qs.tiles.TrdsTile;
-import com.android.systemui.qs.tiles.AppSideBarTile;
 import com.android.systemui.settings.CurrentUserTracker;
 import com.android.systemui.statusbar.policy.BluetoothController;
 import com.android.systemui.statusbar.policy.CastController;
@@ -383,8 +382,6 @@ public class QSTileHost implements QSTile.Host {
                 return new MusicTile(this);
             case QSConstants.TILE_TRDS:
                 return new TrdsTile(this);	
-            case QSConstants.TILE_APPSIDEBAR:
-                return new AppSideBarTile(this);
             default:
                 throw new IllegalArgumentException("Bad tile spec: " + tileSpec);
         }
