@@ -252,28 +252,34 @@ public class RecentsActivity extends Activity implements RecentsView.RecentsView
                 mEmptyView.setVisibility(View.GONE);
             }
             findViewById(R.id.floating_action_button).setVisibility(View.VISIBLE);
-            boolean showSearchBar = Settings.System.getInt(getContentResolver(),
-                       Settings.System.RECENTS_SHOW_SEARCH_BAR, 1) == 1;
             if (mRecentsView.hasSearchBar()) {
-                if (showSearchBar) {
+                if (Settings.System.getInt(getContentResolver(),
+                    Settings.System.RECENTS_SHOW_SEARCH_BAR, 0) == 1) {
                     mRecentsView.setSearchBarVisibility(View.VISIBLE);
                 } else {
                     mRecentsView.setSearchBarVisibility(View.GONE);
-                }
-            } else {
-                if (showSearchBar) {
+                   }
+                } else {
+                if (Settings.System.getInt(getContentResolver(),
+                    Settings.System.RECENTS_SHOW_SEARCH_BAR, 0) == 1) {
                     addSearchBarAppWidgetView();
-                }
-            }
-
-            // Update search bar space height
-            if (showSearchBar) {
-                RecentsConfiguration.searchBarSpaceHeightPx = getResources().getDimensionPixelSize(
-                    R.dimen.recents_search_bar_space_height);
             } else {
-                RecentsConfiguration.searchBarSpaceHeightPx = 0;
+                }
             }
         }
+
+        // Update search bar space height
+        Resources reso = getResources();
+
+        if (Settings.System.getInt(getContentResolver(),
+                    Settings.System.RECENTS_SHOW_SEARCH_BAR, 0) != 1) {
+        RecentsConfiguration.searchBarSpaceHeightPx = 0;
+	}
+
+        if (Settings.System.getInt(getContentResolver(),
+                    Settings.System.RECENTS_SHOW_SEARCH_BAR, 1) != 0) {
+	RecentsConfiguration.searchBarSpaceHeightPx = reso.getDimensionPixelSize(R.dimen.recents_search_bar_space_height);
+	}
 
         // Animate the SystemUI scrims into view
         mScrimViews.prepareEnterRecentsAnimation();
