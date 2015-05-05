@@ -34,7 +34,7 @@ public final class PhoneStatusBarTransitions extends BarTransitions {
     private final float mIconAlphaWhenOpaque;
 
     private View mLeftSide, mStatusIcons, mSignalCluster, mBattery, mClock, mCenterClock, mLeftClock,
-            mNetworkTraffic, mBlissLogo;
+            mTraffic, mBlissLogo;
 			
     private Animator mCurrentAnimation;
 
@@ -58,7 +58,7 @@ public final class PhoneStatusBarTransitions extends BarTransitions {
         }
         mBattery = mView.findViewById(R.id.battery);
         mClock = mView.findViewById(R.id.clock);
-        mNetworkTraffic = mView.findViewById(R.id.networkTraffic);
+        mTraffic = mView.findViewById(R.id.traffic);
         mBlissLogo = mView.findViewById(R.id.bliss_logo);
         mCenterClock = mView.findViewById(R.id.center_clock);
         mLeftClock = mView.findViewById(R.id.left_clock);		
@@ -106,7 +106,7 @@ public final class PhoneStatusBarTransitions extends BarTransitions {
                     animateTransitionTo(mLeftSide, newAlpha),
                     animateTransitionTo(mStatusIcons, newAlpha),
                     animateTransitionTo(mSignalCluster, newAlpha),
-                    animateTransitionTo(mNetworkTraffic, newAlpha),
+                    animateTransitionTo(mTraffic, newAlpha),
                     animateTransitionTo(mBattery, newAlphaBC),
                     animateTransitionTo(mClock, newAlphaBC),
                     animateTransitionTo(mCenterClock, newAlphaBC),
@@ -122,7 +122,7 @@ public final class PhoneStatusBarTransitions extends BarTransitions {
             if (mLeftSide != null) mLeftSide.setAlpha(newAlpha);
             if (mStatusIcons != null) mStatusIcons.setAlpha(newAlpha);
             if (mSignalCluster != null) mSignalCluster.setAlpha(newAlpha);
-            if (mNetworkTraffic != null) mNetworkTraffic.setAlpha(newAlpha);
+            if (mTraffic != null) mTraffic.setAlpha(newAlpha);
             if (mBattery != null) mBattery.setAlpha(newAlphaBC);
             if (mClock != null) mClock.setAlpha(newAlphaBC);
             if (mCenterClock != null) mCenterClock.setAlpha(newAlphaBC);
