@@ -113,4 +113,11 @@
   <!-- Doze mode -->
   <java-symbol type="bool" name="config_doze_enabled_by_default" />
 
+  <!-- DJSeekBarPreference -->
+  <java-symbol type="layout" name="preference_widget_textsize_seekbar" />
+  <java-symbol type="id" name="min_value" />
+  <java-symbol type="id" name="current_value" />
+  <java-symbol type="id" name="max_value" />
+  <java-symbol type="id" name="textsize_seekbar" />
+
 </resources>

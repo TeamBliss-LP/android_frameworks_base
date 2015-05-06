@@ -6456,6 +6456,11 @@
     <declare-styleable name="SlimSeekBarPreference">
         <!-- No added attributes at this time -->
     </declare-styleable>
+    
+    <!-- Base attributes available to SlimSeekBarPreference. -->
+    <declare-styleable name="TextSizeBarPreference">
+        <!-- No added attributes at this time -->
+    </declare-styleable>
 
     <!-- Base attributes available to DialogPreference. -->
     <declare-styleable name="DialogPreference">
