@@ -90,6 +90,7 @@ public abstract class InputEventReceiver {
     }
 
     private void dispose(boolean finalized) {
+        synchronized(this) {
         if (mCloseGuard != null) {
             if (finalized) {
                 mCloseGuard.warnIfOpen();
@@ -103,6 +104,7 @@ public abstract class InputEventReceiver {
         }
         mInputChannel = null;
         mMessageQueue = null;
+        }
     }
 
     /**
@@ -137,6 +139,7 @@ public abstract class InputEventReceiver {
      * @param handled True if the event was handled.
      */
     public final void finishInputEvent(InputEvent event, boolean handled) {
+        synchronized(this) {
         if (event == null) {
             throw new IllegalArgumentException("event must not be null");
         }
@@ -154,6 +157,7 @@ public abstract class InputEventReceiver {
             }
         }
         event.recycleIfNeededAfterDispatch();
+        }
     }
 
     /**
