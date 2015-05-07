@@ -12331,6 +12331,18 @@ public final class ActivityManagerService extends ActivityManagerNative
                 return;
             }
 
+            // If crash application's package removed &
+            // the reason is due to package not found, ignore crash dialog.
+            try {
+                PackageInfo pi = AppGlobals.getPackageManager().getPackageInfo(r.info.packageName,
+                        0, UserHandle.getCallingUserId());
+                if (pi == null) {
+                    return;
+                }
+            } catch (RemoteException e) {
+                Slog.w(TAG, "Error getting package info: " + r.info.packageName, e);
+            }
+
             Message msg = Message.obtain();
             msg.what = SHOW_ERROR_MSG;
             HashMap data = new HashMap();
