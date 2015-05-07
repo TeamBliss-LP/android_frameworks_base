@@ -659,6 +659,7 @@ public class AudioService extends IAudioService.Stub {
         //Update volumes steps before creatingStreamStates!
         initVolumeSteps();
         createStreamStates();
+        updateNotificationStreamVolumeAlias();
 
         readAndSetLowRamDevice();
 
@@ -1016,11 +1017,7 @@ public class AudioService extends IAudioService.Stub {
 
         mStreamVolumeAlias[AudioSystem.STREAM_DTMF] = dtmfStreamAlias;
 
-        if (mLinkNotificationWithVolume && mVoiceCapable) {
-            mStreamVolumeAlias[AudioSystem.STREAM_NOTIFICATION] = AudioSystem.STREAM_RING;
-        } else {
-            mStreamVolumeAlias[AudioSystem.STREAM_NOTIFICATION] = AudioSystem.STREAM_NOTIFICATION;
-        }
+        updateNotificationStreamVolumeAlias();
 
         if (updateVolumes) {
             mStreamStates[AudioSystem.STREAM_DTMF].setAllIndexes(mStreamStates[dtmfStreamAlias]);
@@ -1032,6 +1029,14 @@ public class AudioService extends IAudioService.Stub {
                     0,
                     0,
                     mStreamStates[AudioSystem.STREAM_DTMF], 0);
+        }
+    }
+
+    private void updateNotificationStreamVolumeAlias() {
+        if (mLinkNotificationWithVolume && mVoiceCapable) {
+            mStreamVolumeAlias[AudioSystem.STREAM_NOTIFICATION] = AudioSystem.STREAM_RING;
+        } else {
+            mStreamVolumeAlias[AudioSystem.STREAM_NOTIFICATION] = AudioSystem.STREAM_NOTIFICATION;
         }
     }
 
