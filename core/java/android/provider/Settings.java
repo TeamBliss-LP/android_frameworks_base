@@ -4178,56 +4178,15 @@ public final class Settings {
         public static final String FORMAL_TEXT_INPUT = "formal_text_input";
 
         /**
-         * Show/hide network speed indicator
-         * @hide
-         */
-        public static final String STATUS_BAR_ENABLE_NETWORK_SPEED_INDICATOR = "status_bar_enable_network_speed_indicator";
-
-        /**
-         * Show/hide network speed indicator on no traffic
-         * @hide
-         */
-        public static final String STATUS_BAR_NETWORK_SPEED_HIDE_TRAFFIC = "status_bar_network_speed_hide_traffic";
-
-        /**
-         * Show summary of traffic.
-         * @hide
-         */
-        public static final String STATUS_BAR_TRAFFIC_SUMMARY = "status_bar_traffic_summary"; 
-
-        /**
-         * Wether to show network speed indicators
-         * 0: download
-         * 1: upload
-         * 2: download and upload
-         * default: 2
-         * @hide
-         */
-        public static final String STATUS_BAR_NETWORK_SPEED_INDICATOR = "status_bar_network_speed_indicator";
-
-        /**
-         * Show/hide network speed indicator icon
-         * @hide
-         */
-        public static final String STATUS_BAR_NETWORK_SPEED_SHOW_ICON = "status_bar_network_speed_show_icon";
-
-        /**
-         * Display network speed indicator value as bit/byte
-         * @hide
-         */
-        public static final String STATUS_BAR_NETWORK_SPEED_BIT_BYTE = "status_bar_network_speed_bit_byte";
-
-        /**
-         * Color of the network speed indicator text
-         * @hide
-         */
-        public static final String STATUS_BAR_NETWORK_SPEED_TEXT_COLOR = "status_bar_network_speed_text_color";
-
-        /**
-         * Color of the network speed indicator icons
-         * @hide
-         */
-        public static final String STATUS_BAR_NETWORK_SPEED_ICON_COLOR = "status_bar_network_speed_icon_color";
+         * Network traffic indicator, goes from least to greatest significant bitwise
+         * 0 = Display up-stream traffic if set
+         * 1 = Display down-stream traffic if set
+         * 2 = Show as Byte/s if set
+         * 16-31 = Refresh interval(ms) min: 250 max: 32750 default: 1000
+	* @hide
+	*/
+	
+	 public static final String NETWORK_TRAFFIC_STATE = "network_traffic_state";
 
         /**		
          *  Enable navigation bar double tap gesture on to put device to sleep
@@ -4247,6 +4206,24 @@ public final class Settings {
          * @hide
          */
         public static final String QUICK_SETTINGS_TILES_VIBRATE = "qs_tiles_vibrate";
+
+        /**
+         * Whether or not to hide the network traffic indicator when there is no activity
+         * @hide
+         */
+        public static final String NETWORK_TRAFFIC_AUTOHIDE = "network_traffic_autohide";
+
+        /**
+         * Network traffic inactivity threshold (default is 10 kBs)
+         * @hide
+         */
+        public static final String NETWORK_TRAFFIC_AUTOHIDE_THRESHOLD = "network_traffic_autohide_threshold";
+
+        /**
+         * Network stats Color style
+         * @hide
+         */
+        public static final String NETWORK_TRAFFIC_COLOR = "network_traffic_color";
 
         /**
          * Toast Animations
