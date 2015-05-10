@@ -7363,6 +7363,12 @@ public final class Settings {
         public static final String QS_TILES_VIBRATE = "qs_tiles_vibrate";
 
         /**
+         * Whether user is allowed to pull down quick settings on secure keyguard.
+         * @hide
+         */
+        public static final String STATUS_BAR_LOCKED_ON_SECURE_KEYGUARD = "block_on_secure_keyguard";
+
+        /**
          * This preference enables showing the power menu on LockScreen.
          * @hide
          */
@@ -7417,7 +7423,7 @@ public final class Settings {
          * @hide
          */
         public static final String NAVIGATION_BAR_HEIGHT = "navigation_bar_height";
-
+		
         /**
          * Navigation bar height when it is on landscape at the right
          * @hide
@@ -7535,6 +7541,7 @@ public final class Settings {
             PRIVACY_GUARD_DEFAULT,
             ADVANCED_REBOOT,
             DEVELOPMENT_SHORTCUT,
+            STATUS_BAR_LOCKED_ON_SECURE_KEYGUARD,
             LOCKSCREEN_ENABLE_POWER_MENU
         };
 
