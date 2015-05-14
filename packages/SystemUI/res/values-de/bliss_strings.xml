@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+
+    <!-- Quick Settings Tiles -->
+    <string name="quick_settings_heads_up_on">Heads Up eingeschaltet</string>
+    <string name="quick_settings_heads_up_off">Keine Unterbrechungen</string>
+    <string name="quick_settings_usb_tether_label">USB Tethering</string>
+    <string name="quick_settings_hwkeys_on">Hardware Tasten eingeschaltet</string>
+    <string name="quick_settings_hwkeys_off">Hardware Tasten ausgeschaltet</string>
+    <string name="heads_up_enabled">Heads Up Benachrichtigungen sind eingeschaltet</string>
+    <string name="heads_up_disabled">Heads Up Benachrichtigungen sind ausgeschaltet</string>
+    <string name="quick_settings_gesture_on">Gesten Überall eingeschaltet</string>
+    <string name="quick_settings_gesture_off">Gesten Überall ausgeschaltet</string>
+
+    <!-- mount notifications -->
+    <string name="ext_media_mounted_notification_title">mounted</string>
+    <string name="ext_media_unmounted_notification_title">unmounted</string>
+    <string name="ext_media_unmounted_notification_message">Speichermedium kann jetzt entfernt werden.</string>
+    <string name="ext_media_unmount_action">Unmount</string>
+    <string name="ext_media_mount_action">Mount</string>
+    <string name="ext_media_unmounting_notification_title">unmounting\u2026</string>
+    <string name="ext_media_mounting_notification_title">mounting\u2026</string>
+
+    <!-- Dialog Cancel/OK -->
+    <string name="cancel">Abbruch</string>
+    <string name="dlg_ok">Ok</string>
+    <string name="yes">Ja</string>
+    <string name="no">Nein</string>
+
+    <!-- Slim Shortcut Actions -->
+    <string name="shortcut_picker">Slim Verknüpfungen</string>
+    <string name="shortcut_rotation">Rotationssperre Umschalter</string>
+    <string name="shortcut_torch">Taschenlampe</string>
+    <string name="shortcut_chamber">Chamber of Secrets</string>
+    <string name="shortcut_reboot">Reboot</string>
+    <string name="shortcut_recovery">Recovery</string>
+    <string name="chamber_disabled">Chamber of secrets ist geschlossen</string>
+    <string name="chamber_title">Eingabeeinstellungen string</string>
+    <string name="chamber_message">Input a Settings string that is either an on and off (checkbox) function or possibly a list-preference. For example, doze_enabled or similar. Settings can be found in the Settings.java file. WARNING: This process is dangerous!</string>
+    <string name="chamber_invalid">This is an invalid input. Be careful.</string>
+    <string name="chamber_invalid_setting">Try toggling the setting manually to ensure the settings database for this action exists.</string>
+    <string name="chamber_checkbox">Checkbox</string>
+    <string name="chamber_chk_message">Is this setting a checkbox setting?</string>
+    <string name="chamber_int">Input values</string>
+    <string name="chamber_int_message">Input the values you\'d like the setting to toggle between. Separate each value with a comma. Color settings accept hex-values such as #FF00aacc or basic color values like red, green, and yellow.</string>
+    <string name="chamber_name_title">Shortcut name</string>
+    <string name="chamber_name_message">Give the shortcut a name to display with the icon.</string>
+    <string name="chamber_name_toast">Using default name</string>
+
+    <!-- Off/On/Toggle -->
+    <string name="off">Aus</string>
+    <string name="on">An</string>
+    <string name="toggle">Umschalten</string>
+    <string name="shortcut_toggle_title">auszuführende Aktion</string>
+
+    <!-- Kill app toast -->
+    <string name="app_killed_message">App beendet</string>
+
+    <!-- Power menu on navring targets -->
+    <string name="navring_action_power_menu">Power Menü</string>
+
+    <!-- Screenrecord Notification Ticker -->
+    <string name="screenrecord_notif_ticker">Bildschirm wird aufgezeichnet</string>
+
+    <!-- Screenrecord notification title -->
+    <string name="screenrecord_notif_title">Bildschirmaufnahme</string>
+
+    <!-- Screenrecord notification action: Stop -->
+    <string name="screenrecord_notif_stop">Stop</string>
+
+    <!-- Screenrecord notification action: show/hide pointer -->
+    <string name="screenrecord_notif_pointer_on">Zeige Punkt</string>
+    <string name="screenrecord_notif_pointer_off">Verstecker Punkt</string>
+
+    <!-- Screen record notification error title -->
+    <string name="screenrecord_notif_error">Aufzeichnung ist nicht möglich</string>
+
+    <!-- Greeting -->
+    <string name="bliss_label">Willkommen bei Bliss</string>
+
+    <!-- Pie controls -->
+    <string name="pie_battery_status_charging">Aufladen (<xliff:g id="percent">%d</xliff:g>%%)</string>
+    <string name="pie_battery_status_full">Geladen</string>
+    <string name="pie_battery_status_discharging"><xliff:g id="percent">%d</xliff:g>%% verbleibend</string>
+    <string name="pie_phone_status_no_service">Kein Dienst</string>
+    <string name="pie_phone_status_airplane_mode">Flugmodus ist an</string>
+    <string name="pie_phone_status_emergency_only">Nur Notrufe</string>
+
+    <!-- App sidebar -->
+    <string name="default_folder_text">Ordner</string>
+    <string name="title_activity_sidebar_configuration">AppBar Inhalt einrichten</string>
+    <string name="action_save">Speichern</string>
+    <string name="toast_items_saved">AppBar Einträge wurden gespeichert.</string>
+    <string name="content_setup_instructions">Hinzufügen von Einträgen zum AppBar durch Gedrückthalten auf der rechten Seite und Hineinziehen in den AppBar.\n\nGruppieren von Einträgen in Ordner durch Hineinziehen auf vorhandene Einträge im AppBar.\n\nZum Entfernen einfach einen Eintrag aus dem AppBar heraus ziehen.</string>
+    <string name="content_setup_dismiss">Weiter</string>
+    <string name="toast_not_installed">App ist nicht installiert</string>
+    <string name="quick_settings_appsidebar_on">AppSideBar An</string>
+    <string name="quick_settings_appsidebar_off">AppSideBar Aus</string>
+
+    <!-- TRDS -->
+    <string name="quick_settings_trds_label">TRDS</string>
+
+    <string name="gestures_message">Geste hier zeichnen</string>
+
+</resources>
