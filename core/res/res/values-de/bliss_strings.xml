@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+
+    <!-- In WiFi AP notification -->
+    <string name="notify_turn_wifi_ap_off_title">Wi-Fi AP ausschalten</string>
+
+    <!-- AOKP custom system animations -->
+    <string name="animation_fade">Ausblenden</string>
+    <string name="animation_slide_right">Slide in rechts</string>
+    <string name="animation_slide_left">Slide in links</string>
+    <string name="animation_slide_right_no_fade">Slide in rechts (kein fade)</string>
+    <string name="animation_slide_left_no_fade">Slide in links (kein fade)</string>
+    <string name="animation_slide_up">Slide in unten</string>
+    <string name="animation_slide_down">Slide in oben</string>
+    <string name="animation_default">Standard</string>
+    <string name="animation_translucent">Durchsichtig</string>
+    <string name="animation_grow_shrink">Grow in (oben)</string>
+    <string name="animation_grow_shrink_center">Grow in (mittig)</string>
+    <string name="animation_grow_shrink_bottom">Grow in (unten)</string>
+    <string name="animation_grow_shrink_left">Grow in (links)</string>
+    <string name="animation_grow_shrink_right">Grow in (rechts)</string>
+    <string name="action_null">Blank</string>
+
+    <string name="default_string">Standard</string>
+
+    <!-- Zen mode buttons -->
+    <string name="silent_mode_priority">Priorität</string>
+    <string name="silent_mode_none">Kein</string>
+
+    <!-- Error description on theme switch with ligtsensor mode enabled -->
+    <string name="theme_auto_switch_mode_error">Automatischer Modus mit Lichterkennung ist aktiv. Manuelles Umschalten ist nicht möglich.</string>
+
+    <!-- Error message if user want to try to disable all navigation options -->
+    <string name="disable_navigation_pie_error">Die Navigationsleiste kann nicht deaktiviert werden, da keine andere aktiv ist. Zuerst Pie Steuerung aktivieren, um dann die Navigationsleiste aus zu schalten.</string>
+    
+    <!-- Error message if user want to try to disable all navigation options -->
+    <string name="disable_pie_navigation_error">Pie Steuerung kann nicht deaktiviert werden, da keine andere aktiv ist. Zuerst Navigationsleiste einschalten, um dann die Pie Steuerung aus zu schalten.</string>
+
+</resources>
