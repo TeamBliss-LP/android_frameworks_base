@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <!-- Quick Settings Tiles -->
+    <string name="quick_settings_heads_up_on">浮动通知已启用</string>
+    <string name="quick_settings_heads_up_off">勿扰</string>
+    <string name="quick_settings_usb_tether_label">USB网络共享</string>
+    <string name="quick_settings_hwkeys_on">实体按键已启用</string>
+    <string name="quick_settings_hwkeys_off">实体按键已禁用</string>
+    <string name="heads_up_enabled">浮动通知已启用</string>
+    <string name="heads_up_disabled">浮动通知已禁用</string>
+    <string name="quick_settings_gesture_on">无处不在的手势已启用</string>
+    <string name="quick_settings_gesture_off">无处不在的手势已禁用</string>
+    <!-- mount notifications -->
+    <string name="ext_media_mounted_notification_title">挂载</string>
+    <string name="ext_media_unmounted_notification_title">卸载</string>
+    <string name="ext_media_unmounted_notification_message">可以安全地移除存储了。</string>
+    <string name="ext_media_unmount_action">卸载</string>
+    <string name="ext_media_mount_action">挂载</string>
+    <string name="ext_media_unmounting_notification_title">\u6b63\u5728\u5378\u8f7d...</string>
+    <string name="ext_media_mounting_notification_title">\u6b63\u5728\u6302\u8f7d...</string>
+    <!-- Dialog Cancel/OK -->
+    <string name="cancel">取消</string>
+    <string name="dlg_ok">确定</string>
+    <string name="yes">是</string>
+    <string name="no">否</string>
+    <!-- Slim Shortcut Actions -->
+    <string name="shortcut_picker">Slim快捷键</string>
+    <string name="shortcut_rotation">旋转锁屏切换</string>
+    <string name="shortcut_torch">手电筒</string>
+    <string name="shortcut_chamber">隐私空间</string>
+    <string name="shortcut_reboot">重启</string>
+    <string name="shortcut_recovery">恢复模式</string>
+    <string name="chamber_disabled">隐私空间已关闭</string>
+    <string name="chamber_title">输入设置字符串</string>
+    <string name="chamber_message">输入字符串设置 on/off（勾选） 或优先列表。比如，doze_enabled或与此类似。设置项能在Settings.java文件中找到。警告：此操作带有危险性！</string>
+    <string name="chamber_invalid">不可用的输入，请仔细检查。</string>
+    <string name="chamber_invalid_setting">手动切换设置以确认设置的数据库中存在此动作。</string>
+    <string name="chamber_checkbox">选择框</string>
+    <string name="chamber_chk_message">该设置是一个选择框设置吗？</string>
+    <string name="chamber_int">输入数值</string>
+    <string name="chamber_int_message">Input the values you\'d like the setting to toggle between. Separate each value with a comma. Color settings accept hex-values such as #FF00aacc or basic color values like red, green, and yellow.</string>
+    <string name="chamber_name_title">快捷方式名称</string>
+    <string name="chamber_name_message">给快捷方式起一个名称显示在图标旁</string>
+    <string name="chamber_name_toast">使用默认名称</string>
+    <!-- Off/On/Toggle -->
+    <string name="off">关</string>
+    <string name="on">开</string>
+    <string name="toggle">切换</string>
+    <string name="shortcut_toggle_title">要执行的操作</string>
+    <!-- Kill app toast -->
+    <string name="app_killed_message">被结束的进程</string>
+    <!-- Power menu on navring targets -->
+    <string name="navring_action_power_menu">电源菜单</string>
+    <!-- Screenrecord Notification Ticker -->
+    <string name="screenrecord_notif_ticker">屏幕正在被录像</string>
+    <!-- Screenrecord notification title -->
+    <string name="screenrecord_notif_title">正在屏幕录像</string>
+    <!-- Screenrecord notification action: Stop -->
+    <string name="screenrecord_notif_stop">停止</string>
+    <!-- Screenrecord notification action: show/hide pointer -->
+    <string name="screenrecord_notif_pointer_on">显示指示</string>
+    <string name="screenrecord_notif_pointer_off">隐藏指示</string>
+    <!-- Screen record notification error title -->
+    <string name="screenrecord_notif_error">无法进行屏幕录像</string>
+    <!-- Greeting -->
+    <string name="bliss_label">欢迎使用Bliss</string>
+    <!-- Pie controls -->
+    <string name="pie_battery_status_charging">正在充电 (<xliff:g id="percent">%d</xliff:g>%%)</string>
+    <string name="pie_battery_status_full">已充满</string>
+    <string name="pie_battery_status_discharging">剩余<xliff:g id="percent">%d</xliff:g>%%</string>
+    <string name="pie_phone_status_no_service">无服务</string>
+    <string name="pie_phone_status_airplane_mode">飞行模式开启</string>
+    <string name="pie_phone_status_emergency_only">仅限紧急呼叫</string>
+    <!-- App sidebar -->
+    <string name="default_folder_text">文件夹</string>
+    <string name="title_activity_sidebar_configuration">应用栏内容设置</string>
+    <string name="action_save">保存</string>
+    <string name="toast_items_saved">应用栏项目已保存。</string>
+    <string name="content_setup_instructions">长按任何项目的右侧并拖放到应用栏，即可添加。\n\n拖放一个项目到任意另一个项目上，可建立文件夹。\n\n如果要移除任何项目，仅需将图标移出应用栏。</string>
+    <string name="content_setup_dismiss">继续</string>
+    <string name="toast_not_installed">应用未安装</string>
+    <string name="quick_settings_appsidebar_on">应用侧边栏开启</string>
+    <string name="quick_settings_appsidebar_off">应用侧边栏关闭</string>
+    <!-- TRDS -->
+    <string name="quick_settings_trds_label">真正的暗色Slim</string>
+    <string name="gestures_message">在这里画出手势</string>
+</resources>

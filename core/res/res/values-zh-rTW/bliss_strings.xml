@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <!-- In WiFi AP notification -->
+    <string name="notify_turn_wifi_ap_off_title">關閉Wi-Fi接入點</string>
+    <!-- AOKP custom system animations -->
+    <string name="animation_fade">淡出淡入</string>
+    <string name="animation_slide_right">右側滑入</string>
+    <string name="animation_slide_left">左側滑入</string>
+    <string name="animation_slide_right_no_fade">右側滑入（無淡出淡入）</string>
+    <string name="animation_slide_left_no_fade">左側滑入（無淡出淡入）</string>
+    <string name="animation_slide_up">底部滑入</string>
+    <string name="animation_slide_down">頂部滑入</string>
+    <string name="animation_default">默認</string>
+    <string name="animation_translucent">半透明</string>
+    <string name="animation_grow_shrink">頂部增大</string>
+    <string name="animation_grow_shrink_center">中部增大</string>
+    <string name="animation_grow_shrink_bottom">底部增大</string>
+    <string name="animation_grow_shrink_left">左側增大</string>
+    <string name="animation_grow_shrink_right">右側增大</string>
+    <string name="action_null">空白</string>
+    <string name="default_string">默認</string>
+    <!-- Zen mode buttons -->
+    <string name="silent_mode_priority">優先</string>
+    <string name="silent_mode_none">無</string>
+    <!-- Error description on theme switch with ligtsensor mode enabled -->
+    <string name="theme_auto_switch_mode_error">已啟用自動光感模式，手動設置不可用。</string>
+    <!-- Error message if user want to try to disable all navigation options -->
+    <string name="disable_navigation_pie_error">無法禁用導航欄，因為沒有啟用其他導航。請首先啟用pie控制器，然後禁用導航欄。</string>
+    <!-- Error message if user want to try to disable all navigation options -->
+    <string name="disable_pie_navigation_error">無法禁用pie控制器，因為沒有啟用其他導航。請首先啟用其他導航欄，然後禁用pie控制器。</string>
+</resources>
