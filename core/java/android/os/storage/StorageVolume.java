@@ -242,16 +242,16 @@ public class StorageVolume implements Parcelable {
         return mState;
     }
 
-    public boolean isMtpEnabled() {
-        return mAllowMtp;
-    }
-
     public void setIsFormatting(boolean isFormatting) {
         mIsFormatting = isFormatting;
     }
 
     public boolean getIsFormatting() {
         return mIsFormatting;
+    }
+
+    public boolean isMtpEnabled() {
+        return mAllowMtp;
     }
 
     @Override
