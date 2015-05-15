@@ -4,7 +4,6 @@
     <!-- Quick Settings Tiles -->
     <string name="quick_settings_heads_up_on">Heads Up eingeschaltet</string>
     <string name="quick_settings_heads_up_off">Keine Unterbrechungen</string>
-    <string name="quick_settings_usb_tether_label">USB Tethering</string>
     <string name="quick_settings_hwkeys_on">Hardware Tasten eingeschaltet</string>
     <string name="quick_settings_hwkeys_off">Hardware Tasten ausgeschaltet</string>
     <string name="heads_up_enabled">Heads Up Benachrichtigungen sind eingeschaltet</string>
