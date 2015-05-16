@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <!-- In WiFi AP notification -->
+    <string name="notify_turn_wifi_ap_off_title">关闭Wi-Fi接入点</string>
+    <!-- AOKP custom system animations -->
+    <string name="animation_fade">淡出淡入</string>
+    <string name="animation_slide_right">右侧滑入</string>
+    <string name="animation_slide_left">左侧滑入</string>
+    <string name="animation_slide_right_no_fade">右侧滑入（无淡出淡入）</string>
+    <string name="animation_slide_left_no_fade">左侧滑入（无淡出淡入）</string>
+    <string name="animation_slide_up">底部滑入</string>
+    <string name="animation_slide_down">顶部滑入</string>
+    <string name="animation_default">默认</string>
+    <string name="animation_translucent">半透明</string>
+    <string name="animation_grow_shrink">顶部放大</string>
+    <string name="animation_grow_shrink_center">居中放大</string>
+    <string name="animation_grow_shrink_bottom">底部放大</string>
+    <string name="animation_grow_shrink_left">左侧放大</string>
+    <string name="animation_grow_shrink_right">右侧放大</string>
+    <string name="action_null">空白</string>
+    <string name="default_string">默认</string>
+    <!-- Zen mode buttons -->
+    <string name="silent_mode_priority">优先</string>
+    <string name="silent_mode_none">无</string>
+    <!-- Error description on theme switch with ligtsensor mode enabled -->
+    <string name="theme_auto_switch_mode_error">已启用自动调节亮度，手动切换是不可用的。</string>
+    <!-- Error message if user want to try to disable all navigation options -->
+    <string name="disable_navigation_pie_error">无法禁用导航栏，因为没有启用其他导航。请首先启用pie控制器，然后禁用导航栏。</string>
+    <!-- Error message if user want to try to disable all navigation options -->
+    <string name="disable_pie_navigation_error">无法禁用pie控制器，因为没有启用其他导航。请首先启用其他导航栏，然后禁用pie控制器。</string>
+</resources>
