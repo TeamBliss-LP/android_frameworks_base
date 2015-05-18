@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 The CyanogenMod Project (Jens Doll)
+ * Copyright (C) 2013-2015 The CyanogenMod Project (Jens Doll)
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -69,9 +69,9 @@ public final class EdgeServiceConstants {
     public static final int SENSITIVITY_HIGHEST = 10;
 
     /**
-     * Do not cut 10% area on th edges
+     * Allow IME to reduce left and right trigger height.
      */
-    public static final int UNRESTRICTED = 0x10;
+    public static final int IME_CONTROL = 0x10;
 
     /**
      * This listener does not likes enabling/disabling filter
@@ -80,8 +80,8 @@ public final class EdgeServiceConstants {
     public static final int LONG_LIVING = 0x20;
 
     /**
-     * Allow IME to reduce left and right trigger height.
+     * Do not cut 10% area on th edges
      */
-    public static final int IME_CONTROL = 0x10;
+    public static final int UNRESTRICTED = 0x30;
 
 }

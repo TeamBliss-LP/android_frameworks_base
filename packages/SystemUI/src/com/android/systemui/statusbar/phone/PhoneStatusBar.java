@@ -545,6 +545,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     Settings.System.STATUS_BAR_GREETING_TIMEOUT),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.PIE_CONTROLS),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.HEADS_UP_BG_COLOR),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
@@ -623,6 +626,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                         resolver,
                         Settings.System.HEADS_UP_TEXT_COLOR,
                         0x00000000, UserHandle.USER_CURRENT);
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.PIE_CONTROLS))) {
+                    attachPieContainer(isPieEnabled());
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.QS_COLOR_SWITCH))) {
                     mQSCSwitch = Settings.System.getIntForUser(
@@ -754,6 +760,12 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mNavigationBarView.setBar(this);
         mNavigationBarView.updateResources(getNavbarThemedResources());
         addNavigationBar(true); // dynamically adding nav bar, reset System UI visibility!
+    }
+	
+    private boolean isPieEnabled() {
+        return Settings.System.getIntForUser(mContext.getContentResolver(),
+                Settings.System.PIE_CONTROLS, 0,
+                UserHandle.USER_CURRENT) == 1;
     }
 
     // ensure quick settings is disabled until the current user makes it through the setup wizard
@@ -1150,6 +1162,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
                 mNavigationBarView.setDisabledFlags(mDisabled);
                 mNavigationBarView.setBar(this);
+                addNavigationBarCallback(mNavigationBarView);
                 mNavigationBarView.setOnVerticalChangedListener(
                         new NavigationBarView.OnVerticalChangedListener() {
                     @Override
@@ -1187,6 +1200,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         } catch (RemoteException ex) {
             // no window manager? good luck with that
         }
+
+        // Setup pie container if enabled
+        attachPieContainer(isPieEnabled());
 
         // figure out which pixel-format to use for the status bar.
         mPixelFormat = PixelFormat.OPAQUE;
@@ -1842,6 +1858,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         prepareNavigationBarView(forceReset);
 
         mWindowManager.addView(mNavigationBarView, getNavigationBarLayoutParams());
+        mNavigationBarOverlay.setNavigationBar(mNavigationBarView);
     }
 
     private void removeNavigationBar() {
@@ -2046,6 +2063,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         // Recalculate the position of the sliding windows and the titles.
         setAreThereNotifications();
         updateExpandedViewPos(EXPANDED_LEAVE_ALONE);
+        restorePieTriggerMask();
     }
 
     public void displayNotificationFromHeadsUp(StatusBarNotification notification) {
@@ -2287,6 +2305,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     }
 
     private void updateNotificationIcons() {
+        if (mNotificationIcons == null) return;
+
         final LinearLayout.LayoutParams params
             = new LinearLayout.LayoutParams(mIconSize + 2*mIconHPadding, mNaturalBarHeight);
 
@@ -2832,8 +2852,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                         | StatusBarManager.DISABLE_RECENT
                         | StatusBarManager.DISABLE_BACK
                         | StatusBarManager.DISABLE_SEARCH)) != 0) {
-            // the nav bar will take care of these
-            if (mNavigationBarView != null) mNavigationBarView.setDisabledFlags(state);
+
+            // All navigation bar listeners will take care of these
+            propagateDisabledFlags(state);
 
             if ((state & StatusBarManager.DISABLE_RECENT) != 0) {
                 // close recents if it's visible
@@ -3528,9 +3549,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
         mNavigationIconHints = hints;
 
-        if (mNavigationBarView != null) {
-            mNavigationBarView.setNavigationIconHints(hints);
-        }
+        propagateNavigationIconHints(hints);
         checkBarModes();
     }
 
@@ -3803,9 +3822,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         if (DEBUG) {
             Log.d(TAG, (showMenu?"showing":"hiding") + " the MENU button");
         }
-        if (mNavigationBarView != null) {
-            mNavigationBarView.setMenuVisibility(showMenu);
-        }
+        propagateMenuVisibility(showMenu);
 
         // See above re: lights-out policy for legacy apps.
         if (showMenu) setLightsOn(true);

@@ -82,7 +82,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import android.util.SparseArray;
 
-public class NavigationBarView extends LinearLayout {
+public class NavigationBarView extends LinearLayout implements BaseStatusBar.NavigationBarCallback {
     private static final boolean DEBUG = NavbarUtils.DEBUG;
     private final static String TAG = "PhoneStatusBar/NavigationBarView";
 
@@ -456,7 +456,8 @@ public class NavigationBarView extends LinearLayout {
 
     @Override
     public void setLayoutDirection(int layoutDirection) {
-		getIcons(mThemedResources != null ? mThemedResources : getContext().getResources());
+        getIcons(mThemedResources != null ? mThemedResources : getContext().getResources());
+
         super.setLayoutDirection(layoutDirection);
     }
 
@@ -465,6 +466,7 @@ public class NavigationBarView extends LinearLayout {
         setDisabledFlags(mDisabledFlags, true);
     }
 
+    @Override
     public void setNavigationIconHints(int hints) {
         setNavigationIconHints(hints, false);
     }
@@ -582,7 +584,8 @@ public class NavigationBarView extends LinearLayout {
             setupNavigationButtons(mAllButtonContainers.get(mDisplayingLayoutIndex));
         }
     };
-
+	
+	@Override
     public void setDisabledFlags(int disabledFlags) {
         setDisabledFlags(disabledFlags, false);
     }
@@ -711,6 +714,7 @@ public class NavigationBarView extends LinearLayout {
         }
     }
 
+    @Override
     public void setMenuVisibility(final boolean show) {
         setMenuVisibility(show, false);
     }
@@ -745,7 +749,7 @@ public class NavigationBarView extends LinearLayout {
         mRot90 = (FrameLayout) findViewById(R.id.rot90);
 
         mRotatedViews[Surface.ROTATION_0] =
-                mRotatedViews[Surface.ROTATION_180] = findViewById(R.id.rot0);
+        mRotatedViews[Surface.ROTATION_180] = findViewById(R.id.rot0);
 
         mRotatedViews[Surface.ROTATION_90] = findViewById(R.id.rot90);
 
@@ -760,7 +764,7 @@ public class NavigationBarView extends LinearLayout {
         setDisabledFlags(mDisabledFlags);
     }
 
-    @Override
+   @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
 

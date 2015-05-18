@@ -24,6 +24,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.hardware.input.InputManager;
 import android.hardware.TorchManager;
+import android.hardware.ITorchService;
 import android.media.AudioManager;
 import android.media.session.MediaSessionLegacyHelper;
 import android.media.ToneGenerator;
@@ -84,6 +85,12 @@ public class Action {
                 return; // ouch
             }
 
+            boolean isKeyguardSecure = false;
+            try {
+                isKeyguardSecure = windowManagerService.isKeyguardSecure();
+            } catch (RemoteException e) {
+            }
+
             // process the actions
             if (action.equals(ActionConstants.ACTION_HOME)) {
                 triggerVirtualKeypress(KeyEvent.KEYCODE_HOME, isLongpress);
@@ -128,6 +135,32 @@ public class Action {
                         new Intent("android.settings.SHOW_INPUT_METHOD_PICKER"),
                         new UserHandle(UserHandle.USER_CURRENT));
                 return;
+            } else if (action.equals(ActionConstants.ACTION_PIE)) {
+                boolean pieState = isPieEnabled(context);
+                if (pieState && !isNavBarEnabled(context) && isNavBarDefault(context)) {
+                    Toast.makeText(context,
+                            com.android.internal.R.string.disable_pie_navigation_error,
+                            Toast.LENGTH_LONG).show();
+                    return;
+                }
+                Settings.System.putIntForUser(
+                        context.getContentResolver(),
+                        Settings.System.PIE_CONTROLS,
+                        pieState ? 0 : 1, UserHandle.USER_CURRENT);
+                return;
+            } else if (action.equals(ActionConstants.ACTION_NAVBAR)) {
+                boolean navBarState = isNavBarEnabled(context);
+                if (navBarState && !isPieEnabled(context) && isNavBarDefault(context)) {
+                    Toast.makeText(context,
+                            com.android.internal.R.string.disable_navigation_pie_error,
+                            Toast.LENGTH_LONG).show();
+                    return;
+                }
+                Settings.System.putIntForUser(
+                        context.getContentResolver(),
+                        Settings.System.NAVBAR_FORCE_ENABLE,
+                        navBarState ? 0 : 1, UserHandle.USER_CURRENT);
+                return;
             } else if (action.equals(ActionConstants.ACTION_KILL)) {
                 if (isKeyguardShowing) {
                     return;
@@ -137,6 +170,22 @@ public class Action {
                 } catch (RemoteException e) {
                 }
                 return;
+            } else if (action.equals(ActionConstants.ACTION_NOTIFICATIONS)) {
+                if (isKeyguardShowing && isKeyguardSecure) {
+                    return;
+                }
+                try {
+                    barService.expandNotificationsPanel();
+                } catch (RemoteException e) {
+                }
+                return;
+            } else if (action.equals(ActionConstants.ACTION_SETTINGS_PANEL)) {
+                if (isKeyguardShowing && isKeyguardSecure) {
+                    return;
+                }
+                try {
+                    barService.expandSettingsPanel();
+                } catch (RemoteException e) {}
             } else if (action.equals(ActionConstants.ACTION_LAST_APP)) {
                 if (isKeyguardShowing) {
                     return;
@@ -187,6 +236,20 @@ public class Action {
                 } catch (RemoteException e) {
                 }
                 return;
+            } else if (action.equals(ActionConstants.ACTION_TORCH)) {
+                try {
+                    ITorchService torchService = ITorchService.Stub.asInterface(
+                            ServiceManager.getService(Context.TORCH_SERVICE));
+                    torchService.toggleTorch();
+                } catch (RemoteException e) {
+                }
+                return;
+            } else if (action.equals(ActionConstants.ACTION_POWER_MENU)) {
+                try {
+                    windowManagerService.toggleGlobalMenu();
+                } catch (RemoteException e) {
+                }
+                return;
             } else if (action.equals(ActionConstants.ACTION_ASSIST)
                     || action.equals(ActionConstants.ACTION_KEYGUARD_SEARCH)) {
                 Intent intent = ((SearchManager) context.getSystemService(Context.SEARCH_SERVICE))
@@ -210,7 +273,7 @@ public class Action {
                     }
                     startActivity(context, intent, barService, isKeyguardShowing);
                 } catch (ActivityNotFoundException e) {
-                    Log.e("SlimActions:", "No activity to handle assist long press action.", e);
+                    Log.e("Action:", "No activity to handle assist long press action.", e);
                 }
                 return;
             } else if (action.equals(ActionConstants.ACTION_VIB)) {
@@ -309,7 +372,7 @@ public class Action {
                 try {
                     intent = Intent.parseUri(action, 0);
                 } catch (URISyntaxException e) {
-                    Log.e("SlimActions:", "URISyntaxException: [" + action + "]");
+                    Log.e("Action:", "URISyntaxException: [" + action + "]");
                     return;
                 }
                 startActivity(context, intent, barService, isKeyguardShowing);

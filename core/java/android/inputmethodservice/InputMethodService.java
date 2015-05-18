@@ -37,6 +37,7 @@ import android.os.ServiceManager;
 import android.os.SystemClock;
 import android.os.UserHandle;
 import android.provider.Settings;
+import android.service.gesture.IEdgeGestureService;
 import android.text.InputType;
 import android.text.Layout;
 import android.text.Spannable;
@@ -330,6 +331,7 @@ public class InputMethodService extends AbstractInputMethodService {
     private boolean mReverseExit;
 
     private SettingsObserver mSettingsObserver;
+    private IEdgeGestureService mEdgeGestureService;
 
     final Insets mTmpInsets = new Insets();
     final int[] mTmpLocation = new int[2];
@@ -1521,6 +1523,17 @@ public class InputMethodService extends AbstractInputMethodService {
             mWindowWasVisible = mWindowVisible;
             mInShowWindow = true;
             showWindowInner(showInput);
+            if (showInput) {
+                // IME softkeyboard is showing. Notify EdgeGestureService.
+                IEdgeGestureService edgeGestureService = getEdgeGestureService();
+                try {
+                    if (edgeGestureService != null) {
+                        edgeGestureService.setImeIsActive(true);
+                    }
+                } catch (RemoteException e) {
+                    mEdgeGestureService = null;
+                }
+            }
         } finally {
             mWindowWasVisible = true;
             mInShowWindow = false;
@@ -1628,6 +1641,16 @@ public class InputMethodService extends AbstractInputMethodService {
             mWindowVisible = false;
             onWindowHidden();
             mWindowWasVisible = false;
+        }
+
+        // IME softkeyboard is hiding. Notify EdgeGestureService.
+        IEdgeGestureService edgeGestureService = getEdgeGestureService();
+        try {
+            if (edgeGestureService != null) {
+                edgeGestureService.setImeIsActive(false);
+            }
+        } catch (RemoteException e) {
+            mEdgeGestureService = null;
         }
 
         int mKeyboardRotationTimeout = Settings.System.getIntForUser(getContentResolver(),
@@ -2400,13 +2423,26 @@ public class InputMethodService extends AbstractInputMethodService {
         return true;
     }
     
-    IStatusBarService getStatusBarService() {
+    private IStatusBarService getStatusBarService() {
         synchronized (mServiceAquireLock) {
             if (mStatusBarService == null) {
                 mStatusBarService = IStatusBarService.Stub.asInterface(
                         ServiceManager.getService("statusbar"));
             }
             return mStatusBarService;
+        }
+    }
+
+    /**
+     * If not set till now get EdgeGestureService.
+     */
+    private IEdgeGestureService getEdgeGestureService() {
+        synchronized (mServiceAquireLock) {
+            if (mEdgeGestureService == null) {
+                mEdgeGestureService = IEdgeGestureService.Stub.asInterface(
+                            ServiceManager.getService("edgegestureservice"));
+            }
+            return mEdgeGestureService;
         }
     }
 
