@@ -17,6 +17,14 @@
  * limitations under the License.
  */
 -->
+<<<<<<< HEAD:packages/SettingsProvider/res/values-ast-rES/strings.xml
 <resources>
   <string name="app_label">Axustes d\'almacenamientu</string>
+=======
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+
+    <!-- The text for the button in the notification window-shade that clears
+         all of the currently visible notifications. [CHAR LIMIT=10]-->
+    <string name="clear_recents">Close all recents</string>
+>>>>>>> a894f6e... Remove @AlmightyMegadeth00 customizable navbar:packages/SystemUI/res/values/axxion_strings.xml
 </resources>

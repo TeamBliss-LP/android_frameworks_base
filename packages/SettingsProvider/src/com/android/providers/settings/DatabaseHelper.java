@@ -2614,9 +2614,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
             loadUISoundEffectsSettings(stmt);
 
-            loadIntegerSetting(stmt, Settings.System.NAVBAR_FORCE_ENABLE,
-                    R.integer.def_force_disable_navkeys);
-
             loadIntegerSetting(stmt, Settings.System.POINTER_SPEED,
                     R.integer.def_pointer_speed);
 
