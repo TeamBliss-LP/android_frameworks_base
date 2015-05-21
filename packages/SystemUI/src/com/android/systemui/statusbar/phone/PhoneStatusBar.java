@@ -42,6 +42,7 @@ import android.annotation.ChaosLab.Classification;
 import android.annotation.NonNull;
 import android.app.ActivityManager;
 import android.app.ActivityManagerNative;
+import android.app.ActivityOptions;
 import android.app.IActivityManager;
 import android.app.Notification;
 import android.app.PendingIntent;
@@ -75,6 +76,7 @@ import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.inputmethodservice.InputMethodService;
+import android.net.Uri;
 import android.media.AudioAttributes;
 import android.media.MediaMetadata;
 import android.media.session.MediaController;
@@ -95,6 +97,7 @@ import android.os.RemoteException;
 import android.os.ServiceManager;
 import android.os.SystemClock;
 import android.os.UserHandle;
+import android.os.UserManager;
 import android.provider.Settings;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.NotificationListenerService.RankingMap;
@@ -118,6 +121,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
+import android.view.WindowManagerGlobal;
 import android.view.ViewGroup.LayoutParams;
 import android.view.ViewPropertyAnimator;
 import android.view.ViewStub;
@@ -363,6 +367,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     // settings
     View mFlipSettingsView;
     private QSPanel mQSPanel;
+    private DevForceNavbarObserver mDevForceNavbarObserver;
+    boolean mSearchPanelAllowed = true;
 
     String mGreeting = "";
 
@@ -413,6 +419,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     private int mNavigationBarWindowState = WINDOW_STATE_SHOWING;
 
+	private int mNavigationIconHints = 0;
+ 
     // the tracker view
     int mTrackingPosition; // the position of the top of the tracking view.
 
@@ -461,7 +469,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     private ScreenPinningRequest mScreenPinningRequest;
 
-    private int mNavigationIconHints = 0;
     private HandlerThread mHandlerThread;
 
     Runnable mLongPressBrightnessChange = new Runnable() {
@@ -472,14 +479,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             mLinger = BRIGHTNESS_CONTROL_LINGER_THRESHOLD + 1;
         }
     };
-
-    // Custom Recents Long Press
-    // - Tracks Event state for custom (user-configurable) Long Presses.
-    private boolean mCustomRecentsLongPressed = false;
-    // - The ArrayList is updated when packages are added and removed.
-    private List<ComponentName> mCustomRecentsLongPressHandlerCandidates = new ArrayList<>();
-    // - The custom Recents Long Press, if selected.  When null, use default (switch last app).
-    private ComponentName mCustomRecentsLongPressHandler = null;
 
     class SettingsObserver extends UserContentObserver {
         SettingsObserver(Handler handler) {
@@ -511,8 +510,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     Settings.System.STATUS_BAR_CARRIER), false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.NAVBAR_LEFT_IN_LANDSCAPE), false, this, UserHandle.USER_ALL);
-            resolver.registerContentObserver(Settings.Secure.getUriFor(
-                    Settings.Secure.RECENTS_LONG_PRESS_ACTIVITY), false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.BATTERY_SAVER_MODE_COLOR),
                     false, this, UserHandle.USER_ALL);
@@ -670,9 +667,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 mNavigationBarView.setLeftInLandscape(navLeftInLandscape);
             }
 
-            // This method reads Settings.Secure.RECENTS_LONG_PRESS_ACTIVITY
-            updateCustomRecentsLongPressHandler(false);
-
             mBlissLogo = Settings.System.getIntForUser(resolver,
                     Settings.System.STATUS_BAR_BLISS_LOGO, 0, mCurrentUserId) == 1;
             mBlissLogoColor = Settings.System.getIntForUser(resolver,
@@ -709,6 +703,44 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 UserHandle.USER_CURRENT) == 1;
     }
 
+    class DevForceNavbarObserver extends ContentObserver {
+        DevForceNavbarObserver(Handler handler) {
+            super(handler);
+        }
+
+        void observe() {
+            ContentResolver resolver = mContext.getContentResolver();
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.NAVBAR_FORCE_ENABLE), false, this);
+        }
+
+        @Override
+        public void onChange(boolean selfChange) {
+            boolean visible = Settings.System.getIntForUser(mContext.getContentResolver(),
+                    Settings.System.NAVBAR_FORCE_ENABLE, 0, UserHandle.USER_CURRENT) == 1;
+            if (visible) {
+                forceAddNavigationBar();
+            } else {
+                removeNavigationBar();
+            }
+        }
+    }
+
+    private void forceAddNavigationBar() {
+        // If we have no Navbar view and we should have one, create it
+        if (mNavigationBarView != null) {
+            return;
+        }
+
+        mNavigationBarView =
+                (NavigationBarView) View.inflate(mContext, R.layout.navigation_bar, null);
+
+        mNavigationBarView.setDisabledFlags(mDisabled);
+        mNavigationBarView.setBar(this);
+        mNavigationBarView.updateResources(getNavbarThemedResources());
+        addNavigationBar(true); // dynamically adding nav bar, reset System UI visibility!
+    }
+
     // ensure quick settings is disabled until the current user makes it through the setup wizard
     private boolean mUserSetup = false;
     private ContentObserver mUserSetupObserver = new ContentObserver(new Handler()) {
@@ -737,7 +769,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             boolean wasUsing = mUseHeadsUp;
             mUseHeadsUp = ENABLE_HEADS_UP && !mDisableNotificationAlerts && Settings.System.getIntForUser(
                     mContext.getContentResolver(),
-                    Settings.System.HEADS_UP_NOTIFICATION, 0, UserHandle.USER_CURRENT) == 1;
+                    Settings.System.HEADS_UP_NOTIFICATION, 1, UserHandle.USER_CURRENT) == 1;
 		    animateCollapsePanels();
 
             mHeadsUpTicker = mUseHeadsUp && 0 != Settings.Global.getInt(
@@ -954,8 +986,20 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
         addNavigationBar(false);
 
+        // Status bar settings observer
         SettingsObserver observer = new SettingsObserver(mHandler);
         observer.observe();
+
+        // Developer options - Force Navigation bar
+        try {
+            boolean needsNav = mWindowManagerService.needsNavigationBar();
+            if (!needsNav) {
+                mDevForceNavbarObserver = new DevForceNavbarObserver(mHandler);
+                mDevForceNavbarObserver.observe();
+            }
+        } catch (RemoteException ex) {
+            // no window manager? good luck with that
+        }
 
         // Lastly, call to the icon policy to install/update all the icons.
         mIconPolicy = new PhoneStatusBarPolicy(mContext, mCastController, mSuController);
@@ -983,8 +1027,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         notifyUserAboutHiddenNotifications();
 
         mScreenPinningRequest = new ScreenPinningRequest(mContext);
-
-        updateCustomRecentsLongPressHandler(true);
     }
 
     boolean isMSim() {
@@ -1075,12 +1117,13 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
         updateShowSearchHoldoff();
 
-
-        if (mNavigationBarView == null) {
-            mNavigationBarView =
-                (NavigationBarView) View.inflate(context, R.layout.navigation_bar, null);
-            mNavigationBarView.updateResources(getNavbarThemedResources());
-        }
+        try {
+            boolean showNav = mWindowManagerService.hasNavigationBar();
+            if (DEBUG) Log.v(TAG, "hasNavigationBar=" + showNav);
+            if (showNav && !mRecreating) {
+                mNavigationBarView =
+                    (NavigationBarView) View.inflate(context, R.layout.navigation_bar, null);
+                mNavigationBarView.updateResources(getNavbarThemedResources());
 
         if (mRecreating) {
             removeSidebarView();
@@ -1088,25 +1131,28 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
         addSidebarView();
 
-        mNavigationBarView.setDisabledFlags(mDisabled);
-        mNavigationBarView.setBar(this);
-        mNavigationBarView.setOnVerticalChangedListener(
-                new NavigationBarView.OnVerticalChangedListener() {
-            @Override
-            public void onVerticalChanged(boolean isVertical) {
-                if (mSearchPanelView != null) {
-                    mSearchPanelView.setHorizontal(isVertical);
-                }
-                mNotificationPanel.setQsScrimEnabled(!isVertical);
+                mNavigationBarView.setDisabledFlags(mDisabled);
+                mNavigationBarView.setBar(this);
+                mNavigationBarView.setOnVerticalChangedListener(
+                        new NavigationBarView.OnVerticalChangedListener() {
+                    @Override
+                    public void onVerticalChanged(boolean isVertical) {
+                        if (mSearchPanelView != null) {
+                            mSearchPanelView.setHorizontal(isVertical);
+                        }
+                        mNotificationPanel.setQsScrimEnabled(!isVertical);
+                    }
+                });
+                mNavigationBarView.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        checkUserAutohide(v, event);
+                        return false;
+                    }});
             }
-        });
-        mNavigationBarView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                checkUserAutohide(v, event);
-                return false;
-            }
-        });
+        } catch (RemoteException ex) {
+            // no window manager? good luck with that
+        }
 
         if (!mRecreating) {
             addAppCircleSidebar();
@@ -1438,6 +1484,21 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         PowerManager pm = (PowerManager) mContext.getSystemService(Context.POWER_SERVICE);
         mBroadcastReceiver.onReceive(mContext,
                 new Intent(pm.isScreenOn() ? Intent.ACTION_SCREEN_ON : Intent.ACTION_SCREEN_OFF));
+                
+        // receive broadcasts
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
+        filter.addAction(Intent.ACTION_SCREEN_OFF);
+        filter.addAction(Intent.ACTION_SCREEN_ON);
+        filter.addAction(Intent.ACTION_KEYGUARD_WALLPAPER_CHANGED);
+        if (DEBUG_MEDIA_FAKE_ARTWORK) {
+            filter.addAction("fake_artwork");
+        }
+        filter.addAction(ACTION_DEMO);
+        context.registerReceiver(mBroadcastReceiver, filter);
+
+        // listen for USER_SETUP_COMPLETE setting (per-user)
+        resetUserSetupObserver();
 
         startGlyphRasterizeHack();
         setKeyguardTextAndIconColors();
@@ -1701,19 +1762,37 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     private void prepareNavigationBarView(boolean forceReset) {
         mNavigationBarView.reorient();
-        mNavigationBarView.setListeners(mRecentsClickListener, mRecentsPreloadOnTouchListener,
-                mLongPressBackRecentsListener, mHomeActionListener);
 
-        if (forceReset) {
+		if (mNavigationBarView.getRecentsButton() != null) {
+			mNavigationBarView.getRecentsButton().setOnClickListener(mRecentsClickListener);
+			mNavigationBarView.getRecentsButton().setOnTouchListener(mRecentsPreloadOnTouchListener);
+			mNavigationBarView.getRecentsButton().setLongClickable(true);
+			mNavigationBarView.getRecentsButton().setOnLongClickListener(mLongPressBackRecentsListener);
+		}
+
+		if (mNavigationBarView.getBackButton() != null) {
+			mNavigationBarView.getBackButton().setLongClickable(true);
+			mNavigationBarView.getBackButton().setOnLongClickListener(mLongPressBackRecentsListener);
+		}
+		setHomeActionListener();
+		
+		if (forceReset) {
             // Nav Bar was added dynamically - we need to reset the mSystemUiVisibility and call
             // setSystemUiVisibility so that mNavigationBarMode is set to the correct value
             int newVal = mSystemUiVisibility;
             mSystemUiVisibility = 0;
             setSystemUiVisibility(newVal, SYSTEM_UI_VISIBILITY_MASK);
-        }
+		}
+		
+		updateSearchPanel();
+	}
 
-        updateSearchPanel();
-    }
+    @Override
+    public void setHomeActionListener() {
+		if (mNavigationBarView.getHomeButton() != null) {
+			mNavigationBarView.getHomeButton().setOnTouchListener(mHomeActionListener);
+		}
+	}
 
     // For small-screen devices (read: phones) that lack hardware navigation buttons
     private void addNavigationBar(boolean forceReset) {
@@ -1731,6 +1810,14 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
         mWindowManager.addView(mNavigationBarView, getNavigationBarLayoutParams());
         mNavigationBarOverlay.setNavigationBar(mNavigationBarView);
+    }
+
+    private void removeNavigationBar() {
+        if (DEBUG) Log.d(TAG, "removeNavigationBar: about to remove " + mNavigationBarView);
+        if (mNavigationBarView == null) return;
+
+        mWindowManager.removeView(mNavigationBarView);
+        mNavigationBarView = null;
     }
 
     private void repositionNavigationBar() {
@@ -1927,6 +2014,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         // Recalculate the position of the sliding windows and the titles.
         setAreThereNotifications();
         updateExpandedViewPos(EXPANDED_LEAVE_ALONE);
+        restorePieTriggerMask();
     }
 
     public void displayNotificationFromHeadsUp(StatusBarNotification notification) {
@@ -3146,6 +3234,48 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     }
 
     @Override
+    public void animateNotificationsOrSettingsPanel() {
+        if (!panelsEnabled() || mState != StatusBarState.SHADE) return;
+        int state = getExpandedNotificationState();
+        switch (state) {
+            case 0:
+                animateExpandNotificationsPanel();
+                break;
+            case 1:
+                animateCollapsePanels();
+                break;
+            case 2:
+                animateExpandSettingsPanel();
+                break;
+        }
+    }
+
+    /**
+     * State of the expanded shade:
+     * 0 = collapsed/expanding
+     * 1 = quicksettings side
+     * 2 = notifications side
+     * @hide
+     */
+    private int getExpandedNotificationState() {
+        if (mExpandedVisible) {
+
+            boolean expanded = mHeader.getExpanded();
+            boolean visibleSettingsButton = mHeader.getSettingsButtonVisibility();
+
+            // Notification button is on quick settings side
+            if (expanded && !visibleSettingsButton) {
+                return 1;
+            // Settings button is on notification side
+            }
+            if (expanded && visibleSettingsButton) {
+                return 2;
+            }
+        }
+        return 0;
+    }
+
+    @Override
     public void animateExpandSettingsPanel() {
         if (SPEW) Log.d(TAG, "animateExpand: mExpandedVisible=" + mExpandedVisible);
         if (!panelsEnabled()) {
@@ -3355,6 +3485,12 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     public GestureRecorder getGestureRecorder() {
         return mGestureRec;
+    }
+
+    private void forceNavigationIconHints() {
+        if (mNavigationBarView != null) {
+            mNavigationBarView.setNavigationIconHints(mNavigationIconHints, true);
+        }
     }
 
     private void setNavigationIconHints(int hints) {
@@ -3762,7 +3898,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         }
     }
 
-    Animation.AnimationListener mTickingDoneListener = new Animation.AnimationListener() {
+    Animation.AnimationListener mTickingDoneListener = new Animation.AnimationListener() {;
         public void onAnimationEnd(Animation animation) {
             mTicking = false;
         }
@@ -3957,14 +4093,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         filter.addAction(ACTION_DEMO);
         mContext.registerReceiver(mBroadcastReceiver, filter);
 
-        // receive broadcasts for packages
-        IntentFilter packageFilter = new IntentFilter();
-        packageFilter.addAction(Intent.ACTION_PACKAGE_ADDED);
-        packageFilter.addAction(Intent.ACTION_PACKAGE_CHANGED);
-        packageFilter.addAction(Intent.ACTION_PACKAGE_FULLY_REMOVED);
-        packageFilter.addAction(Intent.ACTION_PACKAGE_REMOVED);
-        packageFilter.addDataScheme("package");
-        mContext.registerReceiver(mPackageBroadcastReceiver, packageFilter);
     }
 
     private void addStatusBarWindow() {
@@ -4085,6 +4213,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             }
             else if (Intent.ACTION_SCREEN_ON.equals(action)) {
                 mScreenOn = true;
+                
+                // work around problem where mDisplay.getRotation() is not stable while screen is off (bug 7086018)
+                repositionNavigationBar();
                 repositionSearchPanelSwipeView();
                 notifyNavigationBarScreenOn(true);
             }
@@ -4128,7 +4259,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     Intent.ACTION_PACKAGE_CHANGED.equals(action) ||
                     Intent.ACTION_PACKAGE_FULLY_REMOVED.equals(action) ||
                     Intent.ACTION_PACKAGE_REMOVED.equals(action)) {
-                updateCustomRecentsLongPressHandler(true);
             }
         }
     };
@@ -4197,9 +4327,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         wm.forgetLoadedKeyguardWallpaper();
         updateMediaMetaData(true);
 
-        if (mNavigationBarView != null) {
-            mNavigationBarView.updateSettings();
-        }
     }
 
     private void setControllerUsers() {
@@ -4409,6 +4536,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         if (mNavigationBarView != null)  {
             mNavigationBarView.updateResources(getNavbarThemedResources());
             updateSearchPanel();
+            checkBarModes();
         }
     }
 
@@ -4446,6 +4574,12 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             FontSizeUtils.updateFontSize(clock, R.dimen.status_bar_clock_size);
         }
     }
+
+	@Override
+	public void notifyLayoutChange(int direction) {
+		mNavigationBarView.notifyLayoutChange(direction);
+		mHandler.postDelayed(new Runnable() { public void run() { forceNavigationIconHints(); }}, 20);
+	}
 
     protected void loadDimens() {
         final Resources res = mContext.getResources();
@@ -4619,9 +4753,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     @Override
     protected boolean shouldDisableNavbarGestures() {
+		if (!mSearchPanelAllowed) return true;
         return !isDeviceProvisioned()
                 || mExpandedVisible
-                || (mNavigationBarView != null && mNavigationBarView.isInEditMode())
                 || (mDisabled & StatusBarManager.DISABLE_SEARCH) != 0;
     }
 
@@ -5290,29 +5424,25 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 // long-pressed 'together'
                 if ((time - mLastLockToAppLongPress) < LOCK_TO_APP_GESTURE_TOLERENCE) {
                     activityManager.stopLockTaskModeOnCurrent();
-                    // When exiting refresh disabled flags.
-                    mNavigationBarView.setDisabledFlags(mDisabled, true);
-                } else if ((NavbarEditor.NAVBAR_BACK.equals(v.getTag()))
+                } else if ((v.getId() == R.id.back)
                         && !mNavigationBarView.getRecentsButton().isPressed()) {
                     // If we aren't pressing recents right now then they presses
                     // won't be together, so send the standard long-press action.
                     sendBackLongPress = true;
-                } else if (NavbarEditor.NAVBAR_RECENT.equals(v.getTag()) && !activityManager.isInLockTaskMode()) {
+                } else if (v.getId() == R.id.recent_apps && !activityManager.isInLockTaskMode()) {
                     hijackRecentsLongPress = true;
                 }
                 mLastLockToAppLongPress = time;
             } else {
                 // If this is back still need to handle sending the long-press event.
-                if (NavbarEditor.NAVBAR_BACK.equals(v.getTag())) {
+                if (v.getId() == R.id.back) {
                     sendBackLongPress = true;
-                } else if (NavbarEditor.NAVBAR_RECENT.equals(v.getTag()) && !activityManager.isInLockTaskMode()) {
+                } else if (v.getId() == R.id.recent_apps && !activityManager.isInLockTaskMode()) {
                     hijackRecentsLongPress = true;
                 } else if (isAccessiblityEnabled && activityManager.isInLockTaskMode()) {
                     // When in accessibility mode a long press that is recents (not back)
                     // should stop lock task.
                     activityManager.stopLockTaskModeOnCurrent();
-                    // When exiting refresh disabled flags.
-                    mNavigationBarView.setDisabledFlags(mDisabled, true);
                 }
             }
             if (sendBackLongPress) {
@@ -5322,174 +5452,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             }
 
             if (hijackRecentsLongPress) {
-                // If there is a user-selected, registered handler for the
-                // recents long press, start the Intent.  Otherwise,
-                // perform the default action, which is last app switching.
-
-                // Copy it so the value doesn't change between now and when the activity is started.
-                ComponentName customRecentsLongPressHandler = mCustomRecentsLongPressHandler;
-                if (customRecentsLongPressHandler != null) {
-                    startCustomRecentsLongPressActivity(customRecentsLongPressHandler);
-                } else {
-                    ActionUtils.switchToLastApp(mContext, mCurrentUserId);
-                }
+                ActionUtils.switchToLastApp(mContext, mCurrentUserId);
             }
         } catch (RemoteException e) {
             Log.d(TAG, "Unable to reach activity manager", e);
-        }
-    }
-
-    protected View.OnTouchListener mRecentsPreloadOnTouchListener = new View.OnTouchListener() {
-        @Override
-        public boolean onTouch(View v, MotionEvent event) {
-            int action = event.getAction() & MotionEvent.ACTION_MASK;
-
-            // Handle Document switcher
-            // Additional optimization when we have software system buttons - start loading the recent
-            // tasks on touch down
-            if (action == MotionEvent.ACTION_DOWN) {
-                preloadRecents();
-            } else if (action == MotionEvent.ACTION_CANCEL) {
-                cancelPreloadingRecents();
-            } else if (action == MotionEvent.ACTION_UP) {
-                if (!v.isPressed()) {
-                    cancelPreloadingRecents();
-                }
-            }
-
-            // Handle custom recents long press
-            if (action == MotionEvent.ACTION_CANCEL ||
-                action == MotionEvent.ACTION_UP) {
-                cleanupCustomRecentsLongPressHandler();
-            }
-            return false;
-        }
-    };
-
-    /**
-     * If a custom Recents Long Press activity was dispatched, then the certain
-     * handlers need to be cleaned up after the event ends.
-     */
-    private void cleanupCustomRecentsLongPressHandler() {
-        if (mCustomRecentsLongPressed) {
-            mNavigationBarView.setSlippery(false);
-            mNavigationBarView.enableSearchBar();
-        }
-        mCustomRecentsLongPressed = false;
-    }
-
-    /**
-     * An ACTION_RECENTS_LONG_PRESS intent was received, and a custom handler is
-     * set and points to a valid app.  Start this activity.
-     */
-    private void startCustomRecentsLongPressActivity(ComponentName customComponentName) {
-        Intent intent = new Intent(Intent.ACTION_RECENTS_LONG_PRESS);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-
-        // Include the package name of the app currently in the foreground
-        IActivityManager am = ActivityManagerNative.getDefault();
-        List<ActivityManager.RecentTaskInfo> recentTasks = null;
-        try {
-            recentTasks = am.getRecentTasks(
-                    1, ActivityManager.RECENT_WITH_EXCLUDED, UserHandle.myUserId());
-        } catch (RemoteException e) {
-            Log.e(TAG, "Cannot get recent tasks", e);
-        }
-        if (recentTasks != null && recentTasks.size() > 0) {
-            String pkgName = recentTasks.get(0).baseIntent.getComponent().getPackageName();
-            intent.putExtra(Intent.EXTRA_CURRENT_PACKAGE_NAME, pkgName);
-        }
-
-        intent.setComponent(customComponentName);
-        try {
-            // Allow the touch event to continue into the new activity.
-            mNavigationBarView.setSlippery(true);
-            mNavigationBarView.disableSearchBar();
-            mCustomRecentsLongPressed = true;
-
-            mContext.startActivityAsUser(intent, new UserHandle(UserHandle.USER_CURRENT));
-
-        } catch (ActivityNotFoundException e) {
-            Log.e(TAG, "Cannot start activity", e);
-
-            // If the activity failed to launch, clean up
-            cleanupCustomRecentsLongPressHandler();
-        }
-    }
-
-    /**
-     * Get component name for the recent long press setting. Null means default switch to last app.
-     *
-     * Note: every time packages changed, the setting must be re-evaluated.  This is to check that the
-     * component was not uninstalled or disabled.
-     */
-    private void updateCustomRecentsLongPressHandler(boolean scanPackages) {
-        // scanPackages should be true when the PhoneStatusBar is starting for
-        // the first time, and when any package activity occurred.
-        if (scanPackages) {
-            updateCustomRecentsLongPressCandidates();
-        }
-
-        String componentString = Settings.Secure.getString(mContext.getContentResolver(),
-                Settings.Secure.RECENTS_LONG_PRESS_ACTIVITY);
-        if (componentString == null) {
-            mCustomRecentsLongPressHandler = null;
-            return;
-        }
-
-        ComponentName customComponentName = ComponentName.unflattenFromString(componentString);
-        synchronized (mCustomRecentsLongPressHandlerCandidates) {
-            for (ComponentName candidate : mCustomRecentsLongPressHandlerCandidates) {
-                if (candidate.equals(customComponentName)) {
-                    // Found match
-                    mCustomRecentsLongPressHandler = customComponentName;
-
-                    return;
-                }
-            }
-
-            // Did not find match, probably because the selected application has
-            // now been uninstalled for some reason. Since user-selected app is
-            // still saved inside Settings, PhoneStatusBar should fall back to
-            // the default for now.  (We will update this either when the
-            // package is reinstalled or when the user selects another Setting.)
-            mCustomRecentsLongPressHandler = null;
-        }
-    }
-
-    /**
-     * Updates the cache of Recents Long Press applications.
-     *
-     * These applications must:
-     * - handle the Intent.ACTION_RECENTS_LONG_PRESS (which is permissions protected); and
-     * - not be disabled by the user or the system.
-     *
-     * More than one handler can be a candidate.  When the action is invoked,
-     * the user setting (stored in Settings.Secure) is consulted.
-     */
-    private void updateCustomRecentsLongPressCandidates() {
-        synchronized (mCustomRecentsLongPressHandlerCandidates) {
-            mCustomRecentsLongPressHandlerCandidates.clear();
-
-            PackageManager pm = mContext.getPackageManager();
-            Intent intent = new Intent(Intent.ACTION_RECENTS_LONG_PRESS);
-
-            // Search for all apps that can handle ACTION_RECENTS_LONG_PRESS
-            List<ResolveInfo> activities = pm.queryIntentActivities(intent,
-                    PackageManager.MATCH_DEFAULT_ONLY);
-            for (ResolveInfo info : activities) {
-                // Only cache packages that are not disabled
-                int packageState = mContext.getPackageManager().getApplicationEnabledSetting(
-                        info.activityInfo.packageName);
-
-                if (packageState != PackageManager.COMPONENT_ENABLED_STATE_DISABLED &&
-                    packageState != PackageManager.COMPONENT_ENABLED_STATE_DISABLED_USER) {
-
-                    mCustomRecentsLongPressHandlerCandidates.add(
-                        new ComponentName(info.activityInfo.packageName, info.activityInfo.name));
-                }
-
-            }
         }
     }
 

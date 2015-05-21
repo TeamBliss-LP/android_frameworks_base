@@ -99,4 +99,7 @@
 
     <string name="gestures_message">Draw your gesture here</string>
 
+    <!-- Navigation bar -->
+    <string name="def_navbar_layout_warning">Empty layout: using default!</string>
+
 </resources>

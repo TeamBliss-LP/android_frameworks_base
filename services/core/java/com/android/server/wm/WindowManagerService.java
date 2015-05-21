@@ -958,6 +958,11 @@ public class WindowManagerService extends IWindowManager.Stub
     }
 
     @Override
+    public void sendHomeAction() {
+        mPolicy.sendHomeAction();
+    }
+
+    @Override
     public boolean onTransact(int code, Parcel data, Parcel reply, int flags)
             throws RemoteException {
         try {
@@ -11171,6 +11176,11 @@ public class WindowManagerService extends IWindowManager.Stub
     @Override
     public boolean hasNavigationBar() {
         return mPolicy.hasNavigationBar();
+    }
+
+    @Override 
+    public boolean needsNavigationBar() {
+        return mPolicy.needsNavigationBar();
     }
 
     @Override
