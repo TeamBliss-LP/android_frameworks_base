@@ -4876,19 +4876,6 @@ public final class Settings {
                 "pie_buttons_config_second_layer";
 
         /**
-         * Whether pie triggers on the left and right edge should be reduced if IME shows up.
-         * Default = 1 (enabled)
-         * @hide
-         */
-        public static final String PIE_IME_CONTROL = "pie_ime_control";
-
-        /**
-         * Pie trigger sensitivity
-         * @hide
-         */
-        public static final String PIE_TRIGGER_SENSITIVITY = "pie_trigger_sensitivity";
-
-        /**
          * Whether to use the proximity sensor to turn the screen on/off during a call
          * @hide
          */

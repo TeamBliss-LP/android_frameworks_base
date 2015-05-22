@@ -116,6 +116,7 @@ public class NavigationBarView extends LinearLayout {
     private Drawable mRecentLandIcon;
     private FrameLayout mRot0;
     private FrameLayout mRot90;
+
     private NavigationBarViewTaskSwitchHelper mTaskSwitchHelper;
     private DelegateViewHelper mDelegateHelper;
     private DeadZone mDeadZone;
@@ -759,7 +760,7 @@ public class NavigationBarView extends LinearLayout {
         setDisabledFlags(mDisabledFlags);
     }
 
-   @Override
+    @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
 
