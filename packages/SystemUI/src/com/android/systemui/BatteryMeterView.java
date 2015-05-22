@@ -17,6 +17,9 @@
 
 package com.android.systemui;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ValueAnimator;
 import android.app.ActivityManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -43,6 +46,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 
+import com.android.internal.util.bliss.ColorHelper;
 import com.android.systemui.cm.UserContentObserver;
 import com.android.systemui.statusbar.policy.BatteryController;
 
@@ -93,8 +97,14 @@ public class BatteryMeterView extends View implements DemoMode,
     private int mDotLength;
     private int mDotInterval;
 
+    private Animator mColorTransitionAnimator;
+    private boolean mAnimateColorTransition = false;
+    private boolean mAnimateTextColorTransition = false;
+    private float mColorAnimatimationPosition;
     private int mStatusColor;
+    private int mOldStatusColor;
     private int mTextColor;
+    private int mOldTextColor;
 
     private final Path mShapePath = new Path();
     private final Path mClipPath = new Path();
@@ -213,45 +223,30 @@ public class BatteryMeterView extends View implements DemoMode,
         }
     };
 
-    SettingsObserver mObserver = new SettingsObserver(new Handler());
-
-    private class SettingsObserver extends UserContentObserver {
-        public SettingsObserver(Handler handler) {
-            super(handler);
-        }
-
-        @Override
-        protected void observe() {
-            super.observe();
-
-            getContext().getContentResolver().registerContentObserver(Settings.System.getUriFor(
-                    STATUS_BAR_BATTERY_STATUS_STYLE), false, this, UserHandle.USER_ALL);
-            getContext().getContentResolver().registerContentObserver(Settings.System.getUriFor(
-                    STATUS_BAR_BATTERY_STATUS_SHOW_CIRCLE_DOTTED), false, this, UserHandle.USER_ALL);
-            getContext().getContentResolver().registerContentObserver(Settings.System.getUriFor(
-                    STATUS_BAR_BATTERY_STATUS_CIRCLE_DOT_LENGTH), false, this, UserHandle.USER_ALL);
-            getContext().getContentResolver().registerContentObserver(Settings.System.getUriFor(
-                    STATUS_BAR_BATTERY_STATUS_CIRCLE_DOT_INTERVAL), false, this, UserHandle.USER_ALL);
-            getContext().getContentResolver().registerContentObserver(Settings.System.getUriFor(
-                    STATUS_BAR_BATTERY_STATUS_PERCENT_STYLE), false, this, UserHandle.USER_ALL);
-            getContext().getContentResolver().registerContentObserver(Settings.System.getUriFor(
-                    STATUS_BAR_BATTERY_STATUS_CHARGING_ANIMATION_SPEED), false, this, UserHandle.USER_ALL);
-            getContext().getContentResolver().registerContentObserver(Settings.System.getUriFor(
-                    STATUS_BAR_BATTERY_STATUS_COLOR), false, this, UserHandle.USER_ALL);
-            getContext().getContentResolver().registerContentObserver(Settings.System.getUriFor(
-                    STATUS_BAR_BATTERY_STATUS_TEXT_COLOR), false, this, UserHandle.USER_ALL);
-        }
-
-        @Override
-        protected void unobserve() {
-            super.unobserve();
-            getContext().getContentResolver().unregisterContentObserver(this);
-        }
-
-        @Override
-        public void update() {
-            loadShowBatterySetting();
-            postInvalidate();
+    private ContentObserver mObserver = new ContentObserver(new Handler()) {
+        public void onChange(boolean selfChange, Uri uri) {
+            if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_BATTERY_STATUS_COLOR))) {
+                if (!mIsAnimating && !mDemoMode && mTracker.level > 16) {
+                    mAnimateColorTransition = true;
+                    mAnimateTextColorTransition = false;
+                    mColorTransitionAnimator.start();
+                } else {
+                    postInvalidate();
+                }
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_BATTERY_STATUS_TEXT_COLOR))) {
+                if (!mIsAnimating && !mDemoMode && mTracker.level > 16) {
+                    mAnimateColorTransition = true;
+                    mAnimateTextColorTransition = true;
+                    mColorTransitionAnimator.start();
+                } else {
+                    postInvalidate();
+                }
+            } else {
+                loadShowBatterySetting();
+                postInvalidate();
+            }
         }
     };
 
@@ -259,6 +254,7 @@ public class BatteryMeterView extends View implements DemoMode,
     public void onAttachedToWindow() {
         super.onAttachedToWindow();
 
+        int currentUserId = ActivityManager.getCurrentUser();
         IntentFilter filter = new IntentFilter();
         filter.addAction(Intent.ACTION_BATTERY_CHANGED);
         filter.addAction(ACTION_LEVEL_TEST);
@@ -269,7 +265,33 @@ public class BatteryMeterView extends View implements DemoMode,
         }
         mBatteryController.addStateChangedCallback(this);
         mAttached = true;
-        mObserver.observe();
+        mResolver.registerContentObserver(Settings.System.getUriFor(
+                Settings.System.STATUS_BAR_BATTERY_STATUS_STYLE), false, mObserver);
+        mResolver.registerContentObserver(Settings.System.getUriFor(
+                Settings.System.STATUS_BAR_BATTERY_STATUS_SHOW_CIRCLE_DOTTED), false, mObserver);
+        mResolver.registerContentObserver(Settings.System.getUriFor(
+                Settings.System.STATUS_BAR_BATTERY_STATUS_CIRCLE_DOT_LENGTH), false, mObserver);
+        mResolver.registerContentObserver(Settings.System.getUriFor(
+                Settings.System.STATUS_BAR_BATTERY_STATUS_CIRCLE_DOT_INTERVAL), false, mObserver);
+        mResolver.registerContentObserver(Settings.System.getUriFor(
+                Settings.System.STATUS_BAR_BATTERY_STATUS_PERCENT_STYLE), false, mObserver);
+        mResolver.registerContentObserver(Settings.System.getUriFor(
+                Settings.System.STATUS_BAR_BATTERY_STATUS_CHARGING_ANIMATION_SPEED), false, mObserver);
+        mResolver.registerContentObserver(Settings.System.getUriFor(
+                Settings.System.STATUS_BAR_BATTERY_STATUS_COLOR), false, mObserver);
+        mResolver.registerContentObserver(Settings.System.getUriFor(
+                Settings.System.STATUS_BAR_BATTERY_STATUS_TEXT_COLOR), false, mObserver);
+
+        mColorTransitionAnimator = createColorTransitionAnimator(0, 1);
+        mStatusColor = Settings.System.getIntForUser(mResolver,
+                Settings.System.STATUS_BAR_BATTERY_STATUS_COLOR,
+                0xffffffff, currentUserId);
+        mTextColor = Settings.System.getIntForUser(mResolver,
+                Settings.System.STATUS_BAR_BATTERY_STATUS_TEXT_COLOR,
+                0xff000000, currentUserId);
+        mOldStatusColor = mStatusColor;
+        mOldTextColor = mTextColor;
+
     }
 
     @Override
@@ -278,7 +300,6 @@ public class BatteryMeterView extends View implements DemoMode,
 
         mAttached = false;
         getContext().unregisterReceiver(mTracker);
-        mObserver.unobserve();
         mBatteryController.removeStateChangedCallback(this);
     }
 
@@ -477,16 +498,45 @@ public class BatteryMeterView extends View implements DemoMode,
                 Settings.System.STATUS_BAR_BATTERY_STATUS_TEXT_COLOR,
                 0xff000000, currentUserId);
 
-        // If we are in power save mode, always use the normal color.
-        if (mPowerSaveEnabled) {
-            return  text ? mTextColor : mStatusColor;
-        }
-
-        if (percent <= 15) {
-            return 0xfff4511e;
+        if (mAnimateColorTransition) {
+            int blendedStatusColor = ColorHelper.getBlendColor(
+                    mOldStatusColor, mStatusColor, mColorAnimatimationPosition);
+            int blendedTextColor = ColorHelper.getBlendColor(
+                    mOldTextColor, mTextColor, mColorAnimatimationPosition);
+            if (mAnimateTextColorTransition) {
+                return text ? blendedTextColor : mStatusColor;
+            } else {
+                return text ? mTextColor : blendedStatusColor;
+            }
         } else {
-            return text ? mTextColor : mStatusColor;
+            if (percent <= 15 && !mPowerSaveEnabled) {
+                return 0xfff4511e;
+            } else {
+                return text ? mTextColor : mStatusColor;
+            }
         }
+    }
+
+    private ValueAnimator createColorTransitionAnimator(float start, float end) {
+        ValueAnimator animator = ValueAnimator.ofFloat(start, end);
+
+        animator.setDuration(500);
+        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener(){
+            @Override public void onAnimationUpdate(ValueAnimator animation) {
+                float position = animation.getAnimatedFraction();
+                mColorAnimatimationPosition = position;
+                postInvalidate();
+            }
+        });
+        animator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                mOldStatusColor = mStatusColor;
+                mOldTextColor = mTextColor;
+                mAnimateColorTransition = false;
+            }
+        });
+        return animator;
     }
 
     @Override
