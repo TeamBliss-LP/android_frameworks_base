@@ -4,9 +4,9 @@
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
      You may obtain a copy of the License at
-  
+
           http://www.apache.org/licenses/LICENSE-2.0
-  
+
      Unless required by applicable law or agreed to in writing, software
      distributed under the License is distributed on an "AS IS" BASIS,
      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -111,7 +111,7 @@
 
     <style name="TextAppearance.StatusBar.Expanded.Network" parent="@style/TextAppearance.StatusBar.Expanded.Date">
         <item name="android:textColor">#999999</item>
-	</style>
+    </style>
 
     <style name="TextAppearance.StatusBar.Expanded.Network.EmergencyOnly">
     </style>
@@ -274,6 +274,12 @@
     </style>
 
     <style name="TextAppearance.StatusBar.CarrierLabel" parent="@*android:style/TextAppearance.StatusBar.Icon">
+        <item name="android:textSize">@dimen/status_bar_clock_size</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textColor">@color/status_bar_clock_color</item>
+    </style>
+
+    <style name="TextAppearance.StatusBar.WifiLabel" parent="@*android:style/TextAppearance.StatusBar.Icon">
         <item name="android:textSize">@dimen/status_bar_clock_size</item>
         <item name="android:textStyle">normal</item>
         <item name="android:textColor">@color/status_bar_clock_color</item>

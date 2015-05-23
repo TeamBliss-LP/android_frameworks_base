@@ -387,7 +387,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     int mKeyguardMaxNotificationCount;
 
-    // carrier/wifi label
+    // carrier label
     private TextView mCarrierLabel;
     private boolean mCarrierLabelVisible = false;
     private int mCarrierLabelHeight;
@@ -413,14 +413,17 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     // Status bar carrier
     private boolean mShowStatusBarCarrier;
 
+    private TextView mWifiSsidLabel;
+    private boolean mShowWifiSsidLabel;
+
     // position
     int[] mPositionTmp = new int[2];
     boolean mExpandedVisible;
 
     private int mNavigationBarWindowState = WINDOW_STATE_SHOWING;
 
-	private int mNavigationIconHints = 0;
- 
+    private int mNavigationIconHints = 0;
+
     // the tracker view
     int mTrackingPosition; // the position of the top of the tracking view.
 
@@ -491,10 +494,11 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
             ContentResolver resolver = mContext.getContentResolver();
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_BRIGHTNESS_CONTROL), false, this,
-                    UserHandle.USER_ALL);
+                    Settings.System.STATUS_BAR_BRIGHTNESS_CONTROL),
+                    false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.SCREEN_BRIGHTNESS_MODE), false, this, UserHandle.USER_ALL);
+                    Settings.System.SCREEN_BRIGHTNESS_MODE),
+                    false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_CLOCK),
                     false, this, UserHandle.USER_ALL);
@@ -503,13 +507,16 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.LOCK_SCREEN_ICON_COLOR),
-                    false, this, UserHandle.USER_ALL);			
+                    false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.HEADS_UP_DISMISS_ON_REMOVE), false, this);
+                    Settings.System.HEADS_UP_DISMISS_ON_REMOVE),
+                    false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_CARRIER), false, this);
+                    Settings.System.STATUS_BAR_CARRIER),
+                    false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.NAVBAR_LEFT_IN_LANDSCAPE), false, this, UserHandle.USER_ALL);
+                    Settings.System.NAVBAR_LEFT_IN_LANDSCAPE),
+                    false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.BATTERY_SAVER_MODE_COLOR),
                     false, this, UserHandle.USER_ALL);
@@ -521,7 +528,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_BATTERY_STATUS_TEXT_COLOR),
-                    false, this, UserHandle.USER_ALL);	
+                    false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_BLISS_LOGO),
                     false, this, UserHandle.USER_ALL);
@@ -549,6 +556,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.NOTIFICATION_DRAWER_CLEAR_ALL_ICON_COLOR),
                     false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.Global.WIFI_STATUS_BAR_SSID),
+                    false, this);
             update();
         }
 
@@ -561,36 +571,37 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
         @Override
         public void onChange(boolean selfChange, Uri uri) {
+            ContentResolver resolver = mContext.getContentResolver();
             if (uri.equals(Settings.System.getUriFor(
                     Settings.System.BATTERY_SAVER_MODE_COLOR))) {
                     mBatterySaverWarningColor = Settings.System.getIntForUser(
-                            mContext.getContentResolver(),
-                            Settings.System.BATTERY_SAVER_MODE_COLOR, -2,
-                            UserHandle.USER_CURRENT);
+                            resolver,
+                            Settings.System.BATTERY_SAVER_MODE_COLOR,
+                            -2, UserHandle.USER_CURRENT);
                     if (mBatterySaverWarningColor == -2) {
                         mBatterySaverWarningColor = mContext.getResources()
-                                .getColor(com.android.internal.R.color.battery_saver_mode_color);
+                            .getColor(com.android.internal.R.color.battery_saver_mode_color);
                     }
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.LOCK_SCREEN_TEXT_COLOR))
-                || uri.equals(Settings.System.getUriFor(
+                    || uri.equals(Settings.System.getUriFor(
                     Settings.System.LOCK_SCREEN_ICON_COLOR))) {
-                setKeyguardTextAndIconColors();
+                    setKeyguardTextAndIconColors();
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_SHOW_TICKER))) {
-                mTickerEnabled = Settings.System.getIntForUser(
-                        mContext.getContentResolver(),
+                    mTickerEnabled = Settings.System.getIntForUser(
+                        resolver,
                         Settings.System.STATUS_BAR_SHOW_TICKER,
                         mContext.getResources().getBoolean(R.bool.enable_ticker)
                         ? 1 : 0, UserHandle.USER_CURRENT) == 1;
-                initTickerView();
+                    initTickerView();
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.NOTIFICATION_DRAWER_CLEAR_ALL_ICON_COLOR))) {
-                UpdateNotifDrawerClearAllIconColor();
+                    UpdateNotifDrawerClearAllIconColor();
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.HEADS_UP_NOTIFCATION_DECAY))) {
                     mHeadsUpNotificationDecay = Settings.System.getIntForUser(
-                            mContext.getContentResolver(),
+                            resolver,
                             Settings.System.HEADS_UP_NOTIFCATION_DECAY,
                             mContext.getResources().getInteger(
                             R.integer.heads_up_notification_decay),
@@ -598,30 +609,44 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     resetHeadsUpDecayTimer();
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_BATTERY_STATUS_TEXT_COLOR))) {
-                updateBatteryLevelTextColor();
-             } else if (uri.equals(Settings.System.getUriFor(
+                    updateBatteryLevelTextColor();
+            } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.HEADS_UP_BG_COLOR))) {
                     mHeadsUpCustomBg = Settings.System.getIntForUser(
-                        mContext.getContentResolver(),
-                        Settings.System.HEADS_UP_BG_COLOR, HEADSUP_DEFAULT_BACKGROUNDCOLOR,
+                        resolver,
+                        Settings.System.HEADS_UP_BG_COLOR,
+                        HEADSUP_DEFAULT_BACKGROUNDCOLOR,
                         UserHandle.USER_CURRENT);
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.HEADS_UP_TEXT_COLOR))) {
                     mHeadsUpCustomText = Settings.System.getIntForUser(
-                        mContext.getContentResolver(),
-                        Settings.System.HEADS_UP_TEXT_COLOR, 0x00000000,
-                        UserHandle.USER_CURRENT);
+                        resolver,
+                        Settings.System.HEADS_UP_TEXT_COLOR,
+                        0x00000000, UserHandle.USER_CURRENT);
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.QS_COLOR_SWITCH))) {
                     mQSCSwitch = Settings.System.getIntForUser(
-                            mContext.getContentResolver(),
-                            Settings.System.QS_COLOR_SWITCH,
-                            0, UserHandle.USER_CURRENT) == 1;
+                        resolver,
+                        Settings.System.QS_COLOR_SWITCH,
+                        0, UserHandle.USER_CURRENT) == 1;
                     recreateStatusBar();
                     updateRowStates();
                     updateSpeedbump();
                     updateClearAll();
                     updateEmptyShadeView();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_CARRIER))) {
+                    mShowStatusBarCarrier = Settings.System.getIntForUser(
+                        resolver,
+                        Settings.System.STATUS_BAR_CARRIER,
+                        0, UserHandle.USER_CURRENT) == 1;
+                    showStatusBarCarrierLabel(mShowStatusBarCarrier);
+            } else if (uri.equals(Settings.Global.getUriFor(
+                    Settings.Global.WIFI_STATUS_BAR_SSID))) {
+                    mShowWifiSsidLabel = Settings.Global.getInt(
+                        resolver,
+                        Settings.Global.WIFI_STATUS_BAR_SSID, 0) == 1;
+                    showWifiSsidLabel(mShowWifiSsidLabel);
             }
             update();
         }
@@ -629,26 +654,27 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         @Override
         public void update() {
             ContentResolver resolver = mContext.getContentResolver();
-            int mode = Settings.System.getIntForUser(mContext.getContentResolver(),
-                            Settings.System.SCREEN_BRIGHTNESS_MODE,
-                            Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL,
-                            UserHandle.USER_CURRENT);
+            int mode = Settings.System.getIntForUser(resolver,
+                    Settings.System.SCREEN_BRIGHTNESS_MODE,
+                    Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL,
+                    mCurrentUserId);
             mAutomaticBrightness = mode != Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL;
-            mBrightnessControl = Settings.System.getIntForUser(
-                    resolver, Settings.System.STATUS_BAR_BRIGHTNESS_CONTROL, 0,
-                    UserHandle.USER_CURRENT) == 1;
+            mBrightnessControl = Settings.System.getIntForUser(resolver,
+                    Settings.System.STATUS_BAR_BRIGHTNESS_CONTROL,
+                    0, mCurrentUserId) == 1;
 
-            mHeadsUpSwype = Settings.System.getInt(
-                    resolver, Settings.System.HEADS_UP_DISMISS_ON_REMOVE, 0) == 1;
+            mHeadsUpSwype = Settings.System.getInt(resolver,
+                    Settings.System.HEADS_UP_DISMISS_ON_REMOVE, 0) == 1;
 
-            mHeadsUpTouchOutside = Settings.System.getInt(
-                    resolver, Settings.System.HEADS_UP_TOUCH_OUTSIDE, 0) == 1;
-					
+            mHeadsUpTouchOutside = Settings.System.getInt(resolver,
+                    Settings.System.HEADS_UP_TOUCH_OUTSIDE, 0) == 1;
+
             mQSCSwitch = Settings.System.getIntForUser(resolver,
                     Settings.System.QS_COLOR_SWITCH, 0, mCurrentUserId) == 1;
 
-            int sidebarPosition = Settings.System.getInt(
-                    resolver, Settings.System.APP_SIDEBAR_POSITION, AppSidebar.SIDEBAR_POSITION_LEFT);
+            int sidebarPosition = Settings.System.getInt(resolver,
+                    Settings.System.APP_SIDEBAR_POSITION,
+                    AppSidebar.SIDEBAR_POSITION_LEFT);
             if (sidebarPosition != mSidebarPosition) {
                 mSidebarPosition = sidebarPosition;
                 removeSidebarView();
@@ -656,33 +682,34 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             }
 
             if (mNavigationBarView != null) {
-                boolean navLeftInLandscape = Settings.System.getIntForUser(resolver,
-                        Settings.System.NAVBAR_LEFT_IN_LANDSCAPE, 0, UserHandle.USER_CURRENT) == 1;
+                boolean navLeftInLandscape = Settings.System.getIntForUser(
+                    resolver, Settings.System.NAVBAR_LEFT_IN_LANDSCAPE,
+                    0, mCurrentUserId) == 1;
                 mNavigationBarView.setLeftInLandscape(navLeftInLandscape);
             }
 
             mBlissLogo = Settings.System.getIntForUser(resolver,
-                    Settings.System.STATUS_BAR_BLISS_LOGO, 0, mCurrentUserId) == 1;
+                    Settings.System.STATUS_BAR_BLISS_LOGO,
+                    0, mCurrentUserId) == 1;
             mBlissLogoColor = Settings.System.getIntForUser(resolver,
-                    Settings.System.STATUS_BAR_BLISS_LOGO_COLOR, 0xFFFFFFFF, mCurrentUserId);
+                    Settings.System.STATUS_BAR_BLISS_LOGO_COLOR,
+                    0xFFFFFFFF, mCurrentUserId);
             showBlissLogo(mBlissLogo, mBlissLogoColor);
 
             mGreeting = Settings.System.getStringForUser(resolver,
                     Settings.System.STATUS_BAR_GREETING,
-                    UserHandle.USER_CURRENT);
+                    mCurrentUserId);
             if (mGreeting != null && mBlissLabel != null && !TextUtils.isEmpty(mGreeting)) {
                 mBlissLabel.setText(mGreeting);
+            } else {
+                mBlissLabel.setText("");
             }
-
             mShowLabelTimeout = Settings.System.getIntForUser(resolver,
-                    Settings.System.STATUS_BAR_GREETING_TIMEOUT, 1000, mCurrentUserId);
-
-            mShowStatusBarCarrier = Settings.System.getIntForUser(resolver,
-                    Settings.System.STATUS_BAR_CARRIER, 0, mCurrentUserId) == 1;
-            if (mStatusBarView != null) {
-                showStatusBarCarrierLabel(mShowStatusBarCarrier);
+                    Settings.System.STATUS_BAR_GREETING_TIMEOUT,
+                    1000, mCurrentUserId);
+            if (mShowLabelTimeout < 100) {
+                mShowLabelTimeout = 100;
             }
-
         }
     }
 
@@ -1081,13 +1108,15 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
         if (!ActivityManager.isHighEndGfx()) {
             mStatusBarWindowContent.setBackground(null);
-            mNotificationPanel.setBackground(new FastColorDrawable(context.getResources().getColor(
+            mNotificationPanel.setBackground(new FastColorDrawable(
+                    context.getResources().getColor(
                     R.color.notification_panel_solid_background)));
         }
 
         if (ENABLE_HEADS_UP) {
             mHeadsUpNotificationView =
-                    (HeadsUpNotificationView) View.inflate(context, R.layout.heads_up, null);
+                    (HeadsUpNotificationView) View.inflate(context,
+                    R.layout.heads_up, null);
             mHeadsUpNotificationView.setVisibility(View.GONE);
             mHeadsUpNotificationView.setBar(this);
             mHeadsUpNotificationDecay = Settings.System.getIntForUser(
@@ -1107,17 +1136,17 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
         try {
             boolean showNav = mWindowManagerService.hasNavigationBar();
-            if (DEBUG) Log.v(TAG, "hasNavigationBar=" + showNav);
             if (showNav && !mRecreating) {
                 mNavigationBarView =
-                    (NavigationBarView) View.inflate(context, R.layout.navigation_bar, null);
+                    (NavigationBarView) View.inflate(context,
+                        R.layout.navigation_bar, null);
                 mNavigationBarView.updateResources(getNavbarThemedResources());
 
-        if (mRecreating) {
-            removeSidebarView();
-        }
+                if (mRecreating) {
+                    removeSidebarView();
+                }
 
-        addSidebarView();
+                addSidebarView();
 
                 mNavigationBarView.setDisabledFlags(mDisabled);
                 mNavigationBarView.setBar(this);
@@ -1151,7 +1180,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             boolean showNav = mWindowManagerService.hasNavigationBar();
             if (!showNav) {
                 mSearchPanelSwipeView = new SearchPanelSwipeView(mContext, this);
-                mWindowManager.addView(mSearchPanelSwipeView, mSearchPanelSwipeView.getGesturePanelLayoutParams());
+                mWindowManager.addView(mSearchPanelSwipeView,
+                    mSearchPanelSwipeView.getGesturePanelLayoutParams());
                 updateSearchPanel();
             }
         } catch (RemoteException ex) {
@@ -1256,6 +1286,11 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                    .getColor(com.android.internal.R.color.battery_saver_mode_color);
         }
 
+        mWifiSsidLabel = (TextView)mStatusBarView.findViewById(R.id.status_bar_wifi_label);
+        mShowWifiSsidLabel = Settings.Global.getInt(
+                mContext.getContentResolver(),
+                Settings.Global.WIFI_STATUS_BAR_SSID, 0) == 1;
+
         // set the inital view visibility
         setAreThereNotifications();
 
@@ -1330,11 +1365,16 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
             mMSimNetworkController.addEmergencyLabelView(mHeader);
 
+            boolean canshowWifiLabel = mWifiSsidLabel != null;
+            if (DEBUG) Log.v(TAG, "wifilabel=" + canshowWifiLabel + " show=" + mShowWifiSsidLabel);
+            if (canshowWifiLabel) {
+                mMSimNetworkController.addWifiLabelView(mWifiSsidLabel);
+                mWifiSsidLabel.setVisibility(mShowWifiSsidLabel ? View.VISIBLE : View.GONE);
+            }
+
             mCarrierLabel = (TextView)mStatusBarWindowContent.findViewById(R.id.carrier_label);
             mShowCarrierInPanel = (mCarrierLabel != null);
-
-            if (DEBUG) Log.v(TAG, "carrierlabel=" + mCarrierLabel + " show=" +
-                                    mShowCarrierInPanel);
+            if (DEBUG) Log.v(TAG, "carrierlabel=" + mCarrierLabel + " show=" + mShowCarrierInPanel);
             if (mShowCarrierInPanel) {
                 mCarrierLabel.setVisibility(mCarrierLabelVisible ? View.VISIBLE : View.INVISIBLE);
 
@@ -1352,6 +1392,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 //        updateCarrierLabelVisibility(false);
                 //    }
                 //});
+
             }
         } else {
             if (mNetworkController == null) {
@@ -1377,12 +1418,17 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 mNetworkController.addEmergencyLabelView(mHeader);
             }
 
+            boolean canshowWifiLabel = mWifiSsidLabel != null;
+            if (DEBUG) Log.v(TAG, "wifilabel=" + canshowWifiLabel + " show=" + mShowWifiSsidLabel);
+            if (canshowWifiLabel) {
+                mNetworkController.addWifiLabelView(mWifiSsidLabel);
+                mWifiSsidLabel.setVisibility(mShowWifiSsidLabel ? View.VISIBLE : View.GONE);
+            }
+
             mCarrierLabel = (TextView)mStatusBarWindowContent.findViewById(R.id.carrier_label);
             mShowCarrierInPanel = (mCarrierLabel != null);
             if (DEBUG) Log.v(TAG, "carrierlabel=" + mCarrierLabel + " show=" + mShowCarrierInPanel);
             if (mShowCarrierInPanel) {
-                mCarrierLabel.setVisibility(mCarrierLabelVisible ? View.VISIBLE : View.INVISIBLE);
-
                 // for mobile devices, we always show mobile connection info here (SPN/PLMN)
                 // for other devices, we show whatever network is connected
                 if (mNetworkController.hasMobileDataFeature()) {
@@ -1390,15 +1436,17 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 } else {
                     mNetworkController.addCombinedLabelView(mCarrierLabel);
                 }
+                mCarrierLabel.setVisibility(mCarrierLabelVisible ? View.VISIBLE : View.GONE);
             }
 
             // set up the dynamic hide/show of the label
             // TODO: uncomment, handle this for the Stack scroller aswell
-//                ((NotificationRowLayout) mStackScroller)
-// .setOnSizeChangedListener(new OnSizeChangedListener() {
-//                @Override
-//                public void onSizeChanged(View view, int w, int h, int oldw, int oldh) {
-//                    updateCarrierLabelVisibility(false);
+            // ((NotificationRowLayout) mStackScroller)
+            //     .setOnSizeChangedListener(new OnSizeChangedListener() {
+            //         @Override
+            //         public void onSizeChanged(View view, int w, int h, int oldw, int oldh) {
+            //             updateCarrierLabelVisibility(false);
+            //         }
         }
 
         mKeyguardBottomArea.setPhoneStatusBar(this);
@@ -1469,7 +1517,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         PowerManager pm = (PowerManager) mContext.getSystemService(Context.POWER_SERVICE);
         mBroadcastReceiver.onReceive(mContext,
                 new Intent(pm.isScreenOn() ? Intent.ACTION_SCREEN_ON : Intent.ACTION_SCREEN_OFF));
-                
+
         // receive broadcasts
         IntentFilter filter = new IntentFilter();
         filter.addAction(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
@@ -2326,9 +2374,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
         if (force || mCarrierLabelVisible != makeVisible) {
             mCarrierLabelVisible = makeVisible;
-            if (DEBUG) {
-                Log.d(TAG, "making carrier label " + (makeVisible?"visible":"invisible"));
-            }
+            if (DEBUG) Log.d(TAG, "making carrier label " + (makeVisible?"visible":"invisible"));
             mCarrierLabel.animate().cancel();
             if (makeVisible) {
                 mCarrierLabel.setVisibility(View.VISIBLE);
@@ -2685,11 +2731,12 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         }
         mClockLocation = mode;
         mShowClock = enabled;
-	}
+    }
+
     private void updateBatteryLevelTextColor() {
         if (mBatteryLevel != null) {
             mBatteryLevel.setTextColor(false);
-        }		
+        }
     }
 
     private void UpdateNotifDrawerClearAllIconColor() {
@@ -2802,7 +2849,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 }
                 animateStatusBarHide(mNotificationIconArea, animate);
             } else {
-                if (mGreeting != null && mBlissLabel != null 
+                if (mGreeting != null && mBlissLabel != null
                     && !TextUtils.isEmpty(mGreeting) && mShowLabel) {
                     if (animate) {
                         mBlissLabel.setVisibility(View.VISIBLE);
@@ -4226,32 +4273,32 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     public void showBlissLogo(boolean show, int color) {
         if (mStatusBarView == null) return;
-        ContentResolver resolver = mContext.getContentResolver();
         blissLogo = (ImageView) mStatusBarView.findViewById(R.id.bliss_logo);
         blissLogo.setColorFilter(color, Mode.SRC_IN);
         if (blissLogo != null) {
-            blissLogo.setVisibility(show ? (mBlissLogo ? View.VISIBLE : View.GONE) : View.GONE);
+            blissLogo.setVisibility(show && mBlissLogo ? View.VISIBLE : View.GONE);
         }
     }
 
-    private BroadcastReceiver mPackageBroadcastReceiver = new BroadcastReceiver() {
-        public void onReceive(Context context, Intent intent) {
-            if (DEBUG) Log.v(TAG, "onReceive: " + intent);
-            String action = intent.getAction();
-            if (Intent.ACTION_PACKAGE_ADDED.equals(action) ||
-                    Intent.ACTION_PACKAGE_CHANGED.equals(action) ||
-                    Intent.ACTION_PACKAGE_FULLY_REMOVED.equals(action) ||
-                    Intent.ACTION_PACKAGE_REMOVED.equals(action)) {
-            }
-        }
-    };
-
     public void showStatusBarCarrierLabel(boolean show) {
         if (mStatusBarView == null || mContext == null) return;
-        ContentResolver resolver = mContext.getContentResolver();
         View statusBarCarrierLabel = mStatusBarView.findViewById(R.id.status_bar_carrier_label);
         if (statusBarCarrierLabel != null) {
-            statusBarCarrierLabel.setVisibility(show ? (mShowStatusBarCarrier ? View.VISIBLE : View.GONE) : View.GONE);
+            statusBarCarrierLabel.setVisibility(show && mShowStatusBarCarrier ? View.VISIBLE : View.GONE);
+            if (DEBUG) Log.v(TAG, "showStatusBarCarrierLabel: label visible: "+(show && mShowStatusBarCarrier ? "true" : "false"));
+        } else {
+            if (DEBUG) Log.v(TAG, "showStatusBarCarrierLabel: label not found!");
+        }
+    }
+
+    public void showWifiSsidLabel(boolean show) {
+        if (mStatusBarView == null || mContext == null) return;
+        View WifiSsidLabel = mStatusBarView.findViewById(R.id.status_bar_wifi_label);
+        if (WifiSsidLabel != null) {
+            WifiSsidLabel.setVisibility(show && mShowWifiSsidLabel ? View.VISIBLE : View.GONE);
+            if (DEBUG) Log.v(TAG, "showWifiSsidLabel: label visible: "+(show && mShowWifiSsidLabel ? "true" : "false"));
+        } else {
+            if (DEBUG) Log.v(TAG, "showWifiSsidLabel: label not found!");
         }
     }
 
@@ -4555,13 +4602,25 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         if (clock != null) {
             FontSizeUtils.updateFontSize(clock, R.dimen.status_bar_clock_size);
         }
+        TextView carrier = (TextView) mStatusBarView.findViewById(R.id.status_bar_carrier_label);
+        if (carrier != null) {
+            FontSizeUtils.updateFontSize(carrier, R.dimen.status_bar_clock_size);
+        }
+        TextView wifi = (TextView) mStatusBarView.findViewById(R.id.status_bar_wifi_label);
+        if (wifi != null) {
+            FontSizeUtils.updateFontSize(wifi, R.dimen.status_bar_clock_size);
+        }
     }
 
-	@Override
-	public void notifyLayoutChange(int direction) {
-		mNavigationBarView.notifyLayoutChange(direction);
-		mHandler.postDelayed(new Runnable() { public void run() { forceNavigationIconHints(); }}, 20);
-	}
+    @Override
+    public void notifyLayoutChange(int direction) {
+        mNavigationBarView.notifyLayoutChange(direction);
+        mHandler.postDelayed(new Runnable() {
+            public void run() {
+                forceNavigationIconHints();
+            }
+        }, 20);
+    }
 
     protected void loadDimens() {
         final Resources res = mContext.getResources();
@@ -4575,7 +4634,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             R.dimen.status_bar_icon_padding);
 
         if (newIconHPadding != mIconHPadding || newIconSize != mIconSize) {
-//            Log.d(TAG, "size=" + newIconSize + " padding=" + newIconHPadding);
             mIconHPadding = newIconHPadding;
             mIconSize = newIconSize;
             //reloadAllNotificationIcons(); // reload the tray
@@ -4595,8 +4653,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             mNotificationPanelMinHeightFrac = 0f;
         }
 
-        mRowMinHeight =  res.getDimensionPixelSize(R.dimen.notification_min_height);
-        mRowMaxHeight =  res.getDimensionPixelSize(R.dimen.notification_max_height);
+        mRowMinHeight = res.getDimensionPixelSize(R.dimen.notification_min_height);
+        mRowMaxHeight = res.getDimensionPixelSize(R.dimen.notification_max_height);
 
         mKeyguardMaxNotificationCount = res.getInteger(R.integer.keyguard_max_notification_count);
 

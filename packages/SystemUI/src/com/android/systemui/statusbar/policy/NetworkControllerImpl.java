@@ -239,6 +239,9 @@ public class NetworkControllerImpl extends BroadcastReceiver
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_SHOW_NETWORK_ACTIVITY),
                     false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.Global.getUriFor(
+                    Settings.Global.WIFI_STATUS_BAR_SSID),
+                    false, this, UserHandle.USER_ALL);
             mDirectionArrowsEnabled = Settings.System.getIntForUser(resolver,
                     Settings.System.STATUS_BAR_SHOW_NETWORK_ACTIVITY,
                     0, UserHandle.USER_CURRENT) == 0 ? false : true;
@@ -607,11 +610,9 @@ public class NetworkControllerImpl extends BroadcastReceiver
                 || action.equals(WifiManager.WIFI_STATE_CHANGED_ACTION)
                 || action.equals(WifiManager.NETWORK_STATE_CHANGED_ACTION)) {
             updateWifiState(intent);
-            refreshViews();
         } else if (action.equals(TelephonyIntents.ACTION_SIM_STATE_CHANGED)) {
             updateSimState(intent);
             updateDataIcon();
-            refreshViews();
         } else if (action.equals(TelephonyIntents.SPN_STRINGS_UPDATED_ACTION)) {
             mShowSpn = intent.getBooleanExtra(TelephonyIntents.EXTRA_SHOW_SPN, false);
             mShowPlmn = intent.getBooleanExtra(TelephonyIntents.EXTRA_SHOW_PLMN, false);
@@ -629,13 +630,10 @@ public class NetworkControllerImpl extends BroadcastReceiver
                 }
             }
             updateNetworkName(mShowSpn, mSpn , mShowPlmn , mPlmn);
-            refreshViews();
         } else if (action.equals(ConnectivityManager.CONNECTIVITY_ACTION_IMMEDIATE) ||
                  action.equals(ConnectivityManager.INET_CONDITION_ACTION)) {
             updateConnectivity(intent);
-            refreshViews();
         } else if (action.equals(Intent.ACTION_CUSTOM_CARRIER_LABEL_CHANGED)) {
-            refreshViews();
         } else if (action.equals(Intent.ACTION_CONFIGURATION_CHANGED)) {
             //parse the string to current language string in public resources
             if (mContext.getResources().getBoolean(
@@ -649,21 +647,20 @@ public class NetworkControllerImpl extends BroadcastReceiver
             }
             updateNetworkName( mShowSpn, mSpn , mShowPlmn , mPlmn);
             refreshLocale();
-            refreshViews();
         } else if (action.equals(Intent.ACTION_LOCALE_CHANGED)) {
             updateNetworkName(false, null, false, null);
-            refreshViews();
         } else if (action.equals(Intent.ACTION_AIRPLANE_MODE_CHANGED)) {
             refreshLocale();
             updateAirplaneMode();
             updateSimIcon();
-            refreshViews();
         } else if (action.equals(WimaxManagerConstants.NET_4G_STATE_CHANGED_ACTION) ||
                 action.equals(WimaxManagerConstants.SIGNAL_LEVEL_CHANGED_ACTION) ||
                 action.equals(WimaxManagerConstants.WIMAX_NETWORK_STATE_CHANGED_ACTION)) {
             updateWimaxState(intent);
-            refreshViews();
+        } else {
+          return;
         }
+        refreshViews();
     }
 
 
@@ -1118,7 +1115,7 @@ public class NetworkControllerImpl extends BroadcastReceiver
     }
 
     public String appendRatToNetworkName(String operator, ServiceState state) {
-        String opeartorName = "";
+        String operatorName = "";
         if (state.getDataRegState() == ServiceState.STATE_IN_SERVICE ||
                 state.getVoiceRegState() == ServiceState.STATE_IN_SERVICE) {
             int voiceNetType = state.getVoiceNetworkType();
@@ -1129,13 +1126,14 @@ public class NetworkControllerImpl extends BroadcastReceiver
             TelephonyManager tm = (TelephonyManager)mContext.getSystemService(
                     Context.TELEPHONY_SERVICE);
             String ratString = tm.networkTypeToString(chosenNetType);
-            opeartorName = new StringBuilder().append(operator).append(" ").append(ratString).
+            operatorName = new StringBuilder().append(operator).append(" ").append(ratString).
                     toString();
         } else {
-            opeartorName = operator;
+            operatorName = operator;
         }
-        return opeartorName;
+        return operatorName;
     }
+
     // ===== Wifi ===================================================================
 
     class WifiHandler extends Handler {
@@ -1232,8 +1230,8 @@ public class NetworkControllerImpl extends BroadcastReceiver
         return null;
     }
 
-
     // ===== Wimax ===================================================================
+
     protected final void updateWimaxState(Intent intent) {
         final String action = intent.getAction();
         boolean wasConnected = mWimaxConnected;
@@ -1321,7 +1319,6 @@ public class NetworkControllerImpl extends BroadcastReceiver
         updateTelephonySignalStrength();
         updateWifiIcons();
     }
-
 
     // ===== Update the views =======================================================
 
@@ -1734,11 +1731,15 @@ public class NetworkControllerImpl extends BroadcastReceiver
         }
 
         // wifi label
+        boolean mShowWifiSsidLabel = Settings.Global.getInt(
+                    mContext.getContentResolver(),
+                    Settings.Global.WIFI_STATUS_BAR_SSID, 0) == 1;
+        wifiLabel = wifiLabel.replace("\"", "");
         N = mWifiLabelViews.size();
         for (int i=0; i<N; i++) {
             TextView v = mWifiLabelViews.get(i);
             v.setText(wifiLabel);
-            if ("".equals(wifiLabel)) {
+            if (!mShowWifiSsidLabel || "".equals(wifiLabel)) {
                 v.setVisibility(View.GONE);
             } else {
                 v.setVisibility(View.VISIBLE);

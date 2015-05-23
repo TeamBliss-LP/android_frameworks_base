@@ -2132,7 +2132,7 @@ public final class Settings {
 
         /**
          * Option to hide the Bluetooth icon in the status bar when disconnected.
-	 * @hide
+         * @hide
          */
         public static final String SHOW_BLUETOOTH_ICON = "show_bluetooth_icon";
 
@@ -3842,7 +3842,7 @@ public final class Settings {
          */
         public static final String STATUS_BAR_EXPANDED_HEADER_SHOW_WEATHER_LOCATION = "status_bar_expanded_header_show_weather_location";
 
-       /**
+        /**
          * Whether to display the gesture anywhere trigger region or not.
          * @hide
          */
@@ -3914,13 +3914,13 @@ public final class Settings {
          */
         public static final String STATUSBAR_BATTERY_BAR_ANIMATE = "statusbar_battery_bar_animate";
 
-		/**
+        /**
          * Force expanded notifications on all apps that support it.
          * @hide
          */
         public static final String FORCE_EXPANDED_NOTIFICATIONS = "force_expanded_notifications";
 
-		/**
+        /**
          * MediaScanner behavior on boot.
          * 0 = enabled
          * 1 = ask (notification)
@@ -3929,7 +3929,7 @@ public final class Settings {
          */
         public static final String MEDIA_SCANNER_ON_BOOT = "media_scanner_on_boot";
 
-		/**
+        /**
          * Whether to show the weather info on the lock screen
          * @hide
          */
@@ -3990,22 +3990,22 @@ public final class Settings {
         public static final String STATUS_BAR_MSIM_SHOW_EMPTY_ICONS = "status_bar_show_empty_sims";
 
         /**
-	     * Give SMS notifications a breathing effect
+         * Give SMS notifications a breathing effect
          * @hide
-	     */
+         */
         public static final String KEY_SMS_BREATH = "sms_breath";
 
         /**
-	     * Give Missed call notifications a breathing effect
-	     * @hide
-	     */
+         * Give Missed call notifications a breathing effect
+         * @hide
+         */
         public static final String KEY_MISSED_CALL_BREATH = "missed_call_breath";
 
         /**
-	     * Give Voicemail notifications a breathing effect
-	     * @hide
-	     */
-        public static final String KEY_VOICEMAIL_BREATH = "voicemail_breath";  
+         * Give Voicemail notifications a breathing effect
+         * @hide
+        */
+        public static final String KEY_VOICEMAIL_BREATH = "voicemail_breath";
 
         /**
          * Enable statusbar double tap gesture on to put device to sleep
@@ -4031,7 +4031,7 @@ public final class Settings {
          */
         public static final String RECENTS_CLEAR_ALL_DISMISS_ALL = "recents_clear_all_dismiss_all";
 
-		/**
+        /**
          * show the membar in recents
          *  @hide
          */
@@ -4070,7 +4070,7 @@ public final class Settings {
          */
         public static final String HEADS_UP_TOUCH_OUTSIDE = "heads_up_touch_outside";
 
-		/**
+        /**
          * Heads Up background color
          * @hide
          */
@@ -4180,17 +4180,16 @@ public final class Settings {
          * 1 = Display down-stream traffic if set
          * 2 = Show as Byte/s if set
          * 16-31 = Refresh interval(ms) min: 250 max: 32750 default: 1000
-	* @hide
-	*/
-	
-	 public static final String NETWORK_TRAFFIC_STATE = "network_traffic_state";
+         * @hide
+         */
 
-        /**		
+        public static final String NETWORK_TRAFFIC_STATE = "network_traffic_state";
+
+        /**
          *  Enable navigation bar double tap gesture on to put device to sleep
          * @hide
          */
-        public static final String DOUBLE_TAP_SLEEP_NAVBAR = "double_tap_sleep_navbar";		
-        
+        public static final String DOUBLE_TAP_SLEEP_NAVBAR = "double_tap_sleep_navbar";
 
         /** Whether to collapse panel when quick settings tile is pressed.
          *
@@ -4228,10 +4227,10 @@ public final class Settings {
          */
         public static final String TOAST_ANIMATION = "toast_animation";
 
-        /**  
+        /**
          * AOKP Custom System Animations
          * @hide
-         */  
+         */
         public static final String[] ACTIVITY_ANIMATION_CONTROLS = new String[] {
                 "activity_open",
                 "activity_close",
@@ -4244,7 +4243,7 @@ public final class Settings {
                 "wallpaper_intra_open",
                 "wallpaper_intra_close",
                 "task_open_behind",
-        };  
+        };
         public static final String ANIMATION_CONTROLS_DURATION = "animation_controls_duration";
         public static final String ANIMATION_CONTROLS_EXIT_ONLY = "animation_controls_exit_only";
         public static final String ANIMATION_CONTROLS_REVERSE_EXIT = "animation_controls_reverse_exit";
@@ -4330,13 +4329,13 @@ public final class Settings {
          */
         public static final String STATUS_BAR_BLISS_LOGO = "status_bar_bliss_logo";
 
-		/**
+        /**
          * Statusbar Bliss logo color setting
          * @hide
          */
         public static final String STATUS_BAR_BLISS_LOGO_COLOR = "status_bar_bliss_logo_color";
 
-		/**
+        /**
          * Status bar greeting
          * @hide
          */
@@ -4472,7 +4471,7 @@ public final class Settings {
          */
         public static final String APP_CIRCLE_BAR_SHOW_TRIGGER = "app_circle_bar_show_trigger";
 
-		/**
+        /**
          * Whether or not to use the app sidebar
          *
          * @hide
@@ -4533,7 +4532,7 @@ public final class Settings {
          * @hide
          */
         public static final String HFM_DISABLE_ADS = "hfm_disable_ads";
-		
+
         /**
          * Whether to prevent loud volume levels when headset is first plugged in.
          * @hide
@@ -4559,8 +4558,8 @@ public final class Settings {
          * @hide
          */
         public static final String DOZE_OVERWRITE_VALUE = "doze_overwrite_value";
- 
-		/**
+
+        /**
          * Navigation Bar show switch
          * @hide
          */
@@ -8577,7 +8576,8 @@ public final class Settings {
         * When the number of open networks exceeds this number, the
         * least-recently-used excess networks will be removed.
         */
-       public static final String WIFI_NUM_OPEN_NETWORKS_KEPT = "wifi_num_open_networks_kept";
+       public static final String WIFI_NUM_OPEN_NETWORKS_KEPT =
+               "wifi_num_open_networks_kept";
 
        /**
         * Whether the Wi-Fi should be on.  Only the Wi-Fi service should touch this.
@@ -8589,7 +8589,7 @@ public final class Settings {
         * @hide
         */
        public static final String WIFI_SCAN_ALWAYS_AVAILABLE =
-                "wifi_scan_always_enabled";
+               "wifi_scan_always_enabled";
 
        /**
         * Used to save the Wifi_ON state prior to tethering.
@@ -8703,6 +8703,12 @@ public final class Settings {
         */
        public static final String WIFI_EPHEMERAL_OUT_OF_RANGE_TIMEOUT_MS =
                "wifi_ephemeral_out_of_range_timeout_ms";
+
+        /**
+         * Whether or not to show the Wi-Fi SSID of a connected AP
+         * @hide
+         */
+        public static final String WIFI_STATUS_BAR_SSID = "wifi_status_bar_ssid";
 
        /**
         * The number of milliseconds to delay when checking for data stalls during

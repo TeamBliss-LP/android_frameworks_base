@@ -1367,11 +1367,15 @@ public class MSimNetworkControllerImpl extends NetworkControllerImpl {
         }
 
         // wifi label
+        boolean mShowWifiSsidLabel = Settings.Global.getInt(
+                    mContext.getContentResolver(),
+                    Settings.Global.WIFI_STATUS_BAR_SSID, 0) == 1;
+        wifiLabel = wifiLabel.replace("\"", "");
         N = mWifiLabelViews.size();
         for (int i=0; i<N; i++) {
             TextView v = mWifiLabelViews.get(i);
             v.setText(wifiLabel);
-            if ("".equals(wifiLabel)) {
+            if (!mShowWifiSsidLabel || "".equals(wifiLabel)) {
                 v.setVisibility(View.GONE);
             } else {
                 v.setVisibility(View.VISIBLE);

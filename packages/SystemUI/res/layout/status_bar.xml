@@ -76,7 +76,20 @@
                     android:layout_gravity="center_vertical"
                     android:textAppearance="@style/TextAppearance.StatusBar.CarrierLabel"
                     android:singleLine="true"
-                    android:ellipsize="end" />
+                    android:ellipsize="end"
+                    android:visibility="gone"/>
+
+                <TextView
+                    android:id="@+id/status_bar_wifi_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:paddingStart="7dp"
+                    android:paddingEnd="7dp"
+                    android:visibility="gone"
+                    android:singleLine="true"
+                    android:ellipsize="end"
+                    android:textAppearance="@style/TextAppearance.StatusBar.WifiLabel" />
 
                 <ImageView
                     android:id="@+id/bliss_logo"
@@ -120,6 +133,7 @@
                     android:orientation="horizontal" />
 
             </com.android.keyguard.AlphaOptimizedLinearLayout>
+
         </com.android.systemui.statusbar.AlphaOptimizedFrameLayout>
 
         <com.android.keyguard.AlphaOptimizedLinearLayout android:id="@+id/system_icon_area"
@@ -127,7 +141,7 @@
             android:layout_height="match_parent"
             android:orientation="horizontal">
 
-        <com.android.systemui.statusbar.policy.NetworkTraffic
+            <com.android.systemui.statusbar.policy.NetworkTraffic
                 android:id="@+id/networkTraffic"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
@@ -137,7 +151,8 @@
 
             <include layout="@layout/system_icons" />
 
-            <com.android.systemui.BatteryLevelTextView android:id="@+id/battery_level_text"
+            <com.android.systemui.BatteryLevelTextView
+                android:id="@+id/battery_level_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
