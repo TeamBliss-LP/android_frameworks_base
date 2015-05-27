@@ -500,8 +500,12 @@ public class NavigationBarView extends LinearLayout {
         if (mImeLayout) {
             if (mLegacyMenu && mButtonLayouts == 1) {
                 // show hard-coded switchers here when written
-                getButtonView(ACTION_IME).setVisibility(showingIME ? View.VISIBLE : View.INVISIBLE);
-                getButtonView(ACTION_IME_LAYOUT).setVisibility(showingIME ? View.VISIBLE : View.INVISIBLE);
+                if (getButtonView(ACTION_IME) != null) {
+                    getButtonView(ACTION_IME).setVisibility(showingIME ? View.VISIBLE : View.INVISIBLE);
+                }
+                if (getButtonView(ACTION_IME_LAYOUT) != null) {
+                    getButtonView(ACTION_IME_LAYOUT).setVisibility(showingIME ? View.VISIBLE : View.INVISIBLE);
+                }
             }
             if (mButtonLayouts > 1) {
                 final int orientation = getResources().getConfiguration().orientation;
