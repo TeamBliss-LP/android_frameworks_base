@@ -474,13 +474,20 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
 
     private void updateSystemIconsLayoutParams() {
         RelativeLayout.LayoutParams lp = (LayoutParams) mSystemIconsSuperContainer.getLayoutParams();
-        int baseId = mTaskManagerButton != null
+        int taskManager = mTaskManagerButton != null
                 ? mTaskManagerButton.getId() : mSettingsButton.getId();
+        int powerMenu = mStatusBarPowerMenu != null
+                ? mStatusBarPowerMenu.getId() : mTaskManagerButton.getId();
         int rule = mExpanded
-                ? baseId
+                ? taskManager
                 : mMultiUserSwitch.getId();
-        if (rule != lp.getRules()[RelativeLayout.START_OF]) {
+        int rulep = mExpanded
+                ? powerMenu
+                : mMultiUserSwitch.getId();
+        if (rule != lp.getRules()[RelativeLayout.START_OF] &&
+                rule != lp.getRules()[RelativeLayout.START_OF]) {
             lp.addRule(RelativeLayout.START_OF, rule);
+            lp.addRule(RelativeLayout.START_OF, rulep);
             mSystemIconsSuperContainer.setLayoutParams(lp);
         }
     }
@@ -821,7 +828,6 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
         target.avatarX = mMultiUserSwitch.getLeft() + mMultiUserAvatar.getLeft();
         target.avatarY = mMultiUserSwitch.getTop() + mMultiUserAvatar.getTop();
         target.weatherY = mClock.getBottom() - mWeatherLine1.getHeight();
-        target.statusBarPowerMenuY = mClock.getTop();
         if (getLayoutDirection() == LAYOUT_DIRECTION_LTR) {
             target.batteryX = mSystemIconsSuperContainer.getLeft()
                     + mSystemIconsContainer.getRight();
@@ -1247,8 +1253,10 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
                 Settings.System.STATUS_BAR_EXPANDED_HEADER_ICON_COLOR, 0xffffffff);
 
         ((ImageView)mSettingsButton).setColorFilter(mIconColor, Mode.MULTIPLY);
-        ((ImageView)mStatusBarPowerMenu).setColorFilter(mIconColor, Mode.MULTIPLY);
-		((ImageView)mTaskManagerButton).setColorFilter(mIconColor, Mode.MULTIPLY);
+        if (mStatusBarPowerMenu != null) {
+            ((ImageView)mStatusBarPowerMenu).setColorFilter(mIconColor, Mode.MULTIPLY);
+        }
+        ((ImageView)mTaskManagerButton).setColorFilter(mIconColor, Mode.MULTIPLY);
         Drawable alarmIcon = getResources().getDrawable(R.drawable.ic_access_alarms_small);
         alarmIcon.setColorFilter(mIconColor, Mode.MULTIPLY);
         mAlarmStatus.setCompoundDrawablesWithIntrinsicBounds(alarmIcon, null, null, null);
