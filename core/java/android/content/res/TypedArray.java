@@ -146,7 +146,7 @@ public class TypedArray {
 
         TypedValue v = mValue;
         if (getValueAt(index, v)) {
-            Log.w(Resources.TAG, "Converting to string: " + v);
+            //Log.w(Resources.TAG, "Converting to string: " + v);
             return v.coerceToString();
         }
         Log.w(Resources.TAG, "getString of bad type: 0x"
@@ -178,7 +178,7 @@ public class TypedArray {
 
         TypedValue v = mValue;
         if (getValueAt(index, v)) {
-            Log.w(Resources.TAG, "Converting to string: " + v);
+            //Log.w(Resources.TAG, "Converting to string: " + v);
             CharSequence cs = v.coerceToString();
             return cs != null ? cs.toString() : null;
         }
@@ -250,7 +250,7 @@ public class TypedArray {
 
         TypedValue v = mValue;
         if (getValueAt(index, v)) {
-            Log.w(Resources.TAG, "Converting to string: " + v);
+            //Log.w(Resources.TAG, "Converting to string: " + v);
             CharSequence cs = v.coerceToString();
             return cs != null ? cs.toString() : null;
         }
