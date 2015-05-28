@@ -713,17 +713,17 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 mHandler.post(mScreenshotRunnable);
             } else if (action.equals(Intent.ACTION_SCREENRECORD)) {
                 mHandler.removeCallbacks(mScreenrecordRunnable);
-                mHandler.post(mScreenrecordRunnable);        
-			}
-		}
-		
+                mHandler.post(mScreenrecordRunnable);
+            }
+        }
+
         protected void register() {
             if (!mIsRegistered) {
                 mIsRegistered = true;
 
                 IntentFilter filter = new IntentFilter();
                 filter.addAction(Intent.ACTION_SCREENSHOT);
-                filter.addAction(Intent.ACTION_SCREENRECORD);                
+                filter.addAction(Intent.ACTION_SCREENRECORD);
                 mContext.registerReceiver(mCustomActionReceiver, filter);
             }
         }
@@ -2194,18 +2194,18 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 updateWakeGestureListenerLp();
             }
 
-			int NavHeight = Settings.System.getInt(resolver,
-					Settings.System.NAVIGATION_BAR_HEIGHT, 0);
-			int NavHeightLand = Settings.System.getInt(resolver,
-					Settings.System.NAVIGATION_BAR_HEIGHT_LANDSCAPE, 0);
-			int NavWidth = Settings.System.getInt(resolver,
-					Settings.System.NAVIGATION_BAR_WIDTH, 0);
-			if (NavHeight != mUserNavBarHeight || NavHeightLand != mUserNavBarHeightLand || NavWidth != mUserNavBarWidth) {
-				mUserNavBarHeight = NavHeight;
-				mUserNavBarHeightLand = NavHeightLand;
-				mUserNavBarWidth = NavWidth;
-				resetScreenHelper();
-			}
+            int NavHeight = Settings.System.getInt(resolver,
+                    Settings.System.NAVIGATION_BAR_HEIGHT, 0);
+            int NavHeightLand = Settings.System.getInt(resolver,
+                    Settings.System.NAVIGATION_BAR_HEIGHT_LANDSCAPE, 0);
+            int NavWidth = Settings.System.getInt(resolver,
+                    Settings.System.NAVIGATION_BAR_WIDTH, 0);
+            if (NavHeight != mUserNavBarHeight || NavHeightLand != mUserNavBarHeightLand || NavWidth != mUserNavBarWidth) {
+                    mUserNavBarHeight = NavHeight;
+                    mUserNavBarHeightLand = NavHeightLand;
+                    mUserNavBarWidth = NavWidth;
+                    resetScreenHelper();
+            }
 
             final boolean useEdgeService = Settings.System.getIntForUser(resolver,
                     Settings.System.USE_EDGE_SERVICE_FOR_GESTURES, 1, UserHandle.USER_CURRENT) == 1;

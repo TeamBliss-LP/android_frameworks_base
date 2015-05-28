@@ -78,6 +78,7 @@ public class NetworkControllerImpl extends BroadcastReceiver
     // debug
     static final String TAG = "StatusBar.NetworkController";
     static final boolean DEBUG = false;
+    static final boolean DEBUGS = false;
     static final boolean CHATTY = false; // additional diagnostics, but not logspew
 
     // telephony
@@ -241,6 +242,9 @@ public class NetworkControllerImpl extends BroadcastReceiver
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.Global.getUriFor(
                     Settings.Global.WIFI_STATUS_BAR_SSID),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_CARRIER),
                     false, this, UserHandle.USER_ALL);
             mDirectionArrowsEnabled = Settings.System.getIntForUser(resolver,
                     Settings.System.STATUS_BAR_SHOW_NETWORK_ACTIVITY,
@@ -634,6 +638,7 @@ public class NetworkControllerImpl extends BroadcastReceiver
                  action.equals(ConnectivityManager.INET_CONDITION_ACTION)) {
             updateConnectivity(intent);
         } else if (action.equals(Intent.ACTION_CUSTOM_CARRIER_LABEL_CHANGED)) {
+            refreshViews();
         } else if (action.equals(Intent.ACTION_CONFIGURATION_CHANGED)) {
             //parse the string to current language string in public resources
             if (mContext.getResources().getBoolean(
@@ -665,6 +670,7 @@ public class NetworkControllerImpl extends BroadcastReceiver
 
 
     // ===== Telephony ==============================================================
+
     protected String getLocaleString(String originalCarrier) {
         String localeCarrier = android.util.NativeTextHelper.getLocalString(mContext,
                 originalCarrier,
@@ -1075,7 +1081,7 @@ public class NetworkControllerImpl extends BroadcastReceiver
     }
 
     void updateNetworkName(boolean showSpn, String spn, boolean showPlmn, String plmn) {
-        if (DEBUG) {
+        if (DEBUGS) {
             Log.d("CarrierLabel", "updateNetworkName showSpn=" + showSpn + " spn=" + spn
                     + " showPlmn=" + showPlmn + " plmn=" + plmn);
         }
@@ -1333,8 +1339,10 @@ public class NetworkControllerImpl extends BroadcastReceiver
         int N;
         final boolean emergencyOnly = isEmergencyOnly();
 
-        final String customCarrierLabel = Settings.System.getStringForUser(context.getContentResolver(),
-                Settings.System.CUSTOM_CARRIER_LABEL, UserHandle.USER_CURRENT);
+        final String customCarrierLabel = Settings.System.getStringForUser(
+                context.getContentResolver(),
+                Settings.System.CUSTOM_CARRIER_LABEL,
+                UserHandle.USER_CURRENT);
 
         if (!mHasMobileDataFeature) {
             mDataSignalIconId = mPhoneSignalIconId = 0;
@@ -1512,11 +1520,6 @@ public class NetworkControllerImpl extends BroadcastReceiver
             mQSPhoneSignalIconId = 0;
         }
 
-        if (!TextUtils.isEmpty(customCarrierLabel)) {
-            combinedLabel = customCarrierLabel;
-            mobileLabel = customCarrierLabel;
-        }
-
         if (DEBUG) {
             Log.d(TAG, "refreshViews connected={"
                     + (mWifiConnected?" wifi":"")
@@ -1527,6 +1530,7 @@ public class NetworkControllerImpl extends BroadcastReceiver
                     + Integer.toHexString(combinedSignalIconId)
                     + "/" + getResourceName(combinedSignalIconId)
                     + " combinedActivityIconId=0x" + Integer.toHexString(combinedActivityIconId)
+                    + " customCarrierLabel=" + customCarrierLabel
                     + " mobileLabel=" + mobileLabel
                     + " wifiLabel=" + wifiLabel
                     + " emergencyOnly=" + emergencyOnly
@@ -1566,6 +1570,11 @@ public class NetworkControllerImpl extends BroadcastReceiver
                     + " mBluetoothTetherIconId=0x"
                     + Integer.toHexString(mBluetoothTetherIconId)
                     + "/" + getResourceName(mBluetoothTetherIconId));
+        }
+
+        if (!TextUtils.isEmpty(customCarrierLabel)) {
+            combinedLabel = customCarrierLabel;
+            mobileLabel = customCarrierLabel;
         }
 
         // update QS
@@ -1723,9 +1732,7 @@ public class NetworkControllerImpl extends BroadcastReceiver
         // the combinedLabel in the notification panel
         if (!mLastCombinedLabel.equals(combinedLabel)) {
             mLastCombinedLabel = combinedLabel;
-            N = mCombinedLabelViews.size();
-            for (int i=0; i<N; i++) {
-                TextView v = mCombinedLabelViews.get(i);
+            for (TextView v : mCombinedLabelViews) {
                 v.setText(combinedLabel);
             }
         }
@@ -1735,37 +1742,27 @@ public class NetworkControllerImpl extends BroadcastReceiver
                     mContext.getContentResolver(),
                     Settings.Global.WIFI_STATUS_BAR_SSID, 0) == 1;
         wifiLabel = wifiLabel.replace("\"", "");
-        N = mWifiLabelViews.size();
-        for (int i=0; i<N; i++) {
-            TextView v = mWifiLabelViews.get(i);
+        mShowWifiSsidLabel = mShowWifiSsidLabel && !"".equals(wifiLabel);
+        if (DEBUGS) Log.d(TAG, "refreshViews: mShowWifiSsidLabel = " + mShowWifiSsidLabel);
+        for (TextView v : mWifiLabelViews) {
             v.setText(wifiLabel);
-            if (!mShowWifiSsidLabel || "".equals(wifiLabel)) {
-                v.setVisibility(View.GONE);
-            } else {
-                v.setVisibility(View.VISIBLE);
-            }
+            v.setVisibility(mShowWifiSsidLabel ? View.VISIBLE : View.GONE);
         }
 
         // mobile label
-        N = mMobileLabelViews.size();
-        for (int i=0; i<N; i++) {
-            TextView v = mMobileLabelViews.get(i);
+        boolean mShowCarrierLabel = !"".equals(mobileLabel);
+        if (DEBUGS) Log.d(TAG, "refreshViews: mShowCarrierLabel = " + mShowCarrierLabel);
+        for (TextView v : mMobileLabelViews) {
             v.setText(mobileLabel);
-            if ("".equals(mobileLabel)) {
-                v.setVisibility(View.GONE);
-            } else {
-                v.setVisibility(View.VISIBLE);
-            }
+            v.setVisibility(mShowCarrierLabel ? View.VISIBLE : View.GONE);
         }
+        setCarrierText();
 
         // e-call label
-        N = mEmergencyViews.size();
-        for (int i=0; i<N; i++) {
-            StatusBarHeaderView v = mEmergencyViews.get(i);
+        for (StatusBarHeaderView v : mEmergencyViews) {
             v.setShowEmergencyCallsOnly(emergencyOnly);
         }
 
-        setCarrierText();
     }
 
     public int getVoiceNetworkType() {

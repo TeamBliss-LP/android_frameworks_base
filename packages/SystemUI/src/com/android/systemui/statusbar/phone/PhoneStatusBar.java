@@ -225,6 +225,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         DragDownHelper.DragDownCallback, ActivityStarter, OnUnlockMethodChangedListener {
     static final String TAG = "PhoneStatusBar";
     public static final boolean DEBUG = BaseStatusBar.DEBUG;
+    public static final boolean DEBUGS = false;
     public static final boolean SPEW = false;
     public static final boolean DUMPTRUCK = false; // extra dumpsys info
     public static final boolean DEBUG_GESTURES = false;
@@ -517,7 +518,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.HEADS_UP_DISMISS_ON_REMOVE),
-                    false, this);
+                    false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_CARRIER),
                     false, this, UserHandle.USER_ALL);
@@ -592,7 +593,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     mBatterySaverWarningColor = Settings.System.getIntForUser(
                             resolver,
                             Settings.System.BATTERY_SAVER_MODE_COLOR,
-                            -2, UserHandle.USER_CURRENT);
+                            -2, mCurrentUserId);
                     if (mBatterySaverWarningColor == -2) {
                         mBatterySaverWarningColor = mContext.getResources()
                             .getColor(com.android.internal.R.color.battery_saver_mode_color);
@@ -608,7 +609,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                         resolver,
                         Settings.System.STATUS_BAR_SHOW_TICKER,
                         mContext.getResources().getBoolean(R.bool.enable_ticker)
-                        ? 1 : 0, UserHandle.USER_CURRENT) == 1;
+                        ? 1 : 0, mCurrentUserId) == 1;
                     initTickerView();
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.NOTIFICATION_DRAWER_CLEAR_ALL_ICON_COLOR))) {
@@ -620,7 +621,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                             Settings.System.HEADS_UP_NOTIFCATION_DECAY,
                             mContext.getResources().getInteger(
                             R.integer.heads_up_notification_decay),
-                            UserHandle.USER_CURRENT);
+                            mCurrentUserId);
                     resetHeadsUpDecayTimer();
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_BATTERY_STATUS_TEXT_COLOR))) {
@@ -631,13 +632,13 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                         resolver,
                         Settings.System.HEADS_UP_BG_COLOR,
                         HEADSUP_DEFAULT_BACKGROUNDCOLOR,
-                        UserHandle.USER_CURRENT);
+                        mCurrentUserId);
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.HEADS_UP_TEXT_COLOR))) {
                     mHeadsUpCustomText = Settings.System.getIntForUser(
                         resolver,
                         Settings.System.HEADS_UP_TEXT_COLOR,
-                        0x00000000, UserHandle.USER_CURRENT);
+                        0x00000000, mCurrentUserId);
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.PIE_CONTROLS))) {
                     attachPieContainer(isPieEnabled());
@@ -646,7 +647,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     mQSCSwitch = Settings.System.getIntForUser(
                         resolver,
                         Settings.System.QS_COLOR_SWITCH,
-                        0, UserHandle.USER_CURRENT) == 1;
+                        0, mCurrentUserId) == 1;
                     recreateStatusBar();
                     updateRowStates();
                     updateSpeedbump();
@@ -657,7 +658,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     mShowStatusBarCarrier = Settings.System.getIntForUser(
                         resolver,
                         Settings.System.STATUS_BAR_CARRIER,
-                        0, UserHandle.USER_CURRENT) == 1;
+                        0, mCurrentUserId) == 1;
                     showStatusBarCarrierLabel(mShowStatusBarCarrier);
             } else if (uri.equals(Settings.Global.getUriFor(
                     Settings.Global.WIFI_STATUS_BAR_SSID))) {
@@ -749,8 +750,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
         @Override
         public void onChange(boolean selfChange) {
-            boolean visible = Settings.System.getIntForUser(mContext.getContentResolver(),
-                    Settings.System.NAVBAR_FORCE_ENABLE, 0, UserHandle.USER_CURRENT) == 1;
+            boolean visible = Settings.System.getIntForUser(
+                mContext.getContentResolver(),
+                Settings.System.NAVBAR_FORCE_ENABLE,
+                0, mCurrentUserId) == 1;
             if (visible) {
                 forceAddNavigationBar();
             } else {
@@ -773,11 +776,11 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mNavigationBarView.updateResources(getNavbarThemedResources());
         addNavigationBar(true); // dynamically adding nav bar, reset System UI visibility!
     }
-	
+
     private boolean isPieEnabled() {
         return Settings.System.getIntForUser(mContext.getContentResolver(),
                 Settings.System.PIE_CONTROLS, 0,
-                UserHandle.USER_CURRENT) == 1;
+                mCurrentUserId) == 1;
     }
 
     // ensure quick settings is disabled until the current user makes it through the setup wizard
@@ -816,7 +819,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             mHeadsUpUserEnabled = 0 != Settings.System.getIntForUser(
                     mContext.getContentResolver(), Settings.System.HEADS_UP_USER_ENABLED,
                     Settings.System.HEADS_UP_USER_ON,
-                    UserHandle.USER_CURRENT);
+                    mCurrentUserId);
             Log.d(TAG, "heads up is " + (mUseHeadsUp && mHeadsUpUserEnabled ? "enabled" : "disabled"));
             if (wasUsing != mUseHeadsUp) {
                 if (!mUseHeadsUp || !mHeadsUpUserEnabled) {
@@ -1156,13 +1159,13 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     res.getInteger(R.integer.heads_up_notification_decay),
                     UserHandle.USER_CURRENT);
         }
-
+/*
         if (MULTIUSER_DEBUG) {
             mNotificationPanelDebugText = (TextView) mNotificationPanel.findViewById(
                     R.id.header_debug_info);
             mNotificationPanelDebugText.setVisibility(View.VISIBLE);
         }
-
+*/
         updateShowSearchHoldoff();
 
         try {
@@ -1314,8 +1317,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
         mBatterySaverWarningColor = Settings.System.getIntForUser(
                 mContext.getContentResolver(),
-                Settings.System.BATTERY_SAVER_MODE_COLOR, -2,
-                UserHandle.USER_CURRENT);
+                Settings.System.BATTERY_SAVER_MODE_COLOR,
+                -2, mCurrentUserId);
         if (mBatterySaverWarningColor == -2) {
             mBatterySaverWarningColor = mContext.getResources()
                    .getColor(com.android.internal.R.color.battery_saver_mode_color);
@@ -1325,6 +1328,12 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mShowWifiSsidLabel = Settings.Global.getInt(
                 mContext.getContentResolver(),
                 Settings.Global.WIFI_STATUS_BAR_SSID, 0) == 1;
+
+        mShowStatusBarCarrier = Settings.System.getIntForUser(
+                mContext.getContentResolver(),
+                Settings.System.STATUS_BAR_CARRIER,
+                0, mCurrentUserId) == 1;
+        showStatusBarCarrierLabel(mShowStatusBarCarrier);
 
         // set the inital view visibility
         setAreThereNotifications();
@@ -1401,7 +1410,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             mMSimNetworkController.addEmergencyLabelView(mHeader);
 
             boolean canshowWifiLabel = mWifiSsidLabel != null;
-            if (DEBUG) Log.v(TAG, "wifilabel=" + canshowWifiLabel + " show=" + mShowWifiSsidLabel);
+            if (DEBUGS) Log.v(TAG, "wifilabel=" + canshowWifiLabel + " show=" + mShowWifiSsidLabel);
             if (canshowWifiLabel) {
                 mMSimNetworkController.addWifiLabelView(mWifiSsidLabel);
                 mWifiSsidLabel.setVisibility(mShowWifiSsidLabel ? View.VISIBLE : View.GONE);
@@ -1409,9 +1418,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
             mCarrierLabel = (TextView)mStatusBarWindowContent.findViewById(R.id.carrier_label);
             mShowCarrierInPanel = (mCarrierLabel != null);
-            if (DEBUG) Log.v(TAG, "carrierlabel=" + mCarrierLabel + " show=" + mShowCarrierInPanel);
+            if (DEBUGS) Log.v(TAG, "carrierlabel=" + mCarrierLabel + " show=" + mCarrierLabelVisible);
             if (mShowCarrierInPanel) {
-                mCarrierLabel.setVisibility(mCarrierLabelVisible ? View.VISIBLE : View.INVISIBLE);
+                mCarrierLabel.setVisibility(mCarrierLabelVisible ? View.VISIBLE : View.GONE);
 
                 // for mobile devices, we always show mobile connection info here (SPN/PLMN)
                 // for other devices, we show whatever network is connected
@@ -1454,7 +1463,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             }
 
             boolean canshowWifiLabel = mWifiSsidLabel != null;
-            if (DEBUG) Log.v(TAG, "wifilabel=" + canshowWifiLabel + " show=" + mShowWifiSsidLabel);
+            if (DEBUGS) Log.v(TAG, "wifilabel=" + canshowWifiLabel + " show=" + mShowWifiSsidLabel);
             if (canshowWifiLabel) {
                 mNetworkController.addWifiLabelView(mWifiSsidLabel);
                 mWifiSsidLabel.setVisibility(mShowWifiSsidLabel ? View.VISIBLE : View.GONE);
@@ -1462,8 +1471,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
             mCarrierLabel = (TextView)mStatusBarWindowContent.findViewById(R.id.carrier_label);
             mShowCarrierInPanel = (mCarrierLabel != null);
-            if (DEBUG) Log.v(TAG, "carrierlabel=" + mCarrierLabel + " show=" + mShowCarrierInPanel);
+            if (DEBUGS) Log.v(TAG, "carrierlabel=" + mCarrierLabel + " show=" + mCarrierLabelVisible);
             if (mShowCarrierInPanel) {
+                mCarrierLabel.setVisibility(mCarrierLabelVisible ? View.VISIBLE : View.GONE);
                 // for mobile devices, we always show mobile connection info here (SPN/PLMN)
                 // for other devices, we show whatever network is connected
                 if (mNetworkController.hasMobileDataFeature()) {
@@ -1471,7 +1481,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 } else {
                     mNetworkController.addCombinedLabelView(mCarrierLabel);
                 }
-                mCarrierLabel.setVisibility(mCarrierLabelVisible ? View.VISIBLE : View.GONE);
             }
 
             // set up the dynamic hide/show of the label
@@ -2431,7 +2440,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
         if (force || mCarrierLabelVisible != makeVisible) {
             mCarrierLabelVisible = makeVisible;
-            if (DEBUG) Log.d(TAG, "making carrier label " + (makeVisible?"visible":"invisible"));
+            if (DEBUGS) Log.d(TAG, "making carrier label " + (makeVisible?"visible":"invisible"));
             mCarrierLabel.animate().cancel();
             if (makeVisible) {
                 mCarrierLabel.setVisibility(View.VISIBLE);
@@ -4313,7 +4322,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             }
             else if (Intent.ACTION_SCREEN_ON.equals(action)) {
                 mScreenOn = true;
-                
+
                 // work around problem where mDisplay.getRotation() is not stable while screen is off (bug 7086018)
                 repositionNavigationBar();
                 repositionSearchPanelSwipeView();
@@ -4354,10 +4363,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         if (mStatusBarView == null || mContext == null) return;
         View statusBarCarrierLabel = mStatusBarView.findViewById(R.id.status_bar_carrier_label);
         if (statusBarCarrierLabel != null) {
-            statusBarCarrierLabel.setVisibility(show && mShowStatusBarCarrier ? View.VISIBLE : View.GONE);
-            if (DEBUG) Log.v(TAG, "showStatusBarCarrierLabel: label visible: "+(show && mShowStatusBarCarrier ? "true" : "false"));
+            statusBarCarrierLabel.setVisibility(show ? View.VISIBLE : View.GONE);
+            if (DEBUGS) Log.v(TAG, "showStatusBarCarrierLabel: label visible: "+(show ? "true" : "false"));
         } else {
-            if (DEBUG) Log.v(TAG, "showStatusBarCarrierLabel: label not found!");
+            if (DEBUGS) Log.v(TAG, "showStatusBarCarrierLabel: label not found!");
         }
     }
 
@@ -4365,10 +4374,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         if (mStatusBarView == null || mContext == null) return;
         View WifiSsidLabel = mStatusBarView.findViewById(R.id.status_bar_wifi_label);
         if (WifiSsidLabel != null) {
-            WifiSsidLabel.setVisibility(show && mShowWifiSsidLabel ? View.VISIBLE : View.GONE);
-            if (DEBUG) Log.v(TAG, "showWifiSsidLabel: label visible: "+(show && mShowWifiSsidLabel ? "true" : "false"));
+            WifiSsidLabel.setVisibility(show ? View.VISIBLE : View.GONE);
+            if (DEBUGS) Log.v(TAG, "showWifiSsidLabel: label visible: "+(show ? "true" : "false"));
         } else {
-            if (DEBUG) Log.v(TAG, "showWifiSsidLabel: label not found!");
+            if (DEBUGS) Log.v(TAG, "showWifiSsidLabel: label not found!");
         }
     }
 

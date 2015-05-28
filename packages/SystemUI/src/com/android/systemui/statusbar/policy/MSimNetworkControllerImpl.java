@@ -41,6 +41,7 @@ import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
 import android.os.SystemProperties;
+import android.os.UserHandle;
 import android.provider.Settings;
 import android.provider.Telephony;
 import android.telephony.PhoneStateListener;
@@ -50,6 +51,7 @@ import android.telephony.SubscriptionInfo;
 import android.telephony.SubscriptionManager;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.Slog;
 import android.util.SparseIntArray;
 import android.view.View;
@@ -68,7 +70,8 @@ import com.android.systemui.R;
 public class MSimNetworkControllerImpl extends NetworkControllerImpl {
     // debug
     static final String TAG = "StatusBar.MSimNetworkController";
-    static final boolean DEBUG = false;
+    static final boolean DEBUG  = false;
+    static final boolean DEBUGS = false;
     static final boolean CHATTY = true; // additional diagnostics, but not logspew
 
     private int mUserId;
@@ -414,6 +417,8 @@ public class MSimNetworkControllerImpl extends NetworkControllerImpl {
                  action.equals(ConnectivityManager.INET_CONDITION_ACTION)) {
             updateConnectivity(intent);
             refreshViews(mDefaultPhoneId);
+        } else if (action.equals(Intent.ACTION_CUSTOM_CARRIER_LABEL_CHANGED)) {
+            refreshViews();
         } else if (action.equals(Intent.ACTION_CONFIGURATION_CHANGED)) {
             //parse the string to current language string in public resources
             if (mContext.getResources().getBoolean(com.android.internal.R.
@@ -1070,6 +1075,12 @@ public class MSimNetworkControllerImpl extends NetworkControllerImpl {
         String mobileLabel = "";
         String wifiLabel = "";
         int N;
+
+        final String customCarrierLabel = Settings.System.getStringForUser(
+                context.getContentResolver(),
+                Settings.System.CUSTOM_CARRIER_LABEL,
+                UserHandle.USER_CURRENT);
+
         if (DEBUG) {
             Slog.d(TAG,"refreshViews phoneId =" + phoneId + "mMSimDataConnected ="
                     + mMSimDataConnected[phoneId]);
@@ -1272,6 +1283,8 @@ public class MSimNetworkControllerImpl extends NetworkControllerImpl {
                     + "/" + getResourceName(mMSimcombinedSignalIconId[phoneId])
                     + " mMSimcombinedActivityIconId=0x" + Integer.toHexString
                             (mMSimcombinedActivityIconId[phoneId])
+                    + " mobileLabel=" + mobileLabel
+                    + " customCarrierLabel=" + customCarrierLabel
                     + " mAirplaneMode=" + mAirplaneMode
                     + " mMSimDataActivity=" + mMSimDataActivity[phoneId]
                     + " mMSimPhoneSignalIconId=0x" + Integer.toHexString
@@ -1293,16 +1306,21 @@ public class MSimNetworkControllerImpl extends NetworkControllerImpl {
                     + " mBluetoothTetherIconId=0x" + Integer.toHexString(mBluetoothTetherIconId));
         }
 
+        if (!TextUtils.isEmpty(customCarrierLabel)) {
+            combinedLabel = customCarrierLabel;
+            mobileLabel = customCarrierLabel;
+        }
+
         // update QS
         for (NetworkSignalChangedCallback cb : mSignalsChangedCallbacks) {
             notifySignalsChangedCallbacks(cb);
         }
 
         if (mMSimLastPhoneSignalIconId[phoneId] != mMSimPhoneSignalIconId[phoneId]
-         || mLastWifiIconId                 != mWifiIconId
-         || mLastWimaxIconId                != mWimaxIconId
+         || mLastWifiIconId                  != mWifiIconId
+         || mLastWimaxIconId                 != mWimaxIconId
          || mMSimLastDataTypeIconId[phoneId] != mMSimDataTypeIconId[phoneId]
-         || mLastAirplaneMode               != mAirplaneMode
+         || mLastAirplaneMode                != mAirplaneMode
          || mMSimLastSimIconId[phoneId] != mNoMSimIconId[phoneId]
          || mMSimLastcombinedActivityIconId[phoneId]
                 != mMSimcombinedActivityIconId[phoneId])
@@ -1371,27 +1389,19 @@ public class MSimNetworkControllerImpl extends NetworkControllerImpl {
                     mContext.getContentResolver(),
                     Settings.Global.WIFI_STATUS_BAR_SSID, 0) == 1;
         wifiLabel = wifiLabel.replace("\"", "");
-        N = mWifiLabelViews.size();
-        for (int i=0; i<N; i++) {
-            TextView v = mWifiLabelViews.get(i);
+        mShowWifiSsidLabel = mShowWifiSsidLabel && !"".equals(wifiLabel);
+        if (DEBUGS) Log.d(TAG, "refreshViews: mShowWifiSsidLabel = " + mShowWifiSsidLabel);
+        for (TextView v : mWifiLabelViews) {
             v.setText(wifiLabel);
-            if (!mShowWifiSsidLabel || "".equals(wifiLabel)) {
-                v.setVisibility(View.GONE);
-            } else {
-                v.setVisibility(View.VISIBLE);
-            }
+            v.setVisibility(mShowWifiSsidLabel ? View.VISIBLE : View.GONE);
         }
 
         // mobile label
-        N = mMobileLabelViews.size();
-        for (int i=0; i<N; i++) {
-            TextView v = mMobileLabelViews.get(i);
+        boolean mShowCarrierLabel = !"".equals(mobileLabel);
+        if (DEBUGS) Log.d(TAG, "refreshViews: mShowCarrierLabel = " + mShowCarrierLabel);
+        for (TextView v : mMobileLabelViews) {
             v.setText(mobileLabel);
-            if ("".equals(mobileLabel)) {
-                v.setVisibility(View.GONE);
-            } else {
-                v.setVisibility(View.VISIBLE);
-            }
+            v.setVisibility(mShowCarrierLabel ? View.VISIBLE : View.GONE);
         }
         setCarrierText();
     }
