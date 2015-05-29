@@ -61,6 +61,7 @@ public class NetworkTraffic extends TextView {
     private int MB = KB * KB;
     private int GB = MB * KB;
     private boolean mAutoHide;
+    private boolean mHideArrows;
     private int mAutoHideThreshold;
     private int mNetworkTrafficColor;
 
@@ -185,6 +186,9 @@ public class NetworkTraffic extends TextView {
                     .getUriFor(Settings.System.NETWORK_TRAFFIC_AUTOHIDE_THRESHOLD), false,
                     this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System
+                    .getUriFor(Settings.System.NETWORK_TRAFFIC_HIDE_ARROW), false,
+                    this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System
                     .getUriFor(Settings.System.NETWORK_TRAFFIC_COLOR), false,
                     this, UserHandle.USER_ALL);
         }
@@ -278,6 +282,13 @@ public class NetworkTraffic extends TextView {
                 Settings.System.NETWORK_TRAFFIC_AUTOHIDE_THRESHOLD, 10,
                 UserHandle.USER_CURRENT);
 
+        mHideArrows = Settings.System.getIntForUser(resolver,
+                Settings.System.NETWORK_TRAFFIC_HIDE_ARROW, 1,
+                UserHandle.USER_CURRENT) == 1;
+        if (mHideArrows) {
+            setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+        }
+
         mState = Settings.System.getInt(resolver, Settings.System.NETWORK_TRAFFIC_STATE, 0);
 
         mNetworkTrafficColor = Settings.System.getInt(resolver,
@@ -332,6 +343,10 @@ public class NetworkTraffic extends TextView {
     }
 
     private void updateTrafficDrawable() {
+        if (mHideArrows) {
+            return;
+        }
+
         int intTrafficDrawable;
         Drawable drw = null;
         if (isSet(mState, MASK_UP + MASK_DOWN)) {
