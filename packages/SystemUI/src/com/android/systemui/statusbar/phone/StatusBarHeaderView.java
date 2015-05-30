@@ -166,7 +166,6 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
     private float mCurrentT;
     private boolean mShowingDetail;
 
-
     private SettingsObserver mSettingsObserver;
     private boolean mShowWeather;
     private boolean mShowWeatherLocation;
@@ -175,23 +174,22 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
     protected Vibrator mVibrator;
 
     private boolean mQSCSwitch = false;
-	
+
     private int mTextColor;
     private int mIconColor;
 
     private ContentObserver mContentObserver = new ContentObserver(new Handler()) {
-   	 @Override
-    	 public void onChange(boolean selfChange, Uri uri) {
-		loadShowStatusBarPowerMenuSettings();
-	}
+        @Override
+        public void onChange(boolean selfChange, Uri uri) {
+            loadShowStatusBarPowerMenuSettings();
+        }
     };
 
 
     public StatusBarHeaderView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        loadShowStatusBarPowerMenuSettings();  
+        loadShowStatusBarPowerMenuSettings();
         mContext = context;
-
         mVibrator = (Vibrator) mContext.getSystemService(Context.VIBRATOR_SERVICE);
     }
 
@@ -353,7 +351,6 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
         mClockCollapsedSize = getResources().getDimensionPixelSize(R.dimen.qs_time_collapsed_size);
         mClockExpandedSize = getResources().getDimensionPixelSize(R.dimen.qs_time_expanded_size);
         mClockCollapsedScaleFactor = (float) mClockCollapsedSize / (float) mClockExpandedSize;
-
     }
 
     public void setActivityStarter(ActivityStarter activityStarter) {
@@ -487,12 +484,14 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
     private void updateSystemIconsLayoutParams() {
         RelativeLayout.LayoutParams lp = (LayoutParams) mSystemIconsSuperContainer.getLayoutParams();
         int taskManager = mTaskManagerButton != null
-                ? mTaskManagerButton.getId() : mSettingsButton.getId();
+                ? mTaskManagerButton.getId()
+                : mSettingsButton.getId();
         int headsUp = mHeadsUpButton != null
                 ? mHeadsUpButton.getId()
                 : mMultiUserSwitch.getId();
         int powerMenu = mStatusBarPowerMenu != null
-                ? mStatusBarPowerMenu.getId() : mTaskManagerButton.getId();
+                ? mStatusBarPowerMenu.getId()
+                : mTaskManagerButton.getId();
         int rule = mExpanded
                 ? taskManager
                 : mMultiUserSwitch.getId();
@@ -551,7 +550,8 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
 
     private void updateStatusBarPowerMenuVisibility() {
         mStatusBarPowerMenu.setVisibility(mExpanded
-                && (mStatusBarPowerMenuStyle != STATUS_BAR_POWER_MENU_OFF) ? View.VISIBLE
+                && (mStatusBarPowerMenuStyle != STATUS_BAR_POWER_MENU_OFF)
+                ? View.VISIBLE
                 : View.GONE);
     }
 
@@ -782,7 +782,7 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
         Intent intent = new Intent(Intent.ACTION_VIEW).setData(builder.build());
         mActivityStarter.startActivity(intent, true /* dismissShade */);
     }
-    
+
     private void triggerPowerMenuDialog() {
         Intent intent = new Intent(Intent.ACTION_POWERMENU);
         mContext.sendBroadcast(intent); /* broadcast action */
@@ -899,21 +899,26 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
         target.taskManagerAlpha = getAlphaForVisibility(mTaskManagerButton);
         target.headsUpAlpha = getAlphaForVisibility(mHeadsUpButton);
         target.settingsAlpha = getAlphaForVisibility(mSettingsButton);
-        target.settingsTranslation = mExpanded
+        target.settingsTranslation = (mExpanded
                 ? 0
-                : mMultiUserSwitch.getLeft() - mSettingsButton.getLeft();
-        if (mTaskManagerButton != null) {
-            target.taskManagerTranslation = mExpanded
+                : mMultiUserSwitch.getLeft() - mSettingsButton.getLeft());
+        if (mStatusBarPowerMenu != null) {
+            target.statusBarPowerMenuTranslation = (mExpanded
                     ? 0
-                    : mSettingsButton.getLeft() - mTaskManagerButton.getLeft();
+                    : mSettingsButton.getLeft() - mStatusBarPowerMenu.getLeft());
+        }
+        if (mTaskManagerButton != null) {
+            target.taskManagerTranslation = (mExpanded
+                    ? 0
+                    : mSettingsButton.getLeft() - mTaskManagerButton.getLeft());
         }
         if (mHeadsUpButton != null) {
-            target.headsUpTranslation = mExpanded
+            target.headsUpTranslation = (mExpanded
                     ? 0
-                    : mMultiUserSwitch.getLeft() - mHeadsUpButton.getLeft();
+                    : mMultiUserSwitch.getLeft() - mHeadsUpButton.getLeft());
         }
-        target.signalClusterAlpha = mSignalClusterDetached ? 0f : 1f;
-        target.settingsRotation = !mExpanded ? 90f : 0f;
+        target.signalClusterAlpha = (mSignalClusterDetached ? 0f : 1f);
+        target.settingsRotation = (!mExpanded ? 90f : 0f);
     }
 
     private float getAlphaForVisibility(View v) {
@@ -970,8 +975,10 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
         mSettingsButton.setTranslationY(mSystemIconsSuperContainer.getTranslationY());
         mSettingsButton.setTranslationX(values.settingsTranslation);
         mSettingsButton.setRotation(values.settingsRotation);
-        if (mStatusBarPowerMenuStyle != STATUS_BAR_POWER_MENU_OFF) {
+        if (mStatusBarPowerMenu != null &&
+            mStatusBarPowerMenuStyle != STATUS_BAR_POWER_MENU_OFF) {
             mStatusBarPowerMenu.setRotation(values.settingsRotation);
+            mStatusBarPowerMenu.setTranslationX(values.statusBarPowerMenuTranslation);
         }
         if (mTaskManagerButton != null) {
             mTaskManagerButton.setTranslationX(values.taskManagerTranslation);
@@ -1025,6 +1032,7 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
         float batteryLevelExpandedAlpha;
         float taskManagerAlpha;
         float taskManagerTranslation;
+        float statusBarPowerMenuTranslation;
         float headsUpAlpha;
         float headsUpTranslation;
         float settingsAlpha;
@@ -1044,33 +1052,52 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
             avatarY = v1.avatarY * (1 - t) + v2.avatarY * t;
             batteryX = v1.batteryX * (1 - t) + v2.batteryX * t;
             batteryY = v1.batteryY * (1 - t) + v2.batteryY * t;
+            statusBarPowerMenuTranslation =
+                    v1.statusBarPowerMenuTranslation * (1 - t)
+                    + v2.statusBarPowerMenuTranslation * t;
             taskManagerTranslation =
-                    v1.taskManagerTranslation * (1 - t) + v2.taskManagerTranslation * t;
+                    v1.taskManagerTranslation * (1 - t)
+                    + v2.taskManagerTranslation * t;
             headsUpTranslation =
-                    v1.headsUpTranslation * (1 - t) + v2.headsUpTranslation * t;
-            settingsTranslation = v1.settingsTranslation * (1 - t) + v2.settingsTranslation * t;
+                    v1.headsUpTranslation * (1 - t)
+                    + v2.headsUpTranslation * t;
+            settingsTranslation = v1.settingsTranslation * (1 - t)
+                    + v2.settingsTranslation * t;
             weatherY = v1.weatherY * (1 - t) + v2.weatherY * t;
-            statusBarPowerMenuY = v1.statusBarPowerMenuY * (1 - t) + v2.statusBarPowerMenuY * t;
+            statusBarPowerMenuY = v1.statusBarPowerMenuY * (1 - t)
+                    + v2.statusBarPowerMenuY * t;
 
             float t1 = Math.max(0, t - 0.5f) * 2;
-            settingsRotation = v1.settingsRotation * (1 - t1) + v2.settingsRotation * t1;
+            settingsRotation = v1.settingsRotation * (1 - t1)
+                    + v2.settingsRotation * t1;
             emergencyCallsOnlyAlpha =
-                    v1.emergencyCallsOnlyAlpha * (1 - t1) + v2.emergencyCallsOnlyAlpha * t1;
+                    v1.emergencyCallsOnlyAlpha * (1 - t1)
+                    + v2.emergencyCallsOnlyAlpha * t1;
 
             float t2 = Math.min(1, 2 * t);
-            signalClusterAlpha = v1.signalClusterAlpha * (1 - t2) + v2.signalClusterAlpha * t2;
+            signalClusterAlpha = v1.signalClusterAlpha * (1 - t2)
+                    + v2.signalClusterAlpha * t2;
 
             float t3 = Math.max(0, t - 0.7f) / 0.3f;
-            batteryLevelAlpha = v1.batteryLevelAlpha * (1 - t3) + v2.batteryLevelAlpha * t3;
+            batteryLevelAlpha = v1.batteryLevelAlpha * (1 - t3)
+                    + v2.batteryLevelAlpha * t3;
             batteryLevelExpandedAlpha =
-                    v1.batteryLevelExpandedAlpha * (1 - t3) + v2.batteryLevelExpandedAlpha * t3;
-            taskManagerAlpha = v1.taskManagerAlpha * (1 - t3) + v2.taskManagerAlpha * t3;
-            headsUpAlpha = v1.headsUpAlpha * (1 - t3) + v2.headsUpAlpha * t3;
-            settingsAlpha = v1.settingsAlpha * (1 - t3) + v2.settingsAlpha * t3;
-            dateExpandedAlpha = v1.dateExpandedAlpha * (1 - t3) + v2.dateExpandedAlpha * t3;
-            dateCollapsedAlpha = v1.dateCollapsedAlpha * (1 - t3) + v2.dateCollapsedAlpha * t3;
-            alarmStatusAlpha = v1.alarmStatusAlpha * (1 - t3) + v2.alarmStatusAlpha * t3;
-            statusBarPowerMenuAlpha = v1.statusBarPowerMenuAlpha * (1 - t3) + v2.statusBarPowerMenuAlpha * t3;
+                    v1.batteryLevelExpandedAlpha * (1 - t3)
+                    + v2.batteryLevelExpandedAlpha * t3;
+            taskManagerAlpha = v1.taskManagerAlpha * (1 - t3)
+                    + v2.taskManagerAlpha * t3;
+            headsUpAlpha = v1.headsUpAlpha * (1 - t3)
+                    + v2.headsUpAlpha * t3;
+            settingsAlpha = v1.settingsAlpha * (1 - t3)
+                    + v2.settingsAlpha * t3;
+            dateExpandedAlpha = v1.dateExpandedAlpha * (1 - t3)
+                    + v2.dateExpandedAlpha * t3;
+            dateCollapsedAlpha = v1.dateCollapsedAlpha * (1 - t3)
+                    + v2.dateCollapsedAlpha * t3;
+            alarmStatusAlpha = v1.alarmStatusAlpha * (1 - t3)
+                    + v2.alarmStatusAlpha * t3;
+            statusBarPowerMenuAlpha = v1.statusBarPowerMenuAlpha * (1 - t3)
+                    + v2.statusBarPowerMenuAlpha * t3;
         }
     }
 
