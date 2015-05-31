@@ -399,7 +399,7 @@ public abstract class BaseStatusBar extends SystemUI implements
             splitAndAddToArrayList(mBlacklist, blackString, "\\|");
 
             mSearchPanelViewEnabled = Settings.Secure.getInt(
-                    resolver, Settings.Secure.SEARCH_PANEL_ENABLED, 1) == 1;
+                    resolver, Settings.Secure.SEARCH_PANEL_ENABLED, 0) == 1;
         }
     };
 
