@@ -580,6 +580,11 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         }
 
         @Override
+        public void onChange(boolean selfChange) {
+            update();
+        }
+
+        @Override
         public void onChange(boolean selfChange, Uri uri) {
             ContentResolver resolver = mContext.getContentResolver();
             if (uri.equals(Settings.System.getUriFor(
