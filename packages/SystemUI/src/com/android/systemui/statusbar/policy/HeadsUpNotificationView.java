@@ -137,6 +137,10 @@ public class HeadsUpNotificationView extends FrameLayout implements SwipeHelper.
         }
     }
 
+    public void setTextColor(int color) {
+        // dummy to satisfy reflection (for custom color commits only)
+    }
+
     public void updateResources() {
         if (mContentHolder != null) {
             final LayoutParams lp = (LayoutParams) mContentHolder.getLayoutParams();
