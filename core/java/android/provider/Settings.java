@@ -3727,6 +3727,12 @@ public final class Settings {
         public static final String STATUS_BAR_BATTERY_STATUS_SHOW_CIRCLE_DOTTED = "status_bar_battery_status_show_circle_dotted";
 
         /**
+         * Enable double tap gesture anywhere on the lock screen put device to sleep
+         * @hide
+         */
+        public static final String DOUBLE_TAP_SLEEP_ANYWHERE = "double_tap_sleep_anywhere";
+
+        /**
          * Length of the Circle battery status dots on the status bar
          *
          * Values 0 - 10
