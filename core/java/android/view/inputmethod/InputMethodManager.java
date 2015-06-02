@@ -2006,19 +2006,21 @@ public final class InputMethodManager {
                 List<Object> info = mService.getShortcutInputMethodsAndSubtypes();
                 // "info" has imi1, subtype1, subtype2, imi2, subtype2, imi3, subtype3..in the list
                 ArrayList<InputMethodSubtype> subtypes = null;
-                final int N = info.size();
-                if (info != null && N > 0) {
-                    for (int i = 0; i < N; ++i) {
-                        Object o = info.get(i);
-                        if (o instanceof InputMethodInfo) {
-                            if (ret.containsKey(o)) {
-                                Log.e(TAG, "IMI list already contains the same InputMethod.");
-                                break;
+                if (info != null) {
+                    final int N = info.size();
+                    if (N > 0) {
+                        for (int i = 0; i < N; ++i) {
+                            Object o = info.get(i);
+                            if (o instanceof InputMethodInfo) {
+                                if (ret.containsKey(o)) {
+                                    Log.e(TAG, "IMI list already contains the same InputMethod.");
+                                    break;
+                                }
+                                subtypes = new ArrayList<InputMethodSubtype>();
+                                ret.put((InputMethodInfo)o, subtypes);
+                            } else if (subtypes != null && o instanceof InputMethodSubtype) {
+                                subtypes.add((InputMethodSubtype)o);
                             }
-                            subtypes = new ArrayList<InputMethodSubtype>();
-                            ret.put((InputMethodInfo)o, subtypes);
-                        } else if (subtypes != null && o instanceof InputMethodSubtype) {
-                            subtypes.add((InputMethodSubtype)o);
                         }
                     }
                 }
