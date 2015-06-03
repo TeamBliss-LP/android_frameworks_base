@@ -34,6 +34,7 @@ public class KeyguardSecurityModel {
     public enum SecurityMode {
         Invalid, // NULL state
         None, // No security enabled
+        ThirdParty, // Insecure 3rd party
         Pattern, // Unlock by drawing a pattern.
         Password, // Unlock by entering an alphanumeric password
         PIN, // Strictly numeric password
