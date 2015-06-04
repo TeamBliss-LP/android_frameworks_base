@@ -5084,7 +5084,13 @@ public final class Settings {
          * @hide
          */
         public static final String LEGACY_MENU_RIGHT_LONG_SHORTCUT_URI = "legacy_menu_right_long_shortcut_uri";     
-            
+
+       	/**
+         * Whether to show the IME arrows in the status bar
+         * @hide
+         */
+        public static final String STATUS_BAR_IME_ARROWS = "status_bar_ime_arrows";
+        
         /**
          * Settings to backup. This is here so that it's in the same place as the settings
          * keys and easy to update.

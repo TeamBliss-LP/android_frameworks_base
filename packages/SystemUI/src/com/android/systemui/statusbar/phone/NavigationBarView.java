@@ -32,8 +32,12 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.database.ContentObserver;
+import android.graphics.drawable.Drawable;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
@@ -44,6 +48,7 @@ import android.os.Message;
 import android.os.RemoteException;
 import android.os.UserHandle;
 import android.provider.Settings;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.ContextThemeWrapper;
@@ -57,6 +62,8 @@ import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.os.PowerManager;
+import android.view.GestureDetector;
 import android.view.inputmethod.InputMethodManager;
 import android.view.accessibility.AccessibilityManager;
 import android.view.accessibility.AccessibilityManager.TouchExplorationStateChangeListener;
@@ -71,13 +78,13 @@ import com.android.internal.util.bliss.ActionHelper;
 import com.android.internal.util.bliss.ColorHelper;
 import com.android.internal.util.bliss.DeviceUtils;
 import com.android.systemui.R;
-import com.android.systemui.cm.UserContentObserver;
 import com.android.systemui.statusbar.BaseStatusBar;
 import com.android.systemui.statusbar.DelegateViewHelper;
 import com.android.systemui.statusbar.policy.KeyButtonView;
 import com.android.systemui.statusbar.policy.DeadZone;
 import com.android.systemui.statusbar.policy.KeyButtonView;
 
+import java.net.URISyntaxException;
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -86,7 +93,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class NavigationBarView extends LinearLayout {
-    private static final boolean DEBUG = NavbarUtils.DEBUG;
+    private static final boolean DEBUG = false;
     private final static String TAG = "PhoneStatusBar/NavigationBarView";
 
     // slippery nav bar when everything is disabled, e.g. during setup
@@ -104,6 +111,11 @@ public class NavigationBarView extends LinearLayout {
     private static final int KEY_MENU_RIGHT = 0;
     private static final int KEY_MENU_LEFT = 1;
     private static final int KEY_IME_SWITCHER = 2;
+    private static final int KEY_IME_LEFT = 3;
+    private static final int KEY_IME_RIGHT = 4;
+
+    private final static int HIDE_IME_ARROW = 0;
+    private final static int SHOW_IME_ARROW = 1;
 
 	// Legacy menu tweaks by @siracuervo
 	private boolean mLegacyMenuLayout;
@@ -123,6 +135,10 @@ public class NavigationBarView extends LinearLayout {
     private int mMenuVisibility;
     private int mMenuSetting;
     private boolean mOverrideMenuKeys;
+    private boolean mIsImeButtonVisible = false;
+
+    private boolean mImeArrowVisibility;
+    private boolean mIsImeArrowVisible = false;
 
     final Display mDisplay;
     View mCurrentView = null;
@@ -137,8 +153,6 @@ public class NavigationBarView extends LinearLayout {
     int mDisabledFlags = 0;
     int mNavigationIconHints = 0;
 
-    private FrameLayout mRot0;
-    private FrameLayout mRot90;
     private BackButtonDrawable mBackIcon, mBackLandIcon, mBackAltIcon;
 
     private Drawable mRecentIcon;
@@ -175,7 +189,9 @@ public class NavigationBarView extends LinearLayout {
     private OnVerticalChangedListener mOnVerticalChangedListener;
     private boolean mIsLayoutRtl;
     private boolean mDelegateIntercepted;
-    private ContentObserver mSettingsObserver;
+    private GestureDetector mDoubleTapGesture;
+
+    private SettingsObserver mSettingsObserver;
 
     private class NavTransitionListener implements TransitionListener {
         private boolean mBackTransitioning;
@@ -269,6 +285,8 @@ public class NavigationBarView extends LinearLayout {
         getIcons(res);
 
         mBarTransitions = new NavigationBarTransitions(this);
+        mButtonsConfig = ActionHelper.getNavBarConfig(mContext);
+        mButtonIdList = new ArrayList<Integer>();
 
         mDoubleTapGesture = new GestureDetector(mContext,
                 new GestureDetector.SimpleOnGestureListener() {
@@ -280,8 +298,19 @@ public class NavigationBarView extends LinearLayout {
             }
         });
 
-        mButtonsConfig = ActionHelper.getNavBarConfig(mContext);
-        mButtonIdList = new ArrayList<Integer>();
+        mSettingsObserver = new SettingsObserver(new Handler());
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        mSettingsObserver.observe();
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        mSettingsObserver.unobserve();
     }
 
 
@@ -391,6 +420,14 @@ public class NavigationBarView extends LinearLayout {
         return mCurrentView.findViewById(R.id.ime_switcher);
     }
 
+    public View getLeftImeArrowButton() {
+        return mCurrentView.findViewById(R.id.ime_left);
+    }
+
+    public View getRightImeArrowButton() {
+        return mCurrentView.findViewById(R.id.ime_right);
+    }
+
     public void setOverrideMenuKeys(boolean b) {
         mOverrideMenuKeys = b;
         setMenuVisibility(mShowMenu, true /* force */);
@@ -403,9 +440,40 @@ public class NavigationBarView extends LinearLayout {
         mRecentLandIcon = res.getDrawable(R.drawable.ic_sysbar_recent_land);
     }
 
+    public void updateResources(Resources res) {
+        mThemedResources = res;
+        getIcons(mThemedResources);
+        mBarTransitions.updateResources(res);
+        for (int i = 0; i < mRotatedViews.length; i++) {
+            ViewGroup container = (ViewGroup) mRotatedViews[i];
+            if (container != null) {
+                updateLightsOutResources(container);
+            }
+        }
+    }
+
+    private void updateLightsOutResources(ViewGroup container) {
+        ViewGroup lightsOut = (ViewGroup) container.findViewById(R.id.lights_out);
+        if (lightsOut != null) {
+            final int nChildren = lightsOut.getChildCount();
+            for (int i = 0; i < nChildren; i++) {
+                final View child = lightsOut.getChildAt(i);
+                if (child instanceof ImageView) {
+                    final ImageView iv = (ImageView) child;
+                    // clear out the existing drawable, this is required since the
+                    // ImageView keeps track of the resource ID and if it is the same
+                    // it will not update the drawable.
+                    iv.setImageDrawable(null);
+                    iv.setImageDrawable(mThemedResources.getDrawable(
+                            R.drawable.ic_sysbar_lights_out_dot_large));
+                }
+            }
+        }
+    }
+
     @Override
     public void setLayoutDirection(int layoutDirection) {
-        getIcons(getContext().getResources());
+        getIcons(mThemedResources != null ? mThemedResources : getContext().getResources());
         updateSettings();
 
         super.setLayoutDirection(layoutDirection);
@@ -416,7 +484,6 @@ public class NavigationBarView extends LinearLayout {
         setDisabledFlags(mDisabledFlags, true);
     }
 
-    @Override
     public void setPinningCallback(KeyButtonView.LongClickCallback c) {
         mCallback = c;
     }
@@ -453,6 +520,10 @@ public class NavigationBarView extends LinearLayout {
             addButton(navButtonLayout, leftMenuKeyView, landscape);
             addLightsOutButton(lightsOut, leftMenuKeyView, landscape, true);
 
+            KeyButtonView leftImeArrow = generateMenuKey(landscape, KEY_IME_LEFT);
+            addButton(navButtonLayout, leftImeArrow, landscape);
+            addLightsOutButton(lightsOut, leftImeArrow, landscape, true);
+
             mAppIsBinded = false;
             ActionConfig actionConfig;
 
@@ -483,6 +554,10 @@ public class NavigationBarView extends LinearLayout {
             addButton(navButtonLayout, rightMenuKeyView, landscape);
             addLightsOutButton(lightsOut, rightMenuKeyView, landscape, true);
 
+            KeyButtonView rightImeArrow = generateMenuKey(landscape, KEY_IME_RIGHT);
+            addButton(navButtonLayout, rightImeArrow, landscape);
+            addLightsOutButton(lightsOut, rightImeArrow, landscape, true);
+
             View imeSwitcher = generateMenuKey(landscape, KEY_IME_SWITCHER);
             addButton(navButtonLayout, imeSwitcher, landscape);
             addLightsOutButton(lightsOut, imeSwitcher, landscape, true);
@@ -503,6 +578,7 @@ public class NavigationBarView extends LinearLayout {
         v.setLongpressAction(longpress);
         int i = mContext.getResources().getDimensionPixelSize(R.dimen.navigation_key_width);
         v.setLayoutParams(getLayoutParams(landscape, i));
+        v.setScaleType(KeyButtonView.ScaleType.CENTER_INSIDE);
 
         if (clickAction.equals(ActionConstants.ACTION_BACK)) {
             v.setId(R.id.back);
@@ -516,9 +592,6 @@ public class NavigationBarView extends LinearLayout {
             mButtonIdList.add(buttonId);
         }
 
-        if (clickAction.startsWith("**")) {
-            v.setScaleType(KeyButtonView.ScaleType.CENTER);
-        }
 
         boolean colorize = true;
         if (iconUri != null && !iconUri.equals(ActionConstants.ICON_EMPTY)
@@ -541,12 +614,12 @@ public class NavigationBarView extends LinearLayout {
         }
 
         Drawable d = ActionHelper.getActionIconImage(mContext, clickAction, iconUri);
+
         if (d != null) {
             if (colorize && mNavBarButtonColorMode != 3) {
-                v.setImageBitmap(ColorHelper.getColoredBitmap(d, mNavBarButtonColor));
-            } else {
-                v.setImageDrawable(d);
+                d = ColorHelper.getColoredDrawable(d, mNavBarButtonColor);
             }
+            v.setImageDrawable(d);
         }
         v.setRippleColor(mRippleColor);
         return v;
@@ -884,6 +957,18 @@ public class NavigationBarView extends LinearLayout {
 			}                
             v.setVisibility(View.INVISIBLE);
             v.setContentDescription(getResources().getString(R.string.accessibility_menu));
+        } else if (keyId == KEY_IME_LEFT) {
+            v.setClickAction(ActionConstants.ACTION_IME_NAVIGATION_LEFT);
+            v.setLongpressAction(ActionConstants.ACTION_IME_NAVIGATION_UP);
+            v.setId(R.id.ime_left);
+            v.setVisibility(View.GONE);
+            d = mContext.getResources().getDrawable(R.drawable.ic_sysbar_ime_left);
+        } else if (keyId == KEY_IME_RIGHT) {
+            v.setClickAction(ActionConstants.ACTION_IME_NAVIGATION_RIGHT);
+            v.setLongpressAction(ActionConstants.ACTION_IME_NAVIGATION_DOWN);
+            v.setId(R.id.ime_right);
+            v.setVisibility(View.GONE);
+            d = mContext.getResources().getDrawable(R.drawable.ic_sysbar_ime_right);
         } else if (keyId == KEY_IME_SWITCHER) {
             v.setClickAction(ActionConstants.ACTION_IME);
             v.setId(R.id.ime_switcher);
@@ -894,10 +979,10 @@ public class NavigationBarView extends LinearLayout {
         if (mNavBarButtonColorMode != 3) {
             if (d instanceof VectorDrawable) {
                 d.setTint(mNavBarButtonColor);
-                v.setImageDrawable(d);
             } else {
-                v.setImageBitmap(ColorHelper.getColoredBitmap(d, mNavBarButtonColor));
+                d = ColorHelper.getColoredDrawable(d, mNavBarButtonColor);
             }
+            v.setImageDrawable(d);
         } else {
             v.setImageDrawable(d);
         }
@@ -943,7 +1028,7 @@ public class NavigationBarView extends LinearLayout {
         addMe.setLayoutParams(v.getLayoutParams());
         addMe.setImageResource(empty ? R.drawable.ic_sysbar_lights_out_dot_large
                 : R.drawable.ic_sysbar_lights_out_dot_small);
-        addMe.setScaleType(ImageView.ScaleType.CENTER);
+        addMe.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
         addMe.setVisibility(empty ? View.INVISIBLE : View.VISIBLE);
 
         if (landscape) {
@@ -979,12 +1064,17 @@ public class NavigationBarView extends LinearLayout {
 
         mNavigationIconHints = hints;
 
-        final boolean showImeButton = ((hints & StatusBarManager.NAVIGATION_HINT_IME_SHOWN) != 0);
-        if (getImeSwitchButton() != null)
+        final boolean showImeButton = ((hints & StatusBarManager.NAVIGATION_HINT_IME_SHOWN) != 0
+                    && !mImeArrowVisibility);
+        if (getImeSwitchButton() != null) {
             getImeSwitchButton().setVisibility(showImeButton ? View.VISIBLE : View.GONE);
+            mIsImeButtonVisible = showImeButton;
+        }
 
-        // Update menu button in case the IME state has changed.
-        setMenuVisibility(mShowMenu, true);
+        mIsImeArrowVisible = (backAlt && mImeArrowVisibility);
+        getLeftImeArrowButton().setVisibility(mIsImeArrowVisible ? View.VISIBLE : View.GONE);
+        getRightImeArrowButton().setVisibility(mIsImeArrowVisible ? View.VISIBLE : View.GONE);
+
         setDisabledFlags(mDisabledFlags, true);
     }
 
@@ -1047,6 +1137,16 @@ public class NavigationBarView extends LinearLayout {
             }
         }
 
+        if (disableHome) {
+            getLeftMenuButton().setVisibility(View.INVISIBLE);
+            getRightMenuButton().setVisibility(View.INVISIBLE);
+            getImeSwitchButton().setVisibility(View.GONE);
+            getLeftImeArrowButton().setVisibility(View.GONE);
+            getRightImeArrowButton().setVisibility(View.GONE);
+        } else {
+            setMenuVisibility(mShowMenu, true);
+        }
+
         mBarTransitions.applyBackButtonQuiescentAlpha(mBarTransitions.getMode(), true /*animate*/);
     }
 
@@ -1055,12 +1155,6 @@ public class NavigationBarView extends LinearLayout {
             return ActivityManagerNative.getDefault().isInLockTaskMode();
         } catch (RemoteException e) {
             return false;
-        }
-    }
-
-    private void setVisibleOrInvisible(View view, boolean visible) {
-        if (view != null) {
-            view.setVisibility(visible ? VISIBLE : INVISIBLE);
         }
     }
 
@@ -1086,7 +1180,6 @@ public class NavigationBarView extends LinearLayout {
         }
     }
 
-    @Override
     public void setMenuVisibility(final boolean show) {
         setMenuVisibility(show, false);
     }
@@ -1099,34 +1192,28 @@ public class NavigationBarView extends LinearLayout {
         mLegacyMenuLayout = Settings.System.getInt(mContext.getContentResolver(),
                     Settings.System.LEGACY_MENU_LAYOUT, 1) == 1; 
                     
-        mShowMenu = show;
-
         View leftMenuKeyView = getLeftMenuButton();
         View rightMenuKeyView = getRightMenuButton();
 		View imeSwitcherView = getImeSwitchButton();
 	
 		if (mLegacyMenuLayout) {
-			if (mOverrideMenuKeys) {
-				leftMenuKeyView.setVisibility(View.VISIBLE);
-				rightMenuKeyView.setVisibility(View.VISIBLE);
-				return;
-			} else if (mMenuVisibility == MENU_VISIBILITY_NEVER) {
-				leftMenuKeyView.setVisibility(View.INVISIBLE);
-				rightMenuKeyView.setVisibility(View.INVISIBLE);
-			}
+        // Only show Menu if IME switcher and IME arrowsnot shown.
+        boolean showLeftMenuButton = (((mMenuVisibility == MENU_VISIBILITY_ALWAYS || show)
+                && (mMenuSetting == SHOW_LEFT_MENU || mMenuSetting == SHOW_BOTH_MENU)
+                && (mMenuVisibility != MENU_VISIBILITY_NEVER))
+                || mOverrideMenuKeys)
+                && !mIsImeArrowVisible;
+        boolean showRightMenuButton = (((mMenuVisibility == MENU_VISIBILITY_ALWAYS || show)
+                && (mMenuSetting == SHOW_RIGHT_MENU || mMenuSetting == SHOW_BOTH_MENU)
+                && (mMenuVisibility != MENU_VISIBILITY_NEVER))
+                || mOverrideMenuKeys)
+                && !(mIsImeButtonVisible || mIsImeArrowVisible);
 
-			// Only show Menu if IME switcher not shown.
-			final boolean shouldShow =
-					((mNavigationIconHints & StatusBarManager.NAVIGATION_HINT_IME_SHOWN) == 0);
-				boolean showLeftMenuButton = (mMenuVisibility == MENU_VISIBILITY_ALWAYS || show)
-					&& (mMenuSetting == SHOW_LEFT_MENU || mMenuSetting == SHOW_BOTH_MENU);
-				boolean showRightMenuButton = (mMenuVisibility == MENU_VISIBILITY_ALWAYS || show)
-					&& (mMenuSetting == SHOW_RIGHT_MENU || mMenuSetting == SHOW_BOTH_MENU)
-					&& shouldShow;
-
-			leftMenuKeyView.setVisibility(showLeftMenuButton ? View.VISIBLE : View.INVISIBLE);
-			rightMenuKeyView.setVisibility(showRightMenuButton ? View.VISIBLE : View.INVISIBLE);
-			mShowMenu = show;
+        leftMenuKeyView.setVisibility(showLeftMenuButton ? View.VISIBLE
+                : (mIsImeArrowVisible ? View.GONE : View.INVISIBLE));
+        rightMenuKeyView.setVisibility(showRightMenuButton ? View.VISIBLE
+                : ((mIsImeButtonVisible || mIsImeArrowVisible) ? View.GONE : View.INVISIBLE));
+        mShowMenu = show;
 		} else { 
 			leftMenuKeyView.setVisibility(View.GONE);
 			rightMenuKeyView.setVisibility(View.GONE);
@@ -1187,7 +1274,6 @@ public class NavigationBarView extends LinearLayout {
         // force the low profile & disabled states into compliance
         mBarTransitions.init(mVertical);
         setDisabledFlags(mDisabledFlags, true /* force */);
-        setMenuVisibility(mShowMenu, true /* force */);
 
         if (DEBUG) {
             Log.d(TAG, "reorient(): rot=" + mDisplay.getRotation());
@@ -1430,9 +1516,41 @@ public class NavigationBarView extends LinearLayout {
 				
 		mCustomRightLongShortcutUri = Settings.System.getString(resolver,
 				Settings.System.LEGACY_MENU_RIGHT_LONG_SHORTCUT_URI);	
+
+        mImeArrowVisibility = (Settings.System.getIntForUser(resolver,
+                Settings.System.STATUS_BAR_IME_ARROWS, HIDE_IME_ARROW,
+                UserHandle.USER_CURRENT) == SHOW_IME_ARROW);
         // construct the navigationbar
         makeBar();
 
+    }
+
+    private class SettingsObserver extends ContentObserver {
+
+        SettingsObserver(Handler handler) {
+            super(handler);
+        }
+
+        void observe() {
+            mContext.getContentResolver().registerContentObserver(
+                    Settings.System.getUriFor(Settings.System.STATUS_BAR_IME_ARROWS),
+                    false, this);
+
+            onChange(false);
+        }
+
+        void unobserve() {
+            mContext.getContentResolver().unregisterContentObserver(this);
+        }
+
+        @Override
+        public void onChange(boolean selfChange) {
+            mImeArrowVisibility =
+                    (Settings.System.getIntForUser(mContext.getContentResolver(),
+                            Settings.System.STATUS_BAR_IME_ARROWS, HIDE_IME_ARROW,
+                            UserHandle.USER_CURRENT) == SHOW_IME_ARROW);
+            setNavigationIconHints(mNavigationIconHints, true);
+        }
     }
 
     public void dump(FileDescriptor fd, PrintWriter pw, String[] args) {

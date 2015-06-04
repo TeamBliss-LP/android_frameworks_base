@@ -49,8 +49,8 @@ import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.ImageView;
 
-import com.android.internal.util.slim.ActionConstants;
-import com.android.internal.util.slim.Action;
+import com.android.internal.util.bliss.ActionConstants;
+import com.android.internal.util.bliss.Action;
 
 import com.android.systemui.R;
 
@@ -61,7 +61,7 @@ import static android.view.accessibility.AccessibilityNodeInfo.ACTION_LONG_CLICK
 
 public class KeyButtonView extends ImageView {
     private static final String TAG = "StatusBar.KeyButtonView";
-    private static final boolean DEBUG = NavbarUtils.DEBUG;
+    private static final boolean DEBUG = false;
 
     // TODO: Get rid of this
     public static final float DEFAULT_QUIESCENT_ALPHA = 1f;
@@ -86,13 +86,18 @@ public class KeyButtonView extends ImageView {
             if (isPressed()) {
                 // Log.d("KeyButtonView", "longpressed: " + this);
                 if (isLongClickable()) {
-                    // Just an old-fashioned ImageView
                     performLongClick();
                 } else {
                     sendEvent(KeyEvent.ACTION_DOWN, KeyEvent.FLAG_LONG_PRESS);
                     sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_LONG_CLICKED);
                 }
-                performLongClick();
+                if (mLongpressAction != null
+                        && (mLongpressAction.equals(ActionConstants.ACTION_IME_NAVIGATION_UP)
+                        || mLongpressAction.equals(ActionConstants.ACTION_IME_NAVIGATION_DOWN))) {
+                    removeCallbacks(mCheckLongPress);
+                    postDelayed(mCheckLongPress, ViewConfiguration.getDoubleTapTimeout());
+                    return;
+                }
                 setHapticFeedbackEnabled(true);
             }
         }
@@ -316,7 +321,6 @@ public class KeyButtonView extends ImageView {
 
     public void setLongClickCallback(LongClickCallback c) {
         mCallback = c;
-        setLongClickable(true);
         setOnLongClickListener(mLongPressListener);
     }
 

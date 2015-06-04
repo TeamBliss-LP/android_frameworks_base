@@ -118,4 +118,8 @@
     <!-- Title shown in recents popup for showing app launch in floating mode -->
     <string name="recent_float_mode_title">Floating mode</string>
 
+    <!-- Navigation bar IME navigation -->
+    <string name="accessibility_ime_navigation_left">Cursor left</string>
+    <string name="accessibility_ime_navigation_right">Cursor right</string>
+
 </resources>
