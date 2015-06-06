@@ -4949,6 +4949,13 @@ public final class Settings {
         public static final String HEADS_UP_SHOW_STATUS_BUTTON = "heads_up_show_status_button";
 
         /**
+         * Wether to show a task manager in expanded status bar header
+         *
+         * @hide
+         */
+        public static final String ENABLE_TASK_MANAGER = "enable_task_manager";
+
+        /**
          * Whether to disable the torch when the screen turns off
          * @hide
          */
