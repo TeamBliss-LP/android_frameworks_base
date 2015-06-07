@@ -58,7 +58,7 @@ public class QSConstants {
     public static final String TILE_NAVBAR = "toggleNavBar";
     public static final String TILE_APPCIRCLEBAR = "toggleAppCircleBar";
     public static final String TILE_USB_TETHER = "usb_tether";
-    public static final String TILE_HEADS_UP = "toggleHeadsUp";
+    public static final String TILE_HEADS_UP = "heads_up";
     public static final String TILE_SLIMACTION = "slimaction";
     public static final String TILE_HWKEYS = "hwkeys";
     public static final String TILE_GESTURE = "gesture";
