@@ -245,8 +245,8 @@ public abstract class Ticker {
                                Mode.MULTIPLY);
                         mIconSwitcher.setImageDrawable(seg.icon);
                     } else {
-                        mIconSwitcher.setImageBitmap(ImageHelper
-                                .getColoredBitmap(seg.icon, iconColor));
+                        mIconSwitcher.setImageDrawable(ImageHelper
+                                .getColoredDrawable(seg.icon, iconColor));
                     }
                 } else {
                     mIconSwitcher.setImageDrawable(seg.icon);

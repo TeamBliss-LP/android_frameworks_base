@@ -16,7 +16,18 @@
 
 package com.android.internal.util.bliss;
 
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.VectorDrawable;
+import android.graphics.drawable.Drawable;
 
 public class ColorHelper {
 
@@ -29,5 +40,50 @@ public class ColorHelper {
         final float b = Color.blue(to) * ratio + Color.blue(from) * inverseRatio;
 
         return Color.argb((int) a, (int) r, (int) g, (int) b);
+    }
+
+    public static Drawable getColoredDrawable(Drawable d, int color) {
+        if (d instanceof VectorDrawable) {
+            d.setTint(color);
+            return d;
+        }
+        Bitmap colorBitmap = ((BitmapDrawable) d).getBitmap();
+        Bitmap grayscaleBitmap = toGrayscale(colorBitmap);
+        Paint pp = new Paint();
+        PorterDuffColorFilter frontFilter =
+            new PorterDuffColorFilter(color, PorterDuff.Mode.MULTIPLY);
+        pp.setColorFilter(frontFilter);
+        Canvas cc = new Canvas(grayscaleBitmap);
+        cc.drawBitmap(grayscaleBitmap, 0, 0, pp);
+        return new BitmapDrawable(grayscaleBitmap);
+    }
+
+    public static Bitmap drawableToBitmap (Drawable drawable) {
+        if (drawable instanceof BitmapDrawable) {
+            return ((BitmapDrawable) drawable).getBitmap();
+        }
+        Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(),
+                drawable.getIntrinsicHeight(), Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        drawable.draw(canvas);
+        return bitmap;
+    }
+
+    private static Bitmap toGrayscale(Bitmap bmpOriginal) {
+        int width, height;
+        height = bmpOriginal.getHeight();
+        width = bmpOriginal.getWidth();
+
+        Bitmap bmpGrayscale = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Canvas c = new Canvas(bmpGrayscale);
+        Paint paint = new Paint();
+        ColorMatrix cm = new ColorMatrix();
+        cm.setSaturation(0);
+
+        ColorMatrixColorFilter f = new ColorMatrixColorFilter(cm);
+        paint.setColorFilter(f);
+        c.drawBitmap(bmpOriginal, 0, 0, paint);
+        return bmpGrayscale;
     }
 }
