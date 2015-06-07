@@ -43,11 +43,7 @@ public class NavbarUtils {
 
     // These items are excluded from settings and cannot be set as targets
     private static final String[] EXCLUDED_FROM_NAVBAR = {
-            ACTION_RING_SILENT,
-            ACTION_RING_VIB,
-            ACTION_RING_VIB_SILENT,
             ACTION_NULL,
-            ACTION_POWER,
             ACTION_LAYOUT_LEFT,
             ACTION_LAYOUT_RIGHT,
             ACTION_ARROW_LEFT,
