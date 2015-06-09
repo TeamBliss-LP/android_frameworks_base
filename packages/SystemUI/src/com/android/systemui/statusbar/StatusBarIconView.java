@@ -73,23 +73,25 @@ public class StatusBarIconView extends AnimatedImageView {
         final float densityMultiplier = res.getDisplayMetrics().density;
         final float scaledPx = 8 * densityMultiplier;
         mSlot = slot;
-        updateIconsAndText();
+        readIconsAndTextSettings();
         mNumberPaint = new Paint();
         mNumberPaint.setTextAlign(Paint.Align.CENTER);
+        mNumberPaint.setColor(mNotifCountTextColor);
         mNumberPaint.setAntiAlias(true);
         mNumberPaint.setTypeface(Typeface.DEFAULT_BOLD);
         mNumberPaint.setTextSize(scaledPx);
 
         mObserver = GlobalSettingsObserver.getInstance(context);
 
-        // We do not resize and scale system icons (on the right), only notification icons (on the
-        // left).
+        // We do not resize and scale system icons (on the right), only
+        // notification icons (on the left).
         if (notification != null) {
             final int outerBounds = res.getDimensionPixelSize(R.dimen.status_bar_icon_size);
             final int imageBounds = res.getDimensionPixelSize(R.dimen.status_bar_icon_drawing_size);
             final float scale = (float)imageBounds / (float)outerBounds;
             setScaleX(scale);
             setScaleY(scale);
+            setNotification(notification);
         }
 
         setScaleType(ImageView.ScaleType.CENTER);
@@ -143,7 +145,7 @@ public class StatusBarIconView extends AnimatedImageView {
         final boolean numberEquals = mIcon != null
                 && mIcon.number == icon.number;
         mIcon = icon.clone();
-        updateIconsAndText();
+        readIconsAndTextSettings();
         setContentDescription(icon.contentDescription);
         if (!iconEquals || force) {
             if (!updateDrawable(false /* no clear */)) return false;
@@ -410,15 +412,17 @@ public class StatusBarIconView extends AnimatedImageView {
                     Settings.System.STATUS_BAR_NOTIF_COUNT_TEXT_COLOR),
                     false, this);
         }
+
         @Override
         protected void unobserve() {
             super.unobserve();
             mContext.getContentResolver().unregisterContentObserver(this);
         }
+
         @Override
         public void update() {
             for (StatusBarIconView sbiv : mIconViews) {
-                sbiv.updateIconsAndText();
+                sbiv.readIconsAndTextSettings();
                 sbiv.set(sbiv.mIcon, true);
                 sbiv.setColorFilter(null);
                 if (sbiv.mNotification == null) {
@@ -431,7 +435,7 @@ public class StatusBarIconView extends AnimatedImageView {
         }
     }
 
-    private void updateIconsAndText() {
+    private void readIconsAndTextSettings() {
         ContentResolver resolver = mContext.getContentResolver();
 
         mColorizeNotifIcons = Settings.System.getInt(resolver,
@@ -451,4 +455,3 @@ public class StatusBarIconView extends AnimatedImageView {
                 0xffffffff);
     }
 }
-
