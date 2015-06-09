@@ -184,6 +184,9 @@ public class SignalClusterView
         mAirplaneModeColor = Settings.System.getIntForUser(resolver,
                 Settings.System.STATUS_BAR_AIRPLANE_MODE_ICON_COLOR,
                 DEFAULT_COLOR, UserHandle.USER_CURRENT);
+        mVpnColor = Settings.System.getIntForUser(resolver,
+                Settings.System.STATUS_BAR_VPN_ICON_COLOR,
+                DEFAULT_COLOR, UserHandle.USER_CURRENT);
     }
 
     public void setNetworkController(NetworkControllerImpl nc) {
@@ -483,7 +486,7 @@ public class SignalClusterView
         }
 
         if (mVpnVisible) {
-                mVpn.setColorFilter(mVpnColor, Mode.MULTIPLY);
+            mVpn.setColorFilter(mVpnColor, Mode.MULTIPLY);
         } else {
             mVpn.setVisibility(View.GONE);
         }
@@ -540,38 +543,38 @@ public class SignalClusterView
                         mOldAirplaneModeColor, mAirplaneModeColor, position);
 
                 if (mWifiVisible) {
-					mWifi.setImageResource(mWifiStrengthId);
-					mWifi.setColorFilter(mNetworkColor, Mode.MULTIPLY);
-					mWifiActivity.setImageResource(mWifiActivityId);
-					mWifiActivity.setColorFilter(networkColorblended, Mode.MULTIPLY);
-					mWifiGroup.setContentDescription(mWifiDescription);
-					mWifiGroup.setVisibility(View.VISIBLE);
-				} else {
-					mWifiGroup.setVisibility(View.GONE);
-				}
+                    mWifi.setImageResource(mWifiStrengthId);
+                    mWifi.setColorFilter(mNetworkColor, Mode.MULTIPLY);
+                    mWifiActivity.setImageResource(mWifiActivityId);
+                    mWifiActivity.setColorFilter(networkColorblended, Mode.MULTIPLY);
+                    mWifiGroup.setContentDescription(mWifiDescription);
+                    mWifiGroup.setVisibility(View.VISIBLE);
+                } else {
+                    mWifiGroup.setVisibility(View.GONE);
+                }
                 if (mMobileVisible && !mIsAirplaneMode) {
-					updateMobile();
-					updateCdma();
-					updateData();
-					updateDataVoice();
-					mMobile.setColorFilter(networkColorblended, Mode.MULTIPLY);
-					mMobileActivity.setImageResource(mMobileActivityId);
-					mMobileActivity.setColorFilter(mNetworkActivityColor, Mode.MULTIPLY);
-					mMobileType.setColorFilter(networkColorblended, Mode.MULTIPLY);
-					mMobileGroup.setVisibility(View.VISIBLE);
-				} else {
-					mMobileGroup.setVisibility(View.GONE);
-					mMobileCdmaGroup.setVisibility(View.GONE);
-					mMobileCdma1xOnly.setVisibility(View.GONE);
-					mDataGroup.setVisibility(View.GONE);
-				}
+                    updateMobile();
+                    updateCdma();
+                    updateData();
+                    updateDataVoice();
+                    mMobile.setColorFilter(networkColorblended, Mode.MULTIPLY);
+                    mMobileActivity.setImageResource(mMobileActivityId);
+                    mMobileActivity.setColorFilter(mNetworkActivityColor, Mode.MULTIPLY);
+                    mMobileType.setColorFilter(networkColorblended, Mode.MULTIPLY);
+                    mMobileGroup.setVisibility(View.VISIBLE);
+                } else {
+                    mMobileGroup.setVisibility(View.GONE);
+                    mMobileCdmaGroup.setVisibility(View.GONE);
+                    mMobileCdma1xOnly.setVisibility(View.GONE);
+                    mDataGroup.setVisibility(View.GONE);
+                }
                 if (mIsAirplaneMode) {
-					mAirplane.setImageResource(mAirplaneIconId);
-					mAirplane.setColorFilter(networkColorblended, Mode.MULTIPLY);
-					mAirplane.setVisibility(View.VISIBLE);
-				} else {
-					mAirplane.setVisibility(View.GONE);
-				}
+                    mAirplane.setImageResource(mAirplaneIconId);
+                    mAirplane.setColorFilter(networkColorblended, Mode.MULTIPLY);
+                    mAirplane.setVisibility(View.VISIBLE);
+                } else {
+                    mAirplane.setVisibility(View.GONE);
+                }
             }
         });
         animator.addListener(new AnimatorListenerAdapter() {
@@ -918,7 +921,7 @@ public class SignalClusterView
         mAirplaneModeColor = Settings.System.getIntForUser(resolver,
                 Settings.System.STATUS_BAR_AIRPLANE_MODE_ICON_COLOR,
                 networkNormalColor, UserHandle.USER_CURRENT);
-        int mVpnColor = Settings.System.getIntForUser(resolver,
+        mVpnColor = Settings.System.getIntForUser(resolver,
                 Settings.System.STATUS_BAR_VPN_ICON_COLOR,
                 networkNormalColor, UserHandle.USER_CURRENT);
 
