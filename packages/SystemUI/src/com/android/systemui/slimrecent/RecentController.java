@@ -191,7 +191,8 @@ public class RecentController implements RecentPanelView.OnExitListener,
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_OUTSIDE) {
                     // Touch outside the recents window....hide recents window.
-                    return hideRecents(false);
+                    onExit();
+                    return true;
                 }
                 return false;
             }
@@ -204,7 +205,8 @@ public class RecentController implements RecentPanelView.OnExitListener,
                     && event.getAction() == KeyEvent.ACTION_UP
                     && !event.isCanceled()) {
                     // Back key was pressed....hide recents window.
-                    return hideRecents(false);
+                    onExit();
+                    return true;
                 }
                 return false;
             }
