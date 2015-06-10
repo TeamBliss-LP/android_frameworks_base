@@ -799,10 +799,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     private void forceAddNavigationBar() {
         // If we have no Navbar view and we should have one, create it
-        if (mNavigationBarView != null) {
-            return;
-        }
-
+        if (mNavigationBarView != null) return;
+        if (DEBUGS) Log.v(TAG, "forceAddNavigationBar()");
         mNavigationBarView =
                 (NavigationBarView) View.inflate(mContext, R.layout.navigation_bar, null);
 
@@ -850,12 +848,12 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     Settings.Global.HEADS_UP_OFF);
             mHeadsUpTicker = mUseHeadsUp && 0 != Settings.Global.getInt(
                     mContext.getContentResolver(), SETTING_HEADS_UP_TICKER, 0);
-            Log.d(TAG, "heads up is " + (mUseHeadsUp ? "enabled" : "disabled"));
+            Log.d(TAG, "initial heads up is " + (mUseHeadsUp ? "enabled" : "disabled"));
             mHeadsUpUserEnabled = 0 != Settings.System.getIntForUser(
                     mContext.getContentResolver(), Settings.System.HEADS_UP_USER_ENABLED,
                     Settings.System.HEADS_UP_USER_ON,
                     mCurrentUserId);
-            Log.d(TAG, "heads up is " + (mUseHeadsUp && mHeadsUpUserEnabled ? "enabled" : "disabled"));
+            Log.d(TAG, "final heads up is " + (mUseHeadsUp && mHeadsUpUserEnabled ? "enabled" : "disabled"));
             if (wasUsing != mUseHeadsUp) {
                 if (!mUseHeadsUp || !mHeadsUpUserEnabled) {
                     Log.d(TAG, "dismissing any existing heads up notification on disable event");
@@ -1198,6 +1196,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         try {
             boolean showNav = mWindowManagerService.hasNavigationBar();
             if (showNav && !mRecreating) {
+                mNavigationBarView = null;
                 mNavigationBarView =
                     (NavigationBarView) View.inflate(context,
                         R.layout.navigation_bar, null);
@@ -1437,7 +1436,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             mMSimNetworkController.addEmergencyLabelView(mHeader);
 
             boolean canshowWifiLabel = mWifiSsidLabel != null;
-            if (DEBUGS) Log.v(TAG, "wifilabel=" + canshowWifiLabel + " show=" + mShowWifiSsidLabel);
             if (canshowWifiLabel) {
                 mMSimNetworkController.addWifiLabelView(mWifiSsidLabel);
                 mWifiSsidLabel.setVisibility(mShowWifiSsidLabel ? View.VISIBLE : View.GONE);
@@ -1445,7 +1443,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
             mCarrierLabel = (TextView)mStatusBarWindowContent.findViewById(R.id.carrier_label);
             mShowCarrierInPanel = (mCarrierLabel != null);
-            if (DEBUGS) Log.v(TAG, "carrierlabel=" + mCarrierLabel + " show=" + mCarrierLabelVisible);
             if (mShowCarrierInPanel) {
                 mCarrierLabel.setVisibility(mCarrierLabelVisible ? View.VISIBLE : View.GONE);
 
@@ -1490,7 +1487,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             }
 
             boolean canshowWifiLabel = mWifiSsidLabel != null;
-            if (DEBUGS) Log.v(TAG, "wifilabel=" + canshowWifiLabel + " show=" + mShowWifiSsidLabel);
             if (canshowWifiLabel) {
                 mNetworkController.addWifiLabelView(mWifiSsidLabel);
                 mWifiSsidLabel.setVisibility(mShowWifiSsidLabel ? View.VISIBLE : View.GONE);
@@ -1498,7 +1494,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
             mCarrierLabel = (TextView)mStatusBarWindowContent.findViewById(R.id.carrier_label);
             mShowCarrierInPanel = (mCarrierLabel != null);
-            if (DEBUGS) Log.v(TAG, "carrierlabel=" + mCarrierLabel + " show=" + mCarrierLabelVisible);
             if (mShowCarrierInPanel) {
                 mCarrierLabel.setVisibility(mCarrierLabelVisible ? View.VISIBLE : View.GONE);
                 // for mobile devices, we always show mobile connection info here (SPN/PLMN)
@@ -1879,38 +1874,41 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     }
 
     private void prepareNavigationBarView(boolean forceReset) {
+        if (mNavigationBarView == null) return;
         mNavigationBarView.reorient();
 
-		if (mNavigationBarView.getRecentsButton() != null) {
-			mNavigationBarView.getRecentsButton().setOnClickListener(mRecentsClickListener);
-			mNavigationBarView.getRecentsButton().setOnTouchListener(mRecentsPreloadOnTouchListener);
-			mNavigationBarView.getRecentsButton().setLongClickable(true);
-			mNavigationBarView.getRecentsButton().setOnLongClickListener(mLongPressBackRecentsListener);
-		}
+        View button = mNavigationBarView.getRecentsButton();
+        if (button != null) {
+            button.setOnClickListener(mRecentsClickListener);
+            button.setOnTouchListener(mRecentsPreloadOnTouchListener);
+            button.setLongClickable(true);
+            button.setOnLongClickListener(mLongPressBackRecentsListener);
+        }
 
-		if (mNavigationBarView.getBackButton() != null) {
-			mNavigationBarView.getBackButton().setLongClickable(true);
-			mNavigationBarView.getBackButton().setOnLongClickListener(mLongPressBackRecentsListener);
-		}
-		setHomeActionListener();
-		
-		if (forceReset) {
+        button = mNavigationBarView.getBackButton();
+        if (button != null) {
+            button.setLongClickable(true);
+            button.setOnLongClickListener(mLongPressBackRecentsListener);
+        }
+        setHomeActionListener();
+
+        if (forceReset) {
             // Nav Bar was added dynamically - we need to reset the mSystemUiVisibility and call
             // setSystemUiVisibility so that mNavigationBarMode is set to the correct value
             int newVal = mSystemUiVisibility;
             mSystemUiVisibility = 0;
             setSystemUiVisibility(newVal, SYSTEM_UI_VISIBILITY_MASK);
-		}
-		
-		updateSearchPanel();
-	}
+        }
+
+        updateSearchPanel();
+    }
 
     @Override
     public void setHomeActionListener() {
-		if (mNavigationBarView.getHomeButton() != null) {
-			mNavigationBarView.getHomeButton().setOnTouchListener(mHomeActionListener);
-		}
-	}
+        if (mNavigationBarView.getHomeButton() != null) {
+            mNavigationBarView.getHomeButton().setOnTouchListener(mHomeActionListener);
+        }
+    }
 
     // For small-screen devices (read: phones) that lack hardware navigation buttons
     private void addNavigationBar(boolean forceReset) {
@@ -4329,16 +4327,20 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 Configuration config = mContext.getResources().getConfiguration();
                 try {
                     // position app sidebar on left if in landscape orientation and device has a navbar
-                    if (mWindowManagerService.hasNavigationBar() &&
-                            config.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                        mWindowManager.updateViewLayout(mAppSidebar,
+                    ContentResolver resolver = mContext.getContentResolver();
+                    boolean sidebarEnabled = Settings.System.getInt(
+                        resolver, Settings.System.APP_SIDEBAR_ENABLED, 0) == 1;
+                    if (sidebarEnabled
+                        && mWindowManagerService.hasNavigationBar()
+                        && config.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                            mWindowManager.updateViewLayout(mAppSidebar,
                                 getAppSidebarLayoutParams(AppSidebar.SIDEBAR_POSITION_LEFT));
-                        mHandler.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                mAppSidebar.setPosition(AppSidebar.SIDEBAR_POSITION_LEFT);
-                            }
-                        }, 500);
+                            mHandler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    mAppSidebar.setPosition(AppSidebar.SIDEBAR_POSITION_LEFT);
+                                }
+                            }, 500);
                     }
                 } catch (RemoteException e) {
                 }
@@ -4898,7 +4900,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     @Override
     protected boolean shouldDisableNavbarGestures() {
-		if (!mSearchPanelAllowed) return true;
+        if (!mSearchPanelAllowed) return true;
         return !isDeviceProvisioned()
                 || mExpandedVisible
                 || (mDisabled & StatusBarManager.DISABLE_SEARCH) != 0;
@@ -5571,6 +5573,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 if ((time - mLastLockToAppLongPress) < LOCK_TO_APP_GESTURE_TOLERENCE) {
                     activityManager.stopLockTaskModeOnCurrent();
                 } else if ((v.getId() == R.id.back)
+                        && mNavigationBarView != null
                         && !mNavigationBarView.getRecentsButton().isPressed()) {
                     // If we aren't pressing recents right now then they presses
                     // won't be together, so send the standard long-press action.

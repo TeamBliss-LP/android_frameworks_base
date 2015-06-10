@@ -407,7 +407,7 @@ public class KeyButtonView extends ImageView {
 
     public void setTint(boolean tint) {
         setColorFilter(null);
-        if (tint) {
+        if (true /* tint */) {
             int color = Settings.Secure.getInt(mContext.getContentResolver(),
                     Settings.Secure.NAVIGATION_BAR_TINT, -1);
             if (color != -1) {
