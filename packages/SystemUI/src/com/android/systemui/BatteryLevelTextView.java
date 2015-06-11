@@ -54,8 +54,8 @@ public class BatteryLevelTextView extends TextView implements
     private int mNewColor;
     private int mOldColor;
     private Animator mColorTransitionAnimator;
-	
-	private ContentResolver mResolver;
+
+    private ContentResolver mResolver;
 
     private SettingsObserver mObserver = new SettingsObserver(new Handler());
 
@@ -93,7 +93,8 @@ public class BatteryLevelTextView extends TextView implements
         mRequestedVisibility = getVisibility();
 
         mNewColor = Settings.System.getInt(mResolver,
-                Settings.System.STATUSBAR_CLOCK_COLOR, 0xffffffff);
+            Settings.System.STATUS_BAR_BATTERY_STATUS_TEXT_COLOR,
+            0xffffffff);
         mOldColor = mNewColor;
         mColorTransitionAnimator = createColorTransitionAnimator(0, 1);
 
@@ -176,14 +177,13 @@ public class BatteryLevelTextView extends TextView implements
     }
 
     public void setTextColor(boolean isHeader) {
-        int headerColor = Settings.System.getInt(mResolver,
-                Settings.System.STATUS_BAR_EXPANDED_HEADER_TEXT_COLOR, 0xffffffff);
-        mNewColor = Settings.System.getInt(mResolver,
-                Settings.System.STATUS_BAR_BATTERY_STATUS_TEXT_COLOR, 0xff000000);
-
         if (isHeader) {
+            int headerColor = Settings.System.getInt(mResolver,
+                    Settings.System.STATUS_BAR_EXPANDED_HEADER_TEXT_COLOR, 0xffffffff);
             setTextColor(headerColor);
         } else {
+            mNewColor = Settings.System.getInt(mResolver,
+                    Settings.System.STATUS_BAR_BATTERY_STATUS_TEXT_COLOR, 0xffffffff);
             if (!mBatteryCharging && mBatteryLevel > 16) {
                 if (mOldColor != mNewColor) {
                     mColorTransitionAnimator.start();
