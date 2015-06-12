@@ -407,14 +407,17 @@ public class KeyButtonView extends ImageView {
 
     public void setTint(boolean tint) {
         setColorFilter(null);
-        if (true /* tint */) {
-            int color = Settings.Secure.getInt(mContext.getContentResolver(),
-                    Settings.Secure.NAVIGATION_BAR_TINT, -1);
-            if (color != -1) {
-                setColorFilter(color, PorterDuff.Mode.MULTIPLY);
-            } else {
-                tint = false;
-            }
+        int color = Settings.Secure.getInt(mContext.getContentResolver(),
+                Settings.Secure.NAVIGATION_BAR_TINT, -1);
+        boolean hasTint = (color != 0xff000000 && color != -1);
+        if (!hasTint) tint = false;
+        if (tint) {
+            tint = true;
+            setColorFilter(color, PorterDuff.Mode.MULTIPLY);
+        } else {
+            tint = false;
+            Settings.Secure.putInt(mContext.getContentResolver(),
+                Settings.Secure.NAVIGATION_BAR_TINT, -1);
         }
         mShouldTintIcons = tint;
     }
