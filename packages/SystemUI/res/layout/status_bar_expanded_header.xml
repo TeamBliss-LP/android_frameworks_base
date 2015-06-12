@@ -82,11 +82,11 @@
     <LinearLayout android:id="@+id/system_icons_super_container"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/status_bar_header_height"
-        android:layout_toStartOf="@id/multi_user_switch"
+        android:layout_toStartOf="@id/settings_button"
         android:layout_alignWithParentIfMissing="true"
         android:layout_marginStart="16dp"
         android:background="@drawable/ripple_drawable"
-        android:paddingEnd="4dp" >
+        android:paddingEnd="4dp">
 
         <FrameLayout android:id="@+id/system_icons_container"
             android:layout_width="wrap_content"
@@ -198,7 +198,7 @@
             android:gravity="right"
             android:textColor="@color/status_bar_temperature_text_color"
             android:textSize="@dimen/weather_text_size"
-            android:importantForAccessibility="noHideDescendants"/>
+            android:importantForAccessibility="noHideDescendants" />
     <TextView
             android:id="@+id/weather_line_2"
             android:layout_width="match_parent"
@@ -207,7 +207,7 @@
             android:gravity="right"
             android:textColor="@color/status_bar_temperature_location_text_color"
             android:textSize="@dimen/weather_text_size"
-            android:importantForAccessibility="noHideDescendants"/>
+            android:importantForAccessibility="noHideDescendants" />
     </LinearLayout>
 
     <include
@@ -215,8 +215,7 @@
         layout="@layout/qs_detail_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        />
+        android:layout_alignParentBottom="true" />
 
     <com.android.systemui.statusbar.AlphaOptimizedImageView
         android:id="@+id/qs_detail_header_progress"
@@ -225,8 +224,7 @@
         android:background="@color/qs_detail_progress_track"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        />
+        android:layout_alignParentBottom="true" />
 
     <TextView
         android:id="@+id/header_debug_info"
@@ -238,7 +236,6 @@
         android:textSize="11dp"
         android:textStyle="bold"
         android:textColor="#00A040"
-        android:padding="2dp"
-        />
+        android:padding="2dp" />
 
 </com.android.systemui.statusbar.phone.StatusBarHeaderView>
