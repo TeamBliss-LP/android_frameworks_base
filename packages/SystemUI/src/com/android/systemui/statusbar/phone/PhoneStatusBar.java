@@ -1196,7 +1196,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         try {
             boolean showNav = mWindowManagerService.hasNavigationBar();
             if (showNav && !mRecreating) {
-                mNavigationBarView = null;
                 mNavigationBarView =
                     (NavigationBarView) View.inflate(context,
                         R.layout.navigation_bar, null);
