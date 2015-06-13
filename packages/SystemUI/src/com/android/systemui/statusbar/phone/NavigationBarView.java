@@ -877,10 +877,7 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
                     getButtonsArray(mButtonContainerStrings[j]));
             }
         }
-        if (lastgood == -1) {
-            mCurrentLayout = 0;
-            mAllButtonContainers.put(0, mDefaultLayoutArray);
-        } else if (mCurrentLayout > lastgood) {
+        if (mCurrentLayout > lastgood) {
             mCurrentLayout = lastgood;
         }
         setupNavigationButtons(mAllButtonContainers.get(mCurrentLayout));
@@ -965,6 +962,9 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
                     addSeparator(navButtons, landscape, 0, stockThreeButtonLayout ? 1f : 0.5f);
                     addSeparator(lightsOut, landscape, 0, stockThreeButtonLayout ? 1f : 0.5f);
                 }
+            } else if (!mLegacyMenu) { // to fix slim recents
+                addSeparator(navButtons, landscape, mTablet ? (int) mMenuButtonWidth : separatorSize, 0f);
+                addSeparator(lightsOut, landscape, mTablet ? (int) mMenuButtonWidth : separatorSize, 0f);
             }
 
             // add the custom buttons
