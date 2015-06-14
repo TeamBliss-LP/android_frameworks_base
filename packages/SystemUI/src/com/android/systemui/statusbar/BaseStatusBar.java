@@ -1672,8 +1672,10 @@ public abstract class BaseStatusBar extends SystemUI implements
         // apply custom text color to heads up notifications ONLY
         if (isHeadsUp && customTextColor != 0) {
             mHeadsUpCustomText = customTextColor;
-            setRvItemTextColor(contentView, mHeadsUpCustomText);
-            setRvItemTextColor(bigContentView, mHeadsUpCustomText);
+            if (mPowerManager != null && !mPowerManager.isPowerSaveMode()) {
+                setRvItemTextColor(contentView, mHeadsUpCustomText);
+                setRvItemTextColor(bigContentView, mHeadsUpCustomText);
+            }
         }
 
         // set up the adaptive layout
@@ -1835,7 +1837,9 @@ public abstract class BaseStatusBar extends SystemUI implements
     }
 
     private void setRvItemTextColor(RemoteViews view, int color) {
-        if (view == null) return;
+        if (view == null) {
+            return;
+        }
         try {
             view.setTextColor(com.android.internal.R.id.title, color);
         } catch(ActionException e) {}
