@@ -2088,7 +2088,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     HEADSUP_DEFAULT_BACKGROUNDCOLOR, UserHandle.USER_CURRENT);
 
                 // 1. Populate mHeadsUpNotificationView
-                mHeadsUpNotificationView.setTextColor(mHeadsUpCustomText);
                 mHeadsUpNotificationView.showNotification(
                     interruptionCandidate, mHeadsUpCustomBg);
 
