@@ -118,8 +118,8 @@ public class RecentsTaskLoadPlan {
                         isRunning = true;
                     }
                 }
-                if (!isRunning) continue;
             }
+            if (!isRunning) continue;
 
             // Compose the task key
             Task.TaskKey taskKey = new Task.TaskKey(t.persistentId, t.baseIntent, t.userId,
