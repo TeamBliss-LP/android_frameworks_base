@@ -57,7 +57,6 @@ import android.widget.RelativeLayout;
 import com.android.cards.view.CardListView;
 
 import com.android.systemui.R;
-import com.android.systemui.RecentsComponent;
 import com.android.systemui.recents.misc.Utilities;
 import com.android.systemui.statusbar.BaseStatusBar;
 
@@ -85,8 +84,6 @@ public class RecentController implements RecentPanelView.OnExitListener,
     private int mAnimationState = ANIMATION_STATE_NONE;
 
     public static float DEFAULT_SCALE_FACTOR = 1.0f;
-
-    public RecentsComponent.Callbacks mRecentsComponentCallbacks;
 
     private Context mContext;
     private WindowManager mWindowManager;
@@ -213,10 +210,6 @@ public class RecentController implements RecentPanelView.OnExitListener,
         // Settings observer
         SettingsObserver observer = new SettingsObserver(mHandler);
         observer.observe();
-    }
-
-    public void setCallback(RecentsComponent.Callbacks cb) {
-        mRecentsComponentCallbacks = cb;
     }
 
     /**
@@ -451,7 +444,7 @@ public class RecentController implements RecentPanelView.OnExitListener,
     }
 
     // Hide the recent window.
-    public boolean hideRecents(boolean forceHide) {
+    private boolean hideRecents(boolean forceHide) {
         if (isShowing()) {
             mIsPreloaded = false;
             mIsToggled = false;
@@ -502,9 +495,6 @@ public class RecentController implements RecentPanelView.OnExitListener,
     // Listener callback.
     @Override
     public void onExit() {
-        if (mRecentsComponentCallbacks != null) {
-            mRecentsComponentCallbacks.onVisibilityChanged(false);
-        }
         hideRecents(false);
     }
 

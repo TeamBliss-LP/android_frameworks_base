@@ -649,19 +649,18 @@ public class RecentPanelView {
                 mIsLoading = false;
                 return;
             }
-            boolean topTask = i == 0;
             final ActivityManager.RecentTaskInfo recentInfo = recentTasks.get(i);
-            if (i == 0 && isCurrentHomeActivity(runningTasks.get(0))) {
-                topTask = false;
-            }
             boolean isRunning = false;
-            for (ActivityManager.RunningTaskInfo task : runningTasks) {
-                if (recentInfo.baseIntent.getComponent().getPackageName().equals(
-                        task.baseActivity.getPackageName())) {
-                    isRunning = true;
+            if (mOnlyShowRunningTasks) {
+                for (ActivityManager.RunningTaskInfo task : runningTasks) {
+                    if (task.numRunning <= 0) continue;
+                    if (recentInfo.baseIntent.getComponent().getPackageName().equals(
+                            task.baseActivity.getPackageName())) {
+                        isRunning = true;
+                    }
                 }
             }
-            if (mOnlyShowRunningTasks && !isRunning) continue;
+            if (isRunning) continue;
 
             final Intent intent = new Intent(recentInfo.baseIntent);
             if (recentInfo.origActivity != null) {
@@ -686,7 +685,7 @@ public class RecentPanelView {
                     }
                 }
 
-                if (topTask) {
+                if (i == 0 ) {
                     if (mShowTopTask) {
                         // User want to see actual running task. Set it here
                         int oldState = getExpandedState(item);
@@ -750,14 +749,6 @@ public class RecentPanelView {
         // Let us load the cards for it in background.
         final CardLoader cardLoader = new CardLoader();
         cardLoader.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
-    }
-
-    private boolean isCurrentHomeActivity(ActivityManager.RunningTaskInfo task) {
-        Intent intent = new Intent(Intent.ACTION_MAIN);
-        intent.addCategory(Intent.CATEGORY_HOME);
-        ResolveInfo resolveInfo = mContext.getPackageManager().resolveActivity(intent, PackageManager.MATCH_DEFAULT_ONLY);
-        String currentHomePackage = resolveInfo.activityInfo.packageName;
-        return task.baseActivity.getPackageName().equals(currentHomePackage);
     }
 
     /**
