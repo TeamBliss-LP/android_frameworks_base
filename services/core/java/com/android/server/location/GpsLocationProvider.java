@@ -93,12 +93,11 @@ import java.io.StringReader;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Date;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.Vector;
 import libcore.io.IoUtils;
 
 /**
@@ -359,6 +358,7 @@ public class GpsLocationProvider implements LocationProviderInterface {
 
     private int mPositionMode;
 
+    private HashSet<String> mLastKnownMccMnc;
     private boolean mAGPSConfigDb = false;
 
     // Current request from underlying location clients.
@@ -502,18 +502,14 @@ public class GpsLocationProvider implements LocationProviderInterface {
     };
 
     private void subscriptionOrSimChanged(Context context) {
-        Log.d(TAG, "received SIM realted action: ");
-        TelephonyManager phone = (TelephonyManager)
-                mContext.getSystemService(Context.TELEPHONY_SERVICE);
-        String mccMnc = phone.getSimOperator();
-        if (!TextUtils.isEmpty(mccMnc)) {
-            Log.d(TAG, "SIM MCC/MNC is available: " + mccMnc);
-            synchronized (mLock) {
-                reloadGpsProperties(context, mProperties);
+        HashSet<String> mccMnc = getKnownMccMnc(context);
+        //Log.d(TAG, "received SIM change, new known MCC/MNC: " + mccMnc);
+        synchronized (mLock) {
+            if (!mccMnc.isEmpty() && !mccMnc.equals(mLastKnownMccMnc)) {
+                reloadGpsProperties(context, mProperties, mccMnc);
                 mNIHandler.setSuplEsEnabled(mSuplEsEnabled);
             }
-        } else {
-            Log.d(TAG, "SIM MCC/MNC is still not available");
+            mLastKnownMccMnc = mccMnc;
         }
     }
 
@@ -550,8 +546,9 @@ public class GpsLocationProvider implements LocationProviderInterface {
         return native_is_supported();
     }
 
-    private void reloadGpsProperties(Context context, Properties properties) {
-        Log.d(TAG, "Reset GPS properties, previous size = " + properties.size());
+    private void reloadGpsProperties(Context context, Properties properties,
+            HashSet<String> mccMnc) {
+        if (DEBUG) Log.d(TAG, "Reset GPS properties, previous size = " + properties.size());
         loadPropertiesFromResource(context, properties);
         boolean isPropertiesLoadedFromFile = false;
         final String gpsHardware = SystemProperties.get("ro.hardware.gps");
@@ -565,9 +562,9 @@ public class GpsLocationProvider implements LocationProviderInterface {
             loadPropertiesFromFile(DEFAULT_PROPERTIES_FILE, properties);
         }
         // Store GPS configuration to Settings Database and then reload it
-        mAGPSConfigDb = testMccMncConfigurable(context);
+        mAGPSConfigDb = testMccMncConfigurable(context, mccMnc);
         loadPropertiesFromSettingsDb(context, properties);
-        Log.d(TAG, "GPS properties reloaded, size = " + properties.size());
+        if (DEBUG) Log.d(TAG, "GPS properties reloaded, size = " + properties.size());
 
         // TODO: we should get rid of C2K specific setting.
         setSuplHostPort(properties.getProperty("SUPL_HOST"),
@@ -587,7 +584,7 @@ public class GpsLocationProvider implements LocationProviderInterface {
             ByteArrayOutputStream baos = new ByteArrayOutputStream(4096);
             properties.store(baos, null);
             native_configuration_update(baos.toString());
-            Log.d(TAG, "final config = " + baos.toString());
+            if (DEBUG) Log.d(TAG, "final config = " + baos.toString());
         } catch (IOException ex) {
             Log.w(TAG, "failed to dump properties contents");
         }
@@ -608,7 +605,7 @@ public class GpsLocationProvider implements LocationProviderInterface {
         String[] configValues = context.getResources().getStringArray(
                 com.android.internal.R.array.config_gpsParameters);
         for (String item : configValues) {
-            Log.d(TAG, "GpsParamsResource: " + item);
+            if (DEBUG) Log.d(TAG, "GpsParamsResource: " + item);
             // We need to support "KEY =", but not "=VALUE".
             String[] split = item.split("=");
             if (split.length == 2) {
@@ -659,32 +656,39 @@ public class GpsLocationProvider implements LocationProviderInterface {
         context.getContentResolver().registerContentObserver(agpsResetTypeUri, true, observerForResetType);
     }
 
+    private HashSet<String> getKnownMccMnc(Context context) {
+        final TelephonyManager phone = (TelephonyManager)
+                context.getSystemService(Context.TELEPHONY_SERVICE);
+        final HashSet<String> mccMnc = new HashSet<String>();
+        final int phoneCnt = phone.getPhoneCount();
+        for (int i = 0;i < phoneCnt; ++i) {
+            String operator = phone.getNetworkOperatorForPhone(i);
+            if (!TextUtils.isEmpty(operator)) {
+                mccMnc.add(operator);
+            }
+        }
+        return mccMnc;
+    }
+
     /**
      * Test whether current mcc+mnc is in the configurable list
      */
-    private boolean testMccMncConfigurable(Context context) {
-        TelephonyManager phone = (TelephonyManager)
-                context.getSystemService(Context.TELEPHONY_SERVICE);
-        int phoneCnt = phone.getPhoneCount();
-        Vector<String> mccMnc = new Vector<String>();
-        for(int i = 0;i<phoneCnt;++i) {
-            int[] subIds = SubscriptionManager.getSubId(i);
-            if (subIds != null && subIds.length > 0) {
-                mccMnc.add(phone.getNetworkOperatorForSubscription(subIds[0]));
-            }
+    private boolean testMccMncConfigurable(Context context, HashSet<String> mccMnc) {
+        if (mccMnc.isEmpty()) {
+            return false;
         }
-        if (mccMnc.size() > 0) {
-            ContentResolver objContentResolver = context.getContentResolver();
-            String configurable_list = Settings.Global.getString(objContentResolver,
-                    Settings.Global.ASSISTED_GPS_CONFIGURABLE_LIST);
-            if (!TextUtils.isEmpty(configurable_list)) {
-                String[] list = configurable_list.split(",");
-                for (String item:list) {
-                    if(mccMnc.contains(item))
-                        return true;
+
+        ContentResolver resolver = context.getContentResolver();
+        String configurableList = Settings.Global.getString(resolver,
+                Settings.Global.ASSISTED_GPS_CONFIGURABLE_LIST);
+        if (!TextUtils.isEmpty(configurableList)) {
+            for (String item : configurableList.split(",")) {
+                if (mccMnc.contains(item)) {
+                    return true;
                 }
             }
         }
+
         return false;
     }
 
@@ -754,10 +758,11 @@ public class GpsLocationProvider implements LocationProviderInterface {
         // Check if we have a legacy GPS HAL
         mLegacyGpsHAL = mContext.getResources().getBoolean(
                 com.android.internal.R.bool.config_legacyGpsHAL);
+        mLastKnownMccMnc = getKnownMccMnc(mContext);
 
         // Load GPS configuration.
         mProperties = new Properties();
-        reloadGpsProperties(mContext, mProperties);
+        reloadGpsProperties(mContext, mProperties, mLastKnownMccMnc);
 
         // Create a GPS net-initiated handler.
         mNIHandler = new GpsNetInitiatedHandler(context,
@@ -1003,7 +1008,7 @@ public class GpsLocationProvider implements LocationProviderInterface {
                     long certainty = mNtpTime.getCacheCertainty();
                     long now = System.currentTimeMillis();
 
-                    Log.d(TAG, "NTP server returned: "
+                    if (DEBUG) Log.d(TAG, "NTP server returned: "
                             + time + " (" + new Date(time)
                             + ") reference: " + timeReference
                             + " certainty: " + certainty
@@ -1491,7 +1496,7 @@ public class GpsLocationProvider implements LocationProviderInterface {
                         mode = "unknown";
                         break;
                 }
-                Log.d(TAG, "setting position_mode to " + mode);
+                if (DEBUG) Log.d(TAG, "setting position_mode to " + mode);
             }
 
             int interval = (hasCapability(GPS_CAPABILITY_SCHEDULING) ? mFixInterval : 1000);
