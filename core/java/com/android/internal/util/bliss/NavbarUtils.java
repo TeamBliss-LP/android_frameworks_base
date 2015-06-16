@@ -140,22 +140,29 @@ public class NavbarUtils {
     }
 
     public static Drawable getSystemUIDrawable(Context mContext, String DrawableID) {
-        PackageManager pm = mContext.getPackageManager();
-        int resId = 0;
-        Drawable d = null;
-        if (pm != null) {
-            Resources mSystemUiResources = null;
-            try {
-                mSystemUiResources = pm.getResourcesForApplication("com.android.systemui");
-            } catch (Exception e) {
-            }
+        if (mContext == null || DrawableID == null) {
+            return null;
+        }
 
-            if (mSystemUiResources != null && DrawableID != null) {
-                resId = mSystemUiResources.getIdentifier(DrawableID, null, null);
+        Resources res = null;
+        Drawable d = null;
+
+        if (!NavbarConstants.useSystemUI) {
+            res = getNavbarResources(mContext);
+        } else {
+            PackageManager pm = mContext.getPackageManager();
+            if (pm != null) {
+                try {
+                    res = pm.getResourcesForApplication("com.android.systemui");
+                } catch (Exception e) {
+                }
             }
+        }
+        if (res != null) {
+            int resId = res.getIdentifier(DrawableID, null, null);
             if (resId > 0) {
                 try {
-                    d = mSystemUiResources.getDrawable(resId);
+                    d = res.getDrawable(resId);
                 } catch (Exception e) {
                 }
             }

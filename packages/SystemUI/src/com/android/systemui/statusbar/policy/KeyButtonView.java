@@ -71,6 +71,7 @@ import java.util.ArrayList;
 import com.android.internal.statusbar.IStatusBarService;
 import com.android.internal.util.bliss.BlissActions;
 import com.android.internal.util.bliss.KeyButtonInfo;
+import com.android.internal.util.bliss.NavbarConstants;
 import com.android.internal.util.bliss.NavbarUtils;
 import com.android.systemui.R;
 
@@ -210,6 +211,7 @@ public class KeyButtonView extends ImageView {
             }
         } else if (mHasSingleAction) {
             if (mIsLandscape && !mTablet) {
+                NavbarConstants.useSystemUI = false;
                 setImageDrawable(NavbarUtils.getLandscapeIconImage(mContext, mActions.singleAction));
             } else {
                 setImageDrawable(NavbarUtils.getIconImage(mContext, mActions.singleAction));

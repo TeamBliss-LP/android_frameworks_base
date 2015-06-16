@@ -19,13 +19,18 @@ package com.android.internal.util.bliss;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.content.res.ThemeConfig;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
+import android.util.Log;
 
 import java.util.Arrays;
 import java.util.HashMap;
 
 public class NavbarConstants {
+
+    private static final String TAG = "NavbarConstants";
+    public static boolean useSystemUI = false;
 
     public static final String ASSIST_ICON_METADATA_NAME = "com.android.systemui.action_assist_icon";
 
@@ -65,12 +70,13 @@ public class NavbarConstants {
     //not presently utilized, but gives the gist of NavbarConstants' methods without scrolling down (YAY)
     public interface AwesomeGuts {
 
-        int getStringId();                         //returns the resource id of this NavbarConstant's user-facing name
-        String getProperName(Context mContext);          //getStrings ^
+        int getStringId();                                //returns the resource id of this NavbarConstant's user-facing name
+        String getProperName(Context mContext);           //getStrings ^
 
         Resources getMyPackageResources(Context context); //gets a Resources where the drawable can be found (i.e. from mDrawablePackage)
-        int getDrawableId(Context context);             //gets the identifier from ^
-        Drawable getDrawable(Context mContext);         //gets the drawable from ^ and ^^
+        int getDrawableId(Context context);               //gets the identifier from ^
+        Drawable getDrawable(Context mContext);           //gets the drawable from ^ and ^^
+        String getNavbarThemePkgName(Context mContext);   //gets name - if available - navbar theme overlay pkg, else systemui
     }
 
     public static enum NavbarConstant implements AwesomeGuts {
@@ -109,6 +115,7 @@ public class NavbarConstants {
         ACTION_POWER          ("**power**",           com.android.internal.R.string.action_null,          null),
         ACTION_NULL           ("**null**",            com.android.internal.R.string.action_null,          null);
 
+        private final String SYSUI_PKG = "com.android.systemui";
         private final String mAction;
         private final int mStringId;
         private String mDrawablePackage;
@@ -128,16 +135,26 @@ public class NavbarConstants {
 
         //gets a Resources for the package referred to in this constant's unresolved drawable string
         public Resources getMyPackageResources(Context context) {
-            if (mDrawablePackage == null)
-                return context.getResources();
-
             Resources res = null;
+            if (context == null) {
+                return res;
+            }
+            if (mDrawablePackage == null) {
+                return context.getResources();
+            }
+
             synchronized(mPackageResources) {
                 res = mPackageResources.get(mDrawablePackage); //check the map
                 if (res == null) { //if absent, look it up
                     try {
-                        mPackageResources.put(mDrawablePackage,
-                                (res = context.getPackageManager().getResourcesForApplication(mDrawablePackage)));
+                        if (useSystemUI) {
+                            mPackageResources.put(mDrawablePackage,
+                                (res = context.getPackageManager()
+                                        .getResourcesForApplication(mDrawablePackage)));
+                        } else {
+                            mPackageResources.put(mDrawablePackage,
+                                (res = getNavbarResources(context)));
+                        }
                     } catch (Exception e) {
                     }
                 }
@@ -150,10 +167,12 @@ public class NavbarConstants {
             if (mDrawableUnresolvedIdentifier != null) {
                 final Resources res = getMyPackageResources(context);
                 if (res == null) {
+                    Log.d(TAG, "getDrawableId() null");
                     return 0; //return an empty drawable because something is __wrong__
                 }
                 try {
                     mDrawableId = res.getIdentifier(mDrawableUnresolvedIdentifier, null, null);
+                    Log.d(TAG, "getDrawableId() "+mDrawableId);
                 } catch(Exception e) {
                     return 0;
                 }
@@ -162,9 +181,33 @@ public class NavbarConstants {
             return mDrawableId;
         }
 
+        public String getNavbarThemePkgName(Context mContext) {
+            if (mContext == null) return null;
+            String res = null;
+            ThemeConfig themeConfig = mContext.getResources().getConfiguration().themeConfig;
+            if (themeConfig == null) return res;
+            try {
+                final String navbarThemePkgName = themeConfig.getOverlayForNavBar();
+                final String sysuiThemePkgName = themeConfig.getOverlayForStatusBar();
+                if (navbarThemePkgName != null /* && !navbarThemePkgName.equals(sysuiThemePkgName)*/) {
+                    res = navbarThemePkgName;
+                } else {
+                    res = sysuiThemePkgName;
+                }
+            } catch (Exception e) {
+            }
+            return res;
+        }
+
         //returns the drawable for this specific NavbarConstant
         public Drawable getDrawable(Context context) {
-            final Resources res = getMyPackageResources(context);
+            Resources res = null;
+            if (!useSystemUI) {
+                res = getNavbarResources(context);
+            }
+            if (res == null) {
+                res = getMyPackageResources(context);
+            }
             Drawable dr = null;
             if (res != null)
                 try {
@@ -203,6 +246,24 @@ public class NavbarConstants {
         @Override
         public String toString() { return mAction; }
 
+    }
+
+    public static Resources getNavbarResources(Context mContext) {
+        if (mContext == null) return null;
+        ThemeConfig themeConfig = mContext.getResources().getConfiguration().themeConfig;
+        Resources res = null;
+        if (themeConfig != null) {
+            try {
+                final String navbarThemePkgName = themeConfig.getOverlayForNavBar();
+                final String sysuiThemePkgName = themeConfig.getOverlayForStatusBar();
+                if (navbarThemePkgName != null /* && !navbarThemePkgName.equals(sysuiThemePkgName) */) {
+                    res = mContext.getPackageManager().getThemedResourcesForApplication(
+                            mContext.getPackageName(), navbarThemePkgName);
+                }
+            } catch (PackageManager.NameNotFoundException e) {
+            }
+        }
+        return res;
     }
 
     //returns a string array containing the actions of all NavbarConstants
