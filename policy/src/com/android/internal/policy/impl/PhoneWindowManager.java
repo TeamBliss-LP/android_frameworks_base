@@ -128,6 +128,7 @@ import com.android.internal.util.gesture.EdgeServiceConstants;
 import com.android.internal.view.RotationPolicy;
 import com.android.internal.widget.PointerLocationView;
 import com.android.server.LocalServices;
+import com.android.internal.util.bliss.TaskUtils;
 
 import dalvik.system.DexClassLoader;
 
@@ -225,6 +226,10 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     private static final int KEY_MASK_APP_SWITCH = 0x10;
     private static final int KEY_MASK_CAMERA = 0x20;
     private static final int KEY_MASK_VOLUME = 0x40;
+
+    int mUserNavBarHeight;
+    int mUserNavBarHeightLand;
+    int mUserNavBarWidth;
 
     /**
      * These are the system UI flags that, when changing, can cause the layout
@@ -462,6 +467,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     boolean mAppSwitchWakeScreen;
     boolean mCameraWakeScreen;
     boolean mVolumeWakeScreen;
+	boolean mBackKillPending;
 
     // Camera button control flags and actions
     boolean mCameraSleepOnRelease;

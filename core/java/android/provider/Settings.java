@@ -5031,13 +5031,60 @@ public final class Settings {
          */
         public static final String MENU_VISIBILITY = "menu_visibility";
 
-        /**
-         * Whether navigation bar is placed on the left side in landscape mode
-         *
+     	/**
+      	 * Wheter to show or hide the legacy menu layout in the edges of navbar
          * @hide
          */
-        public static final String NAVBAR_LEFT_IN_LANDSCAPE = "navigation_bar_left";
+        public static final String LEGACY_MENU_LAYOUT = "legacy_menu_layout";  
+  
+      	/**
+         * Change the action of the small menu button that is on the left edge of navbar
+         * @hide
+         */
+        public static final String LEGACY_MENU_LEFT_ACTION = "legacy_menu_left_action";
+      
+      	/**
+         * Change the action of the small menu button that is on the right edge of navbar
+         * @hide
+         */
+        public static final String LEGACY_MENU_RIGHT_ACTION = "legacy_menu_right_action";      
+       
+       	/**
+         * Change the longpress action to menu or null of the left legacy menu
+         * @hide
+         */
+        public static final String LEGACY_MENU_LEFT_LONG_ACTION = "legacy_menu_left_long_action";  
+      
+       	/**
+         * Change the longpress action to menu or null of the right legacy menu
+         * @hide
+         */
+        public static final String LEGACY_MENU_RIGHT_LONG_ACTION = "legacy_menu_right_long_action";  
+            
+       	/**
+         * The left menu app/shortcut uri chose in settings is saved here
+         * @hide
+         */
+        public static final String LEGACY_MENU_LEFT_SHORTCUT_URI = "legacy_menu_left_shortcut_uri"; 
+        
+      	/**
+         * The right menu app/shortcut uri chose in settings is saved here
+         * @hide
+         */
+        public static final String LEGACY_MENU_RIGHT_SHORTCUT_URI = "legacy_menu_right_shortcut_uri"; 
 
+       	/**
+         * The left long menu app/shortcut uri chose in settings is saved here
+         * @hide
+         */
+        public static final String LEGACY_MENU_LEFT_LONG_SHORTCUT_URI = "legacy_menu_left_long_shortcut_uri"; 
+        
+       	/**
+         * The right long menu app/shortcut uri chose in settings is saved here
+         * @hide
+         */
+        public static final String LEGACY_MENU_RIGHT_LONG_SHORTCUT_URI = "legacy_menu_right_long_shortcut_uri";     
+            
         /**
          * Settings to backup. This is here so that it's in the same place as the settings
          * keys and easy to update.
