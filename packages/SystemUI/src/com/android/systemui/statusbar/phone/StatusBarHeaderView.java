@@ -714,9 +714,9 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
             startClockActivity();
         } else if (v == mDateGroup) {
             startDateActivity();
-        } else if (isStatusBarPowerMenuVisible()) {
+        } else if (mStatusBarPowerMenu != null && v == mStatusBarPowerMenu) {
             statusBarPowerMenuAction();
-        } else if (mShowHeadsUpButton && mHeadsUpButton != null && v == mHeadsUpButton) {
+        } else if (mHeadsUpButton != null && v == mHeadsUpButton) {
             startHeadsUpActivity();
         } else if (v == mWeatherContainer) {
             startForecastActivity();
@@ -742,7 +742,7 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
             startDateLongClickActivity();
         } else if (v == mWeatherContainer) {
             startForecastLongClickActivity();
-        } else if (isStatusBarPowerMenuVisible()) {
+        } else if (mStatusBarPowerMenu != null && v == mStatusBarPowerMenu) {
             statusBarPowerMenuAction();
         } else if (mHeadsUpButton != null && v == mHeadsUpButton) {
             startHeadsUpLongClickActivity();
@@ -808,10 +808,12 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
     }
 
     private void statusBarPowerMenuAction() {
-        if (mStatusBarPowerMenuStyle == STATUS_BAR_POWER_MENU_DEFAULT) {
-            goToSleep();
-        } else if (mStatusBarPowerMenuStyle == STATUS_BAR_POWER_MENU_INVERTED) {
-            triggerPowerMenuDialog();
+        if (isStatusBarPowerMenuVisible()) {
+            if (mStatusBarPowerMenuStyle == STATUS_BAR_POWER_MENU_DEFAULT) {
+                goToSleep();
+            } else if (mStatusBarPowerMenuStyle == STATUS_BAR_POWER_MENU_INVERTED) {
+                triggerPowerMenuDialog();
+            }
         }
     }
 
