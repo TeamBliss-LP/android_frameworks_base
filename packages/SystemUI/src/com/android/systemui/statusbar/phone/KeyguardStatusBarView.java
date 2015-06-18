@@ -89,6 +89,7 @@ public class KeyguardStatusBarView extends RelativeLayout {
             removeView(mMultiUserSwitch);
         }
         mBatteryLevel.setVisibility(View.VISIBLE);
+        mBatteryLevel.setTextColor(false);
     }
 
     private void updateSystemIconsLayoutParams() {

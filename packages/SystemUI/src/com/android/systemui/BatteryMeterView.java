@@ -57,7 +57,7 @@ public class BatteryMeterView extends View implements DemoMode,
 
     private static final String STATUS_BAR_BATTERY_STATUS_STYLE = "status_bar_battery_status_style";
     private static final String STATUS_BAR_BATTERY_STATUS_SHOW_CIRCLE_DOTTED = "status_bar_battery_status_show_circle_dotted";
-	private static final String STATUS_BAR_BATTERY_STATUS_CIRCLE_DOT_LENGTH = "status_bar_battery_status_circle_dot_length";
+    private static final String STATUS_BAR_BATTERY_STATUS_CIRCLE_DOT_LENGTH = "status_bar_battery_status_circle_dot_length";
     private static final String STATUS_BAR_BATTERY_STATUS_CIRCLE_DOT_INTERVAL = "status_bar_battery_status_circle_dot_interval";
     private static final String STATUS_BAR_BATTERY_STATUS_PERCENT_STYLE = "status_bar_battery_status_percent_style";
     private static final String STATUS_BAR_BATTERY_STATUS_CHARGING_ANIMATION_SPEED = "status_bar_battery_status_charging_animation_speed";
@@ -66,6 +66,8 @@ public class BatteryMeterView extends View implements DemoMode,
 
     private static final boolean SINGLE_DIGIT_PERCENT = false;
     private static final boolean SHOW_100_PERCENT = false;
+
+    private static final int DEFAULT_BATTERY_COLOR = 0xffffffff;
 
     private static final int FULL = 96;
 
@@ -125,6 +127,74 @@ public class BatteryMeterView extends View implements DemoMode,
     private final Object mLock = new Object();
 
     private ContentResolver mResolver;
+
+    private SettingsObserver mObserver;
+
+    private class SettingsObserver extends UserContentObserver {
+        public SettingsObserver(Handler handler) {
+            super(handler);
+        }
+
+        @Override
+        protected void observe() {
+            super.observe();
+
+            mResolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_BATTERY_STATUS_STYLE),
+                    false, this);
+            mResolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_BATTERY_STATUS_SHOW_CIRCLE_DOTTED),
+                    false, this);
+            mResolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_BATTERY_STATUS_CIRCLE_DOT_LENGTH),
+                    false, this);
+            mResolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_BATTERY_STATUS_CIRCLE_DOT_INTERVAL),
+                    false, this);
+            mResolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_BATTERY_STATUS_PERCENT_STYLE),
+                    false, this);
+            mResolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_BATTERY_STATUS_CHARGING_ANIMATION_SPEED),
+                    false, this);
+            mResolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_BATTERY_STATUS_COLOR),
+                    false, this);
+            mResolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_BATTERY_STATUS_TEXT_COLOR),
+                    false, this);
+
+            update();
+        }
+
+        @Override
+        protected void unobserve() {
+            super.unobserve();
+
+            getContext().getContentResolver().unregisterContentObserver(this);
+        }
+
+        @Override
+        public void onChange(boolean selfChange, Uri uri) {
+            loadShowBatterySetting();
+            if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_BATTERY_STATUS_COLOR))
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_BATTERY_STATUS_TEXT_COLOR))) {
+                if (!mIsAnimating && !mDemoMode && mTracker.level > 16) {
+                    mAnimateColorTransition = true;
+                    mAnimateTextColorTransition = false;
+                    mColorTransitionAnimator.start();
+                }
+            }
+            update();
+        }
+
+        @Override
+        public void update() {
+            invalidateIfVisible();
+        }
+    };
 
     private class BatteryTracker extends BroadcastReceiver {
         public static final int UNKNOWN_LEVEL = -1;
@@ -223,38 +293,10 @@ public class BatteryMeterView extends View implements DemoMode,
         }
     };
 
-    private ContentObserver mObserver = new ContentObserver(new Handler()) {
-        public void onChange(boolean selfChange, Uri uri) {
-            if (uri.equals(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_BATTERY_STATUS_COLOR))) {
-                if (!mIsAnimating && !mDemoMode && mTracker.level > 16) {
-                    mAnimateColorTransition = true;
-                    mAnimateTextColorTransition = false;
-                    mColorTransitionAnimator.start();
-                } else {
-                    postInvalidate();
-                }
-            } else if (uri.equals(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_BATTERY_STATUS_TEXT_COLOR))) {
-                if (!mIsAnimating && !mDemoMode && mTracker.level > 16) {
-                    mAnimateColorTransition = true;
-                    mAnimateTextColorTransition = true;
-                    mColorTransitionAnimator.start();
-                } else {
-                    postInvalidate();
-                }
-            } else {
-                loadShowBatterySetting();
-                postInvalidate();
-            }
-        }
-    };
-
     @Override
     public void onAttachedToWindow() {
         super.onAttachedToWindow();
 
-        int currentUserId = ActivityManager.getCurrentUser();
         IntentFilter filter = new IntentFilter();
         filter.addAction(Intent.ACTION_BATTERY_CHANGED);
         filter.addAction(ACTION_LEVEL_TEST);
@@ -263,34 +305,23 @@ public class BatteryMeterView extends View implements DemoMode,
             // preload the battery level
             mTracker.onReceive(getContext(), sticky);
         }
-        mBatteryController.addStateChangedCallback(this);
-        mAttached = true;
-        mResolver.registerContentObserver(Settings.System.getUriFor(
-                Settings.System.STATUS_BAR_BATTERY_STATUS_STYLE), false, mObserver);
-        mResolver.registerContentObserver(Settings.System.getUriFor(
-                Settings.System.STATUS_BAR_BATTERY_STATUS_SHOW_CIRCLE_DOTTED), false, mObserver);
-        mResolver.registerContentObserver(Settings.System.getUriFor(
-                Settings.System.STATUS_BAR_BATTERY_STATUS_CIRCLE_DOT_LENGTH), false, mObserver);
-        mResolver.registerContentObserver(Settings.System.getUriFor(
-                Settings.System.STATUS_BAR_BATTERY_STATUS_CIRCLE_DOT_INTERVAL), false, mObserver);
-        mResolver.registerContentObserver(Settings.System.getUriFor(
-                Settings.System.STATUS_BAR_BATTERY_STATUS_PERCENT_STYLE), false, mObserver);
-        mResolver.registerContentObserver(Settings.System.getUriFor(
-                Settings.System.STATUS_BAR_BATTERY_STATUS_CHARGING_ANIMATION_SPEED), false, mObserver);
-        mResolver.registerContentObserver(Settings.System.getUriFor(
-                Settings.System.STATUS_BAR_BATTERY_STATUS_COLOR), false, mObserver);
-        mResolver.registerContentObserver(Settings.System.getUriFor(
-                Settings.System.STATUS_BAR_BATTERY_STATUS_TEXT_COLOR), false, mObserver);
+        if (mBatteryController != null) {
+            mBatteryController.addStateChangedCallback(this);
+        }
 
-        mColorTransitionAnimator = createColorTransitionAnimator(0, 1);
+        int currentUserId = ActivityManager.getCurrentUser();
         mStatusColor = Settings.System.getIntForUser(mResolver,
                 Settings.System.STATUS_BAR_BATTERY_STATUS_COLOR,
-                0xffffffff, currentUserId);
+                DEFAULT_BATTERY_COLOR, currentUserId);
         mTextColor = Settings.System.getIntForUser(mResolver,
                 Settings.System.STATUS_BAR_BATTERY_STATUS_TEXT_COLOR,
-                0xffffffff, currentUserId);
+                DEFAULT_BATTERY_COLOR, currentUserId);
         mOldStatusColor = mStatusColor;
         mOldTextColor = mTextColor;
+
+        mColorTransitionAnimator = createColorTransitionAnimator(0, 1);
+        mObserver.observe();
+        mAttached = true;
     }
 
     @Override
@@ -298,6 +329,7 @@ public class BatteryMeterView extends View implements DemoMode,
         super.onDetachedFromWindow();
 
         mAttached = false;
+        mResolver.unregisterContentObserver(mObserver);
         getContext().unregisterReceiver(mTracker);
         mBatteryController.removeStateChangedCallback(this);
     }
@@ -306,10 +338,13 @@ public class BatteryMeterView extends View implements DemoMode,
         int currentUserId = ActivityManager.getCurrentUser();
 
         boolean showInsidePercent = Settings.System.getIntForUser(mResolver,
-                Settings.System.STATUS_BAR_BATTERY_STATUS_PERCENT_STYLE, 2, currentUserId) == 0;
+                Settings.System.STATUS_BAR_BATTERY_STATUS_PERCENT_STYLE,
+                2, currentUserId) == 0;
 
         int batteryStyle = Settings.System.getIntForUser(mResolver,
-                Settings.System.STATUS_BAR_BATTERY_STATUS_STYLE, 0, currentUserId);
+                Settings.System.STATUS_BAR_BATTERY_STATUS_STYLE,
+                0, currentUserId);
+
         BatteryMeterMode meterMode = BatteryMeterMode.BATTERY_METER_ICON_PORTRAIT;
         switch (batteryStyle) {
             case 1:
@@ -331,17 +366,17 @@ public class BatteryMeterView extends View implements DemoMode,
         }
 
         mIsCircleDotted = Settings.System.getIntForUser(mResolver,
-                Settings.System.STATUS_BAR_BATTERY_STATUS_SHOW_CIRCLE_DOTTED, 0,
-                currentUserId) == 1;
+                Settings.System.STATUS_BAR_BATTERY_STATUS_SHOW_CIRCLE_DOTTED,
+                0, currentUserId) == 1;
         mDotLength = Settings.System.getIntForUser(mResolver,
-                Settings.System.STATUS_BAR_BATTERY_STATUS_CIRCLE_DOT_LENGTH, 3,
-                currentUserId);
+                Settings.System.STATUS_BAR_BATTERY_STATUS_CIRCLE_DOT_LENGTH,
+                3, currentUserId);
         mDotInterval = Settings.System.getIntForUser(mResolver,
-                Settings.System.STATUS_BAR_BATTERY_STATUS_CIRCLE_DOT_INTERVAL, 2,
-                currentUserId);
+                Settings.System.STATUS_BAR_BATTERY_STATUS_CIRCLE_DOT_INTERVAL,
+                2, currentUserId);
         int chargeAnimSpeed = Settings.System.getIntForUser(mResolver,
-                Settings.System.STATUS_BAR_BATTERY_STATUS_CHARGING_ANIMATION_SPEED, 3,
-                currentUserId);
+                Settings.System.STATUS_BAR_BATTERY_STATUS_CHARGING_ANIMATION_SPEED,
+                3, currentUserId);
 
         if (chargeAnimSpeed == 0) {
             mChargeAnimDisabled = true;
@@ -369,7 +404,10 @@ public class BatteryMeterView extends View implements DemoMode,
         mResolver = context.getContentResolver();
         final Resources res = context.getResources();
 
-        mWarningString = context.getString(R.string.battery_meter_very_low_overlay_symbol);
+        mObserver = new SettingsObserver(mHandler);
+
+        mWarningString = context.getString(
+                R.string.battery_meter_very_low_overlay_symbol);
         mCriticalLevel = mContext.getResources().getInteger(
                 com.android.internal.R.integer.config_criticalBatteryWarningLevel);
         mButtonHeightFraction = context.getResources().getFraction(
@@ -492,10 +530,10 @@ public class BatteryMeterView extends View implements DemoMode,
 
         mStatusColor = Settings.System.getIntForUser(mResolver,
                 Settings.System.STATUS_BAR_BATTERY_STATUS_COLOR,
-                0xffffffff, currentUserId);
+                DEFAULT_BATTERY_COLOR, currentUserId);
         mTextColor = Settings.System.getIntForUser(mResolver,
                 Settings.System.STATUS_BAR_BATTERY_STATUS_TEXT_COLOR,
-                0xffffffff, currentUserId);
+                DEFAULT_BATTERY_COLOR, currentUserId);
 
         if (mAnimateColorTransition) {
             int blendedStatusColor = ColorHelper.getBlendColor(

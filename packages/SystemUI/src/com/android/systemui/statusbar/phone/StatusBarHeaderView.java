@@ -91,6 +91,8 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
     private static final int STATUS_BAR_POWER_MENU_DEFAULT = 1;
     private static final int STATUS_BAR_POWER_MENU_INVERTED = 2;
 
+    private static final int DEFAULT_HEADER_COLOR = 0xffffffff;
+
     private boolean mExpanded;
     private boolean mListening;
 
@@ -1203,7 +1205,8 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
                 if (mQSCSwitch) {
                     int color = Settings.System.getInt(
                             getContext().getContentResolver(),
-                            Settings.System.QS_TEXT_COLOR, 0xffffffff);
+                            Settings.System.QS_TEXT_COLOR,
+                            DEFAULT_HEADER_COLOR);
                     mQsDetailHeaderTitle.setTextColor(color);
                 }
                 final Boolean toggleState = detail.getToggleState();
@@ -1349,7 +1352,8 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
                 if (mQSCSwitch) {
                     int color = Settings.System.getInt(
                             getContext().getContentResolver(),
-                            Settings.System.QS_TEXT_COLOR, 0xffffffff);
+                            Settings.System.QS_TEXT_COLOR,
+                            DEFAULT_HEADER_COLOR);
                     mQsDetailHeaderTitle.setTextColor(color);
                 }
             }
@@ -1416,15 +1420,21 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
     private void updateBackgroundColor() {
         ContentResolver resolver = mContext.getContentResolver();
         int backgroundColor = Settings.System.getInt(resolver,
-                Settings.System.STATUS_BAR_EXPANDED_HEADER_BG_COLOR, 0xff384248);
+                Settings.System.STATUS_BAR_EXPANDED_HEADER_BG_COLOR,
+                0xff384248);
 
         getBackground().setColorFilter(backgroundColor, Mode.MULTIPLY);
+    }
+
+    public void updateBatteryColorSettings(boolean isHeader) {
+        mBatteryLevel.setTextColor(isHeader);
     }
 
     private void updateTextColorSettings() {
         ContentResolver resolver = mContext.getContentResolver();
         mTextColor = Settings.System.getInt(resolver,
-                Settings.System.STATUS_BAR_EXPANDED_HEADER_TEXT_COLOR, 0xffffffff);
+                Settings.System.STATUS_BAR_EXPANDED_HEADER_TEXT_COLOR,
+                DEFAULT_HEADER_COLOR);
 
         mTime.setTextColor(mTextColor);
         mAmPm.setTextColor(mTextColor);
@@ -1432,7 +1442,7 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
                 getTransparentColor(mTextColor, 178));
         mDateExpanded.setTextColor(
                 getTransparentColor(mTextColor, 178));
-        mBatteryLevel.setTextColor(true);
+        updateBatteryColorSettings(mExpanded);
         mAlarmStatus.setTextColor(
                 getTransparentColor(mTextColor, 100));
         mWeatherLine1.setTextColor(mTextColor);
@@ -1442,7 +1452,8 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
     private void updateIconColorSettings() {
         ContentResolver resolver = mContext.getContentResolver();
         mIconColor = Settings.System.getInt(resolver,
-                Settings.System.STATUS_BAR_EXPANDED_HEADER_ICON_COLOR, 0xffffffff);
+                Settings.System.STATUS_BAR_EXPANDED_HEADER_ICON_COLOR,
+                DEFAULT_HEADER_COLOR);
 
         ((ImageView)mSettingsButton).setColorFilter(mIconColor, Mode.MULTIPLY);
         if (mStatusBarPowerMenu != null) {

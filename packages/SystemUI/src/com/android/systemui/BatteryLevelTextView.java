@@ -23,6 +23,7 @@ import android.app.ActivityManager;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Handler;
 import android.os.UserHandle;
 import android.provider.Settings;
@@ -43,6 +44,8 @@ public class BatteryLevelTextView extends TextView implements
             "status_bar_battery_status_style";
     private static final String STATUS_BAR_BATTERY_STATUS_PERCENT_STYLE =
             "status_bar_battery_status_percent_style";
+
+    private static final int DEFAULT_BATTERY_TEXT_COLOR = 0xffffffff;
 
     private BatteryController mBatteryController;
     private boolean mBatteryCharging;
@@ -69,9 +72,17 @@ public class BatteryLevelTextView extends TextView implements
             super.observe();
 
             mResolver.registerContentObserver(Settings.System.getUriFor(
-                    STATUS_BAR_BATTERY_STATUS_STYLE), false, this, UserHandle.USER_ALL);
+                    Settings.System.STATUS_BAR_BATTERY_STATUS_STYLE),
+                    false, this, UserHandle.USER_ALL);
             mResolver.registerContentObserver(Settings.System.getUriFor(
-                    STATUS_BAR_BATTERY_STATUS_PERCENT_STYLE), false, this, UserHandle.USER_ALL);
+                    Settings.System.STATUS_BAR_BATTERY_STATUS_PERCENT_STYLE),
+                    false, this, UserHandle.USER_ALL);
+            mResolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_BATTERY_STATUS_TEXT_COLOR),
+                    false, this, UserHandle.USER_ALL);
+            mResolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_EXPANDED_HEADER_TEXT_COLOR),
+                    false, this, UserHandle.USER_ALL);
         }
 
         @Override
@@ -79,6 +90,19 @@ public class BatteryLevelTextView extends TextView implements
             super.unobserve();
 
             getContext().getContentResolver().unregisterContentObserver(this);
+        }
+
+        @Override
+        public void onChange(boolean selfChange, Uri uri) {
+            if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_EXPANDED_HEADER_TEXT_COLOR))) {
+                // we do not switch color here!
+            } else
+            if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_BATTERY_STATUS_TEXT_COLOR))) {
+                setTextColor(false);
+            }
+            update();
         }
 
         @Override
@@ -94,7 +118,7 @@ public class BatteryLevelTextView extends TextView implements
 
         mNewColor = Settings.System.getInt(mResolver,
             Settings.System.STATUS_BAR_BATTERY_STATUS_TEXT_COLOR,
-            0xffffffff);
+            DEFAULT_BATTERY_TEXT_COLOR);
         mOldColor = mNewColor;
         mColorTransitionAnimator = createColorTransitionAnimator(0, 1);
 
@@ -125,13 +149,15 @@ public class BatteryLevelTextView extends TextView implements
 
         // Respect font size setting.
         setTextSize(TypedValue.COMPLEX_UNIT_PX,
-                getResources().getDimensionPixelSize(R.dimen.battery_level_text_size));
+            getResources().getDimensionPixelSize(
+                R.dimen.battery_level_text_size));
      }
 
     @Override
     public void onBatteryLevelChanged(int level, boolean pluggedIn, boolean charging) {
         mBatteryLevel = level;
-        String percentage = NumberFormat.getPercentInstance().format((double) mBatteryLevel / 100.0);
+        String percentage = NumberFormat.getPercentInstance()
+                .format((double) mBatteryLevel / 100.0);
         setText(percentage);
         boolean changed = mBatteryCharging != charging;
         mBatteryCharging = charging;
@@ -179,11 +205,13 @@ public class BatteryLevelTextView extends TextView implements
     public void setTextColor(boolean isHeader) {
         if (isHeader) {
             int headerColor = Settings.System.getInt(mResolver,
-                    Settings.System.STATUS_BAR_EXPANDED_HEADER_TEXT_COLOR, 0xffffffff);
+                    Settings.System.STATUS_BAR_EXPANDED_HEADER_TEXT_COLOR,
+                    DEFAULT_BATTERY_TEXT_COLOR);
             setTextColor(headerColor);
         } else {
             mNewColor = Settings.System.getInt(mResolver,
-                    Settings.System.STATUS_BAR_BATTERY_STATUS_TEXT_COLOR, 0xffffffff);
+                    Settings.System.STATUS_BAR_BATTERY_STATUS_TEXT_COLOR,
+                    DEFAULT_BATTERY_TEXT_COLOR);
             if (!mBatteryCharging && mBatteryLevel > 16) {
                 if (mOldColor != mNewColor) {
                     mColorTransitionAnimator.start();
@@ -217,24 +245,25 @@ public class BatteryLevelTextView extends TextView implements
     private void loadShowBatteryTextSetting() {
         int currentUserId = ActivityManager.getCurrentUser();
         int mode = Settings.System.getIntForUser(mResolver,
-                Settings.System.STATUS_BAR_BATTERY_STATUS_PERCENT_STYLE, 2, currentUserId);
+                Settings.System.STATUS_BAR_BATTERY_STATUS_PERCENT_STYLE,
+                2, currentUserId);
 
-        boolean showNextPercent = mode == 1;
+        mShow = mode == 1;
         int batteryStyle = Settings.System.getIntForUser(mResolver,
-                Settings.System.STATUS_BAR_BATTERY_STATUS_STYLE, 0, currentUserId);
+                Settings.System.STATUS_BAR_BATTERY_STATUS_STYLE,
+                0, currentUserId);
 
         switch (batteryStyle) {
             case 3: //BATTERY_METER_TEXT
-                showNextPercent = true;
+                mShow = true;
                 break;
             case 4: //BATTERY_METER_GONE
-                showNextPercent = false;
+                mShow = false;
                 break;
             default:
                 break;
         }
 
-        mShow = showNextPercent;
         updateVisibility();
     }
 }

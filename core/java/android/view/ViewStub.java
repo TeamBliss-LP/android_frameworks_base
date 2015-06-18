@@ -306,6 +306,16 @@ public final class ViewStub extends View {
     }
 
     /**
+     * Dummy stub for reflection purposes
+     *
+     * @param color The integer color value.
+     */
+    @android.view.RemotableViewMethod
+    public void setTextColor(int color) {
+        // dummy to prevent exception upon reflection :(
+    }
+
+    /**
      * Listener used to receive a notification after a ViewStub has successfully
      * inflated its layout resource.
      *
