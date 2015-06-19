@@ -62,8 +62,8 @@ public class HeadsUpNotificationView extends FrameLayout implements SwipeHelper.
     private static final boolean DEBUG = false;
     private static final boolean SPEW = DEBUG;
 
-    private final int HEADSUP_DEFAULT_BACKGROUNDCOLOR = 0xff000000;
-    private final int HEADSUP_DEFAULT_TEXTCOLOR = 0xffffffff;
+    private final int HEADSUP_DEFAULT_BACKGROUNDCOLOR = 0x00ffffff;
+    private final int HEADSUP_DEFAULT_TEXTCOLOR = 0x00000000;
 
     Rect mTmpRect = new Rect();
     int[] mTmpTwoArray = new int[2];
