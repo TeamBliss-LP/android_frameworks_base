@@ -23,12 +23,16 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
-
+import android.app.ActivityManagerNative;
+import android.app.IActivityManager;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.RemoteException;
+import android.os.ServiceManager;
+import android.os.SystemProperties;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.View;
@@ -37,6 +41,14 @@ import android.widget.Toast;
 
 import com.bliss.util.CMDProcessor.CommandResult;
 
+// don't show unavoidable warnings
+@SuppressWarnings({
+        "UnusedDeclaration",
+        "MethodWithMultipleReturnPoints",
+        "ReturnOfNull",
+        "NestedAssignment",
+        "DynamicRegexReplaceableByCompiledPattern",
+        "BreakStatement"})
 public class Helpers {
 
     private static final String TAG = "Helpers";
@@ -288,6 +300,18 @@ public class Helpers {
 
     public static void restartSystemUI() {
         new CMDProcessor().su.run("pkill -TERM -f com.android.systemui");
+    }
+
+    public static void restartSystem() {
+        try {
+            final IActivityManager am = ActivityManagerNative.asInterface(ServiceManager.checkService("activity"));
+            if (am != null) {
+                am.restart();
+            }
+        }
+        catch (RemoteException e) {
+            Log.e(TAG, "Failed to restart");
+        }
     }
 
     public static void setSystemProp(String prop, String val) {
