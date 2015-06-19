@@ -30,6 +30,8 @@ import java.util.HashMap;
 public class NavbarConstants {
 
     private static final String TAG = "NavbarConstants";
+    private static boolean DEBUG = false;
+
     public static boolean useSystemUI = false;
 
     public static final String ASSIST_ICON_METADATA_NAME = "com.android.systemui.action_assist_icon";
@@ -156,6 +158,7 @@ public class NavbarConstants {
                                 (res = getNavbarResources(context)));
                         }
                     } catch (Exception e) {
+                        if (DEBUG) Log.d(TAG, "getMyPackageResources: "+e.getMessage());
                     }
                 }
             }
@@ -167,12 +170,10 @@ public class NavbarConstants {
             if (mDrawableUnresolvedIdentifier != null) {
                 final Resources res = getMyPackageResources(context);
                 if (res == null) {
-                    Log.d(TAG, "getDrawableId() null");
                     return 0; //return an empty drawable because something is __wrong__
                 }
                 try {
                     mDrawableId = res.getIdentifier(mDrawableUnresolvedIdentifier, null, null);
-                    Log.d(TAG, "getDrawableId() "+mDrawableId);
                 } catch(Exception e) {
                     return 0;
                 }
@@ -213,6 +214,7 @@ public class NavbarConstants {
                 try {
                     dr = res.getDrawable(getDrawableId(context));
                 } catch (Exception e) {
+                    if (DEBUG) Log.d(TAG, "getMyPackageResources: "+e.getMessage());
                     //something ain't right. force re-finding package reses
                     synchronized(mPackageResources) {
                         mPackageResources.remove(mDrawablePackage);
@@ -256,7 +258,7 @@ public class NavbarConstants {
             try {
                 final String navbarThemePkgName = themeConfig.getOverlayForNavBar();
                 final String sysuiThemePkgName = themeConfig.getOverlayForStatusBar();
-                if (navbarThemePkgName != null /* && !navbarThemePkgName.equals(sysuiThemePkgName) */) {
+                if (navbarThemePkgName != null) {
                     res = mContext.getPackageManager().getThemedResourcesForApplication(
                             mContext.getPackageName(), navbarThemePkgName);
                 }

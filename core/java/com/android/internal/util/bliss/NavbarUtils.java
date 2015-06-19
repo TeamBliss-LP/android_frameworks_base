@@ -26,7 +26,6 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.android.internal.util.bliss.NavbarConstants;
 import com.android.internal.util.bliss.NavbarConstants.NavbarConstant;
