@@ -722,7 +722,7 @@ public class NavigationBarView extends LinearLayout {
         KeyButtonView v = new KeyButtonView(mContext, null);
         int width = mContext.getResources().getDimensionPixelSize(R.dimen.navigation_extra_key_width);
         v.setLayoutParams(getLayoutParams(landscape, width));
-        v.setScaleType(KeyButtonView.ScaleType.CENTER);
+        v.setScaleType(KeyButtonView.ScaleType.CENTER_INSIDE);
         if (keyId == KEY_MENU_LEFT || keyId == KEY_MENU_RIGHT) {
             v.setClickAction(ActionConstants.ACTION_MENU);
             v.setLongpressAction(ActionConstants.ACTION_NULL);
@@ -737,10 +737,20 @@ public class NavigationBarView extends LinearLayout {
 						PackageManager pm = mContext.getPackageManager();					
 						try {
 							d =	pm.getActivityIcon(Intent.parseUri(mCustomLeftShortcutUri, 0));
+
 						} catch (NameNotFoundException e) {
 						} catch (URISyntaxException e) {
 							e.printStackTrace();
-						}					
+						}
+						final int[] appIconPadding = getAppIconPadding();
+							if (landscape) {
+								v.setPaddingRelative(appIconPadding[1], appIconPadding[0],
+								appIconPadding[3], appIconPadding[2]);
+							} else {
+								v.setPaddingRelative(appIconPadding[0], appIconPadding[1],
+								appIconPadding[2], appIconPadding[3]);
+							}
+					// Take normal drawable
 					} else {
 							d = mContext.getResources().getDrawable(leftdrawable); 
 					}		
@@ -791,9 +801,9 @@ public class NavigationBarView extends LinearLayout {
 						v.setLongpressAction(ActionConstants.ACTION_MEDIA_NEXT);	
 					} else if (mLegacyMenuLeftLongAction == 22) {			
 						v.setLongpressAction(ActionConstants.ACTION_MEDIA_PLAY_PAUSE);
-					} else if (mLegacyMenuRightLongAction == 23) {			
+					} else if (mLegacyMenuLeftLongAction == 23) {			
 						v.setLongpressAction(mCustomLeftLongShortcutUri);						
-					} else if (mLegacyMenuRightLongAction == 24) {													
+					} else if (mLegacyMenuLeftLongAction == 24) {													
 						v.setLongpressAction(ActionConstants.ACTION_NULL);				
 					}
 			} else {
@@ -807,7 +817,16 @@ public class NavigationBarView extends LinearLayout {
 					} catch (NameNotFoundException e) {
 					} catch (URISyntaxException e) {
 						e.printStackTrace();
-					}					
+					}		
+					final int[] appIconPadding = getAppIconPadding();
+						if (landscape) {
+							v.setPaddingRelative(appIconPadding[1], appIconPadding[0],
+							appIconPadding[3], appIconPadding[2]);
+						} else {
+							v.setPaddingRelative(appIconPadding[0], appIconPadding[1],
+							appIconPadding[2], appIconPadding[3]);
+						}
+				// Take normal drawable
 				} else {
 						d = mContext.getResources().getDrawable(rightdrawable);   
 				}					
