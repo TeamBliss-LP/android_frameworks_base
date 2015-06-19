@@ -598,7 +598,7 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
             } else {
                 setNextLayout(NavbarConstants.LAYOUT_IME);
             }
-        } else {
+        } else if (mButtonLayouts > 0){
             mCurrentLayout = (mCurrentLayout + direction + mButtonLayouts) % mButtonLayouts;
             if (mCurrentLayout >= mButtonLayouts) mCurrentLayout = mButtonLayouts - 1;
             setNextLayout(mCurrentLayout);
