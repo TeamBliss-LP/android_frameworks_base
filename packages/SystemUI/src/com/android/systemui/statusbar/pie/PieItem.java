@@ -17,6 +17,7 @@
  */
 package com.android.systemui.statusbar.pie;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
@@ -111,16 +112,17 @@ public class PieItem extends PieView.PieDrawable {
         this.flags = flags | PieDrawable.VISIBLE | PieDrawable.DISPLAY_ALL;
 
         final Resources res = context.getResources();
+        final ContentResolver cr = context.getContentResolver();
 
-        float backgroundAlpha = Settings.System.getFloatForUser(context.getContentResolver(),
+        float backgroundAlpha = Settings.System.getFloatForUser(cr,
                 Settings.System.PIE_BUTTON_ALPHA, 0.3f,
                 UserHandle.USER_CURRENT);
         float backgroundSelectedAlpha = Settings.System.getFloatForUser(
-                context.getContentResolver(),
+                cr,
                 Settings.System.PIE_BUTTON_PRESSED_ALPHA, 0.0f,
                 UserHandle.USER_CURRENT);
 
-        int backgroundPaintColor = Settings.System.getIntForUser(context.getContentResolver(),
+        int backgroundPaintColor = Settings.System.getIntForUser(cr,
                 Settings.System.PIE_BUTTON_COLOR, -2,
                 UserHandle.USER_CURRENT);
         if (backgroundPaintColor == -2) {
@@ -130,7 +132,7 @@ public class PieItem extends PieView.PieDrawable {
         mBackgroundPaint.setAlpha((int) ((1-backgroundAlpha) * 255));
         mBackgroundPaint.setAntiAlias(true);
 
-        int selectedPaintColor = Settings.System.getIntForUser(context.getContentResolver(),
+        int selectedPaintColor = Settings.System.getIntForUser(cr,
                 Settings.System.PIE_BUTTON_PRESSED_COLOR, -2,
                 UserHandle.USER_CURRENT);
         if (selectedPaintColor == -2) {
@@ -140,7 +142,7 @@ public class PieItem extends PieView.PieDrawable {
         mSelectedPaint.setAlpha((int) ((1-backgroundSelectedAlpha) * 255));
         mSelectedPaint.setAntiAlias(true);
 
-        int longPressPaintColor = Settings.System.getIntForUser(context.getContentResolver(),
+        int longPressPaintColor = Settings.System.getIntForUser(cr,
                 Settings.System.PIE_BUTTON_LONG_PRESSED_COLOR, -2,
                 UserHandle.USER_CURRENT);
         if (longPressPaintColor == -2) {
@@ -150,7 +152,7 @@ public class PieItem extends PieView.PieDrawable {
         mLongPressPaint.setAlpha((int) ((1-backgroundSelectedAlpha) * 255));
         mLongPressPaint.setAntiAlias(true);
 
-        int outlinePaintColor = Settings.System.getIntForUser(context.getContentResolver(),
+        int outlinePaintColor = Settings.System.getIntForUser(cr,
                 Settings.System.PIE_BUTTON_OUTLINE_COLOR, -2,
                 UserHandle.USER_CURRENT);
         if (outlinePaintColor == -2) {
@@ -220,25 +222,22 @@ public class PieItem extends PieView.PieDrawable {
             if (drawable == null) {
                 return;
             }
-
-            int drawableColorMode = Settings.System.getIntForUser(mContext.getContentResolver(),
+            final ContentResolver cr = mContext.getContentResolver();
+            int drawableColorMode = Settings.System.getIntForUser(cr,
                     Settings.System.PIE_ICON_COLOR_MODE, 0,
                     UserHandle.USER_CURRENT);
-            int drawableColor = Settings.System.getIntForUser(mContext.getContentResolver(),
-                    Settings.System.PIE_ICON_COLOR, -2,
-                    UserHandle.USER_CURRENT);
-            if (drawableColor == -2) {
-                drawableColor = color;
-            }
+            if (drawableColorMode != 3) {
+                int drawableColor = Settings.System.getIntForUser(cr,
+                        Settings.System.PIE_ICON_COLOR, -2,
+                        UserHandle.USER_CURRENT);
+                if (drawableColor == -2) {
+                    drawableColor = color;
+                }
 
-            boolean colorize = true;
-            if (mPieIconType == 2 && drawableColorMode == 1
-                    || mPieIconType == 1 && drawableColorMode != 0) {
-                colorize = false;
-            }
-
-            if (colorize && drawableColorMode != 3) {
-                drawable = ImageHelper.getColoredDrawable(drawable, drawableColor);
+                if (!(mPieIconType == 2 && drawableColorMode == 1)
+                        && !(mPieIconType == 1 && drawableColorMode != 0)) {
+                    drawable = ImageHelper.getColoredDrawable(drawable, drawableColor);
+                }
             }
             imageView.setImageDrawable(drawable);
         }
