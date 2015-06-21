@@ -112,7 +112,7 @@ class AlarmManagerService extends SystemService {
     static final Intent mBackgroundIntent
             = new Intent().addFlags(Intent.FLAG_FROM_BACKGROUND);
     static final IncreasingTimeOrder sIncreasingTimeOrder = new IncreasingTimeOrder();
-    
+
     static final boolean WAKEUP_STATS = false;
 
     private static final Intent NEXT_ALARM_CLOCK_CHANGED_INTENT = new Intent(
@@ -607,7 +607,7 @@ class AlarmManagerService extends SystemService {
             mTag = tag;
         }
     }
-    
+
     static final class BroadcastStats {
         final int mUid;
         final String mPackageName;
@@ -624,7 +624,7 @@ class AlarmManagerService extends SystemService {
             mPackageName = packageName;
         }
     }
-    
+
     final SparseArray<ArrayMap<String, BroadcastStats>> mBroadcastStats
             = new SparseArray<ArrayMap<String, BroadcastStats>>();
 
@@ -653,7 +653,7 @@ class AlarmManagerService extends SystemService {
         intent.addFlags(Intent.FLAG_RECEIVER_REPLACE_PENDING);
         mDateChangeSender = PendingIntent.getBroadcastAsUser(getContext(), 0, intent,
                 Intent.FLAG_RECEIVER_REGISTERED_ONLY_BEFORE_BOOT, UserHandle.ALL);
-        
+
         // now that we have initied the driver schedule the alarm
         mClockReceiver = new ClockReceiver();
         mClockReceiver.scheduleTimeTickEvent();
@@ -661,7 +661,7 @@ class AlarmManagerService extends SystemService {
         mInteractiveStateReceiver = new InteractiveStateReceiver();
         mUninstallReceiver = new UninstallReceiver();
         mQuickBootReceiver = new QuickBootReceiver();
-        
+
         if (mNativeData != 0) {
             AlarmThread waitThread = new AlarmThread();
             waitThread.start();
@@ -1516,12 +1516,12 @@ class AlarmManagerService extends SystemService {
                 alarmSeconds = when / 1000;
                 alarmNanoseconds = (when % 1000) * 1000 * 1000;
             }
-            
+
             set(mNativeData, type, alarmSeconds, alarmNanoseconds);
         } else {
             Message msg = Message.obtain();
             msg.what = ALARM_EVENT;
-            
+
             mHandler.removeMessages(ALARM_EVENT);
             mHandler.sendMessageAtTime(msg, when);
         }
@@ -1641,7 +1641,7 @@ class AlarmManagerService extends SystemService {
         public int compare(Alarm a1, Alarm a2) {
             long when1 = a1.whenElapsed;
             long when2 = a2.whenElapsed;
-            if (when1 > when2) {
+            if (when1 - when2 > 0) {
                 return 1;
             }
             if (when1 < when2) {
@@ -1650,7 +1650,7 @@ class AlarmManagerService extends SystemService {
             return 0;
         }
     }
-    
+
     private static class Alarm {
         public final int type;
         public final boolean wakeup;
