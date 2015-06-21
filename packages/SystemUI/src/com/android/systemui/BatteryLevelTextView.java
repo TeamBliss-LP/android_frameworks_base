@@ -34,29 +34,33 @@ import android.widget.TextView;
 import com.android.internal.util.bliss.ColorHelper;
 import com.android.systemui.cm.UserContentObserver;
 import com.android.systemui.statusbar.policy.BatteryController;
+import com.android.systemui.statusbar.policy.BatteryStateRegistar;
 
 import java.text.NumberFormat;
 
 public class BatteryLevelTextView extends TextView implements
         BatteryController.BatteryStateChangeCallback{
 
-    private static final String STATUS_BAR_BATTERY_STATUS_STYLE =
+    private static final String STATUS_BAR_BATTERY_STYLE =
             "status_bar_battery_status_style";
-    private static final String STATUS_BAR_BATTERY_STATUS_PERCENT_STYLE =
+    private static final String STATUS_BAR_SHOW_BATTERY_PERCENT =
             "status_bar_battery_status_percent_style";
 
     private static final int DEFAULT_BATTERY_TEXT_COLOR = 0xffffffff;
 
-    private BatteryController mBatteryController;
+    private BatteryStateRegistar mBatteryStateRegistar;
+    private boolean mBatteryPluggedIn;
     private boolean mBatteryCharging;
     private int mBatteryLevel = 0;
-    private boolean mShow;
     private boolean mForceShow;
     private boolean mAttached;
     private int mRequestedVisibility;
     private int mNewColor;
     private int mOldColor;
     private Animator mColorTransitionAnimator;
+
+    private int mStyle;
+    private int mPercentMode;
 
     private ContentResolver mResolver;
 
@@ -72,16 +76,7 @@ public class BatteryLevelTextView extends TextView implements
             super.observe();
 
             mResolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_BATTERY_STATUS_STYLE),
-                    false, this, UserHandle.USER_ALL);
-            mResolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_BATTERY_STATUS_PERCENT_STYLE),
-                    false, this, UserHandle.USER_ALL);
-            mResolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_BATTERY_STATUS_TEXT_COLOR),
-                    false, this, UserHandle.USER_ALL);
-            mResolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_EXPANDED_HEADER_TEXT_COLOR),
                     false, this, UserHandle.USER_ALL);
         }
 
@@ -95,19 +90,15 @@ public class BatteryLevelTextView extends TextView implements
         @Override
         public void onChange(boolean selfChange, Uri uri) {
             if (uri.equals(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_EXPANDED_HEADER_TEXT_COLOR))) {
-                // we do not switch color here!
-            } else
-            if (uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_BATTERY_STATUS_TEXT_COLOR))) {
-                setTextColor(false);
+                update();
             }
-            update();
         }
 
         @Override
         public void update() {
-            loadShowBatteryTextSetting();
+            setTextColor(false);
+            setVisibility(mRequestedVisibility);
         }
     };
 
@@ -121,8 +112,6 @@ public class BatteryLevelTextView extends TextView implements
             DEFAULT_BATTERY_TEXT_COLOR);
         mOldColor = mNewColor;
         mColorTransitionAnimator = createColorTransitionAnimator(0, 1);
-
-        loadShowBatteryTextSetting();
     }
 
     public void setForceShown(boolean forceShow) {
@@ -130,10 +119,10 @@ public class BatteryLevelTextView extends TextView implements
         updateVisibility();
     }
 
-    public void setBatteryController(BatteryController batteryController) {
-        mBatteryController = batteryController;
+    public void setBatteryStateRegistar(BatteryStateRegistar batteryStateRegistar) {
+        mBatteryStateRegistar = batteryStateRegistar;
         if (mAttached) {
-            mBatteryController.addStateChangedCallback(this);
+            mBatteryStateRegistar.addStateChangedCallback(this);
         }
     }
 
@@ -158,12 +147,19 @@ public class BatteryLevelTextView extends TextView implements
         mBatteryLevel = level;
         String percentage = NumberFormat.getPercentInstance()
                 .format((double) mBatteryLevel / 100.0);
-        setText(percentage);
-        boolean changed = mBatteryCharging != charging;
-        mBatteryCharging = charging;
-        if (changed) {
-            loadShowBatteryTextSetting();
+        setText(getResources().getString(R.string.battery_level_template, level));
+        if (mBatteryPluggedIn != pluggedIn || mBatteryCharging != charging) {
+            mBatteryPluggedIn = pluggedIn;
+            mBatteryCharging = charging;
+            updateVisibility();
         }
+    }
+
+    @Override
+    public void onBatteryStyleChanged(int style, int percentMode) {
+        mStyle = style;
+        mPercentMode = percentMode;
+        updateVisibility();
     }
 
     @Override
@@ -175,8 +171,8 @@ public class BatteryLevelTextView extends TextView implements
     public void onAttachedToWindow() {
         super.onAttachedToWindow();
 
-        if (mBatteryController != null) {
-            mBatteryController.addStateChangedCallback(this);
+        if (mBatteryStateRegistar != null) {
+            mBatteryStateRegistar.addStateChangedCallback(this);
         }
         mObserver.observe();
 
@@ -189,13 +185,23 @@ public class BatteryLevelTextView extends TextView implements
         mAttached = false;
         mResolver.unregisterContentObserver(mObserver);
 
-        if (mBatteryController != null) {
-            mBatteryController.removeStateChangedCallback(this);
+        if (mBatteryStateRegistar != null) {
+            mBatteryStateRegistar.removeStateChangedCallback(this);
         }
     }
 
-    private void updateVisibility() {
-        if (mShow || mForceShow) {
+    public void updateVisibility() {
+        boolean showNextPercent = mBatteryPluggedIn && (
+                mPercentMode == BatteryController.PERCENTAGE_MODE_OUTSIDE
+                || (mBatteryCharging && mPercentMode == BatteryController.PERCENTAGE_MODE_INSIDE));
+        if (mStyle == BatteryController.STYLE_GONE) {
+            showNextPercent = false;
+        } else if (mStyle == BatteryController.STYLE_TEXT) {
+            showNextPercent = true;
+        }
+
+        if (mPercentMode != BatteryController.PERCENTAGE_MODE_OFF &&
+            mBatteryStateRegistar != null && (showNextPercent || mForceShow)) {
             super.setVisibility(mRequestedVisibility);
         } else {
             super.setVisibility(GONE);
@@ -210,15 +216,14 @@ public class BatteryLevelTextView extends TextView implements
             setTextColor(headerColor);
         } else {
             mNewColor = Settings.System.getInt(mResolver,
-                    Settings.System.STATUS_BAR_BATTERY_STATUS_TEXT_COLOR,
-                    DEFAULT_BATTERY_TEXT_COLOR);
+                Settings.System.STATUS_BAR_BATTERY_STATUS_TEXT_COLOR,
+                DEFAULT_BATTERY_TEXT_COLOR);
             if (!mBatteryCharging && mBatteryLevel > 16) {
                 if (mOldColor != mNewColor) {
                     mColorTransitionAnimator.start();
                 }
-            } else {
-                setTextColor(mNewColor);
             }
+            setTextColor(mNewColor);
         }
     }
 
@@ -242,28 +247,4 @@ public class BatteryLevelTextView extends TextView implements
         return animator;
     }
 
-    private void loadShowBatteryTextSetting() {
-        int currentUserId = ActivityManager.getCurrentUser();
-        int mode = Settings.System.getIntForUser(mResolver,
-                Settings.System.STATUS_BAR_BATTERY_STATUS_PERCENT_STYLE,
-                2, currentUserId);
-
-        mShow = mode == 1;
-        int batteryStyle = Settings.System.getIntForUser(mResolver,
-                Settings.System.STATUS_BAR_BATTERY_STATUS_STYLE,
-                0, currentUserId);
-
-        switch (batteryStyle) {
-            case 3: //BATTERY_METER_TEXT
-                mShow = true;
-                break;
-            case 4: //BATTERY_METER_GONE
-                mShow = false;
-                break;
-            default:
-                break;
-        }
-
-        updateVisibility();
-    }
 }

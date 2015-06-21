@@ -2638,7 +2638,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
             loadHeadsUpSetting(stmt);
 
-            loadIntegerSetting(stmt, Settings.System.STATUS_BAR_BATTERY_STATUS_STYLE,
+            loadIntegerSetting(stmt, Settings.System.STATUS_BAR_BATTERY_STYLE,
                     R.integer.def_battery_style);
 
             loadIntegerSetting(stmt, Settings.System.ENABLE_FORWARD_LOOKUP,

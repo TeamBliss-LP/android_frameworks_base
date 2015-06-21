@@ -18,9 +18,7 @@
 package com.android.systemui.statusbar.phone;
 
 import android.app.ActivityManager;
-import android.app.ActivityManagerNative;
 import android.app.AlarmManager;
-import android.app.IUserSwitchObserver;
 import android.app.PendingIntent;
 import android.content.ContentUris;
 import android.content.ContentResolver;
@@ -43,17 +41,13 @@ import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Handler;
-import android.os.IRemoteCallback;
-import android.os.RemoteException;
 import android.os.UserHandle;
 import android.os.Vibrator;
 import android.provider.AlarmClock;
 import android.provider.CalendarContract;
 import android.provider.CalendarContract.Events;
 import android.provider.Settings;
-import android.telephony.TelephonyManager;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.MathUtils;
 import android.util.TypedValue;
 import android.view.View;
@@ -71,12 +65,14 @@ import com.android.internal.util.cm.WeatherControllerImpl;
 import com.android.keyguard.KeyguardStatusView;
 import com.android.systemui.BatteryMeterView;
 import com.android.systemui.BatteryLevelTextView;
+import com.android.systemui.DockBatteryMeterView;
 import com.android.systemui.FontSizeUtils;
 import com.android.systemui.R;
 import com.android.systemui.cm.UserContentObserver;
 import com.android.systemui.qs.QSPanel;
 import com.android.systemui.qs.QSTile;
 import com.android.systemui.statusbar.policy.BatteryController;
+import com.android.systemui.statusbar.policy.DockBatteryController;
 import com.android.systemui.statusbar.policy.NextAlarmController;
 import com.android.systemui.statusbar.policy.UserInfoController;
 
@@ -84,8 +80,7 @@ import com.android.systemui.statusbar.policy.UserInfoController;
  * The view to manage the header area in the expanded status bar.
  */
 public class StatusBarHeaderView extends RelativeLayout implements View.OnClickListener, View.OnLongClickListener,
-        BatteryController.BatteryStateChangeCallback, NextAlarmController.NextAlarmChangeCallback,
-        WeatherController.Callback {
+        NextAlarmController.NextAlarmChangeCallback, WeatherController.Callback {
 
     private static final int STATUS_BAR_POWER_MENU_OFF = 0;
     private static final int STATUS_BAR_POWER_MENU_DEFAULT = 1;
@@ -116,6 +111,7 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
     private ImageView mQsDetailHeaderProgress;
     private TextView mEmergencyCallsOnly;
     private BatteryLevelTextView mBatteryLevel;
+    private BatteryLevelTextView mDockBatteryLevel;
     private TextView mAlarmStatus;
     private TextView mWeatherLine1, mWeatherLine2;
     private ImageView mStatusBarPowerMenu;
@@ -155,7 +151,6 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
     private float mAvatarCollapsedScaleFactor;
 
     private ActivityStarter mActivityStarter;
-    private BatteryController mBatteryController;
     private NextAlarmController mNextAlarmController;
     private WeatherController mWeatherController;
     private QSPanel mQSPanel;
@@ -235,6 +230,7 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
             mStatusBarPowerMenu.setOnLongClickListener(this);
         }
 
+        mDockBatteryLevel = (BatteryLevelTextView) findViewById(R.id.dock_battery_level_text);
         mAlarmStatus = (TextView) findViewById(R.id.alarm_status);
         mAlarmStatus.setOnClickListener(this);
         mAlarmStatus.setOnLongClickListener(this);
@@ -356,9 +352,26 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
     }
 
     public void setBatteryController(BatteryController batteryController) {
-        mBatteryController = batteryController;
-        ((BatteryMeterView) findViewById(R.id.battery)).setBatteryController(batteryController);
-        mBatteryLevel.setBatteryController(batteryController);
+        BatteryMeterView v = ((BatteryMeterView) findViewById(R.id.battery));
+        v.setBatteryStateRegistar(batteryController);
+        v.setBatteryController(batteryController);
+        mBatteryLevel.setBatteryStateRegistar(batteryController);
+    }
+
+    public void setDockBatteryController(DockBatteryController dockBatteryController) {
+        DockBatteryMeterView v = ((DockBatteryMeterView) findViewById(R.id.dock_battery));
+        if (dockBatteryController != null) {
+            v.setBatteryStateRegistar(dockBatteryController);
+            mDockBatteryLevel.setBatteryStateRegistar(dockBatteryController);
+        } else {
+            if (v != null) {
+                removeView(v);
+            }
+            if (mDockBatteryLevel != null) {
+                removeView(mDockBatteryLevel);
+                mDockBatteryLevel = null;
+            }
+        }
     }
 
     public void setNextAlarmController(NextAlarmController nextAlarmController) {
@@ -467,6 +480,10 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
     private void updateBatteryLevelVisibility() {
         mBatteryLevel.setForceShown(mExpanded && mShowBatteryTextExpanded);
         mBatteryLevel.setVisibility(View.VISIBLE);
+        if (mDockBatteryLevel != null) {
+            mDockBatteryLevel.setForceShown(mExpanded && mShowBatteryTextExpanded);
+            mDockBatteryLevel.setVisibility(View.VISIBLE);
+        }
     }
 
     private void updateSignalClusterDetachment() {
@@ -530,11 +547,9 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
     private void updateListeners() {
         if (mListening) {
             mSettingsObserver.observe();
-            mBatteryController.addStateChangedCallback(this);
             mNextAlarmController.addStateChangedCallback(this);
             mWeatherController.addCallback(this);
         } else {
-            mBatteryController.removeStateChangedCallback(this);
             mNextAlarmController.removeStateChangedCallback(this);
             mWeatherController.removeCallback(this);
             mSettingsObserver.unobserve();
@@ -577,16 +592,6 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
                 ? View.VISIBLE
                 : View.GONE);
         }
-    }
-
-    @Override
-    public void onBatteryLevelChanged(int level, boolean pluggedIn, boolean charging) {
-        // could not care less
-    }
-
-    @Override
-    public void onPowerSaveChanged() {
-        // could not care less
     }
 
     @Override
@@ -1022,6 +1027,9 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
         applyAlpha(mDateCollapsed, values.dateCollapsedAlpha);
         applyAlpha(mDateExpanded, values.dateExpandedAlpha);
         applyAlpha(mBatteryLevel, values.batteryLevelAlpha);
+        if (mDockBatteryLevel != null) {
+            applyAlpha(mDockBatteryLevel, values.batteryLevelAlpha);
+        }
         applyAlpha(mSettingsButton, values.settingsAlpha);
         applyAlpha(mWeatherLine1, values.settingsAlpha);
         applyAlpha(mWeatherLine2, values.settingsAlpha);
@@ -1263,10 +1271,10 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
 
             ContentResolver resolver = mContext.getContentResolver();
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_BATTERY_STATUS_STYLE),
+                    Settings.System.STATUS_BAR_BATTERY_STYLE),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_BATTERY_STATUS_PERCENT_STYLE),
+                    Settings.System.STATUS_BAR_SHOW_BATTERY_PERCENT),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_EXPANDED_HEADER_SHOW_WEATHER),
@@ -1319,9 +1327,9 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
 
             if (updateAll ||
                 uri.equals(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_BATTERY_STATUS_STYLE))
+                    Settings.System.STATUS_BAR_BATTERY_STYLE))
                 || uri.equals(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_BATTERY_STATUS_PERCENT_STYLE))) {
+                    Settings.System.STATUS_BAR_SHOW_BATTERY_PERCENT))) {
                 updateBatteryPercentageSettings();
             }
             if (updateAll ||
@@ -1394,9 +1402,9 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
     private void updateBatteryPercentageSettings() {
         ContentResolver resolver = mContext.getContentResolver();
         int batteryStyle = Settings.System.getInt(resolver,
-                Settings.System.STATUS_BAR_BATTERY_STATUS_STYLE, 0);
+                Settings.System.STATUS_BAR_BATTERY_STYLE, 0);
         boolean showExpandedBatteryPercentage = Settings.System.getInt(resolver,
-                Settings.System.STATUS_BAR_BATTERY_STATUS_PERCENT_STYLE, 2) == 2;
+                Settings.System.STATUS_BAR_SHOW_BATTERY_PERCENT, 2) == 2;
 
         switch (batteryStyle) {
             case 3: //BATTERY_METER_TEXT
