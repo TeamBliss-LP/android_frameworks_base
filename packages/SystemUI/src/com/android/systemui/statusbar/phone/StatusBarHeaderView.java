@@ -932,12 +932,12 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
         if (mHeadsUpButton != null) {
             target.headsUpTranslation = (mExpanded
                     ? 0
-                    : mMultiUserSwitch.getLeft() - mHeadsUpButton.getLeft());
+                    : mSettingsButton.getLeft()  - mHeadsUpButton.getLeft());
         }
         if (mStatusBarPowerMenu != null) {
             target.statusBarPowerMenuTranslation = (mExpanded
                     ? 0
-                    : mMultiUserSwitch.getLeft() - mStatusBarPowerMenu.getLeft());
+                    : mSettingsButton.getLeft()  - mStatusBarPowerMenu.getLeft());
         }
         target.signalClusterAlpha = (mSignalClusterDetached ? 0f : 1f);
         target.settingsRotation = (mExpanded ? 0f : 180f);
@@ -999,18 +999,18 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
 
         if (mShowHeadsUpButton && mHeadsUpButton != null) {
             mHeadsUpButton.setRotation(values.settingsRotation);
-            mHeadsUpButton.setTranslationX(values.headsUpTranslation);
+            mHeadsUpButton.setTranslationX(values.settingsTranslation+values.headsUpTranslation);
             mHeadsUpButton.setTranslationY(mSystemIconsSuperContainer.getTranslationY());
         }
         if (mStatusBarPowerMenu != null &&
             mStatusBarPowerMenuStyle != STATUS_BAR_POWER_MENU_OFF) {
             mStatusBarPowerMenu.setRotation(values.settingsRotation);
-            mStatusBarPowerMenu.setTranslationX(values.statusBarPowerMenuTranslation);
+            mStatusBarPowerMenu.setTranslationX(values.settingsTranslation+values.statusBarPowerMenuTranslation);
             mStatusBarPowerMenu.setTranslationY(mSystemIconsSuperContainer.getTranslationY());
         }
         if (mShowTaskManager && mTaskManagerButton != null) {
             mTaskManagerButton.setRotation(values.settingsRotation);
-            mTaskManagerButton.setTranslationX(values.taskManagerTranslation);
+            mTaskManagerButton.setTranslationX(values.settingsTranslation+values.taskManagerTranslation);
             mTaskManagerButton.setTranslationY(mSystemIconsSuperContainer.getTranslationY());
         }
 
