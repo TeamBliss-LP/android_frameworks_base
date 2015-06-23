@@ -73,27 +73,27 @@ public class NavBarTile extends QSTile<QSTile.BooleanState> {
         mHost.startSettingsActivity(intent);
     }
 
- protected void toggleState() {
-         Settings.System.putInt(mContext.getContentResolver(),
-                        Settings.System.NAVBAR_FORCE_ENABLE, !navbarEnabled() ? 1 : 0);
+    protected void toggleState() {
+        Settings.System.putInt(mContext.getContentResolver(),
+            Settings.System.NAVBAR_FORCE_ENABLE, !navbarEnabled() ? 1 : 0);
     }
 
 
     @Override
     protected void handleUpdateState(BooleanState state, Object arg) {
         state.visible = true;
-	if (navbarEnabled()) {
-        state.icon = ResourceIcon.get(R.drawable.ic_qs_navbar_on);
-        state.label = mContext.getString(R.string.quick_settings_navbar_on);
-	} else {
-        state.icon = ResourceIcon.get(R.drawable.ic_qs_navbar_off);
-	state.label = mContext.getString(R.string.quick_settings_navbar_off);
-	    }
-	}
+        if (navbarEnabled()) {
+            state.icon = ResourceIcon.get(R.drawable.ic_qs_navbar_on);
+            state.label = mContext.getString(R.string.quick_settings_navbar_on);
+        } else {
+            state.icon = ResourceIcon.get(R.drawable.ic_qs_navbar_off);
+            state.label = mContext.getString(R.string.quick_settings_navbar_off);
+        }
+    }
 
     private boolean navbarEnabled() {
         return Settings.System.getInt(mContext.getContentResolver(),
-                Settings.System.NAVBAR_FORCE_ENABLE, 1) == 1;
+                Settings.System.NAVBAR_FORCE_ENABLE, 0) == 1;
     }
 
     @Override
