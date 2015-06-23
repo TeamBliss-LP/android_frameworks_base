@@ -516,6 +516,7 @@ public class NetworkControllerImpl extends BroadcastReceiver
         // inet condition and airplane mode.
         pushConnectivityToSignals();
         updateAirplaneMode(true /* force */);
+        recalculateEmergency();
     }
 
     @VisibleForTesting
