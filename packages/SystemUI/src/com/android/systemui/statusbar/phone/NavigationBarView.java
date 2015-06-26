@@ -578,6 +578,7 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
     }
 
     private void setLayoutChangerType(View v, int side, int orientation) {
+        if (v instanceof LayoutChangerButtonView)
         switch (side) {
             case CHANGER_LEFT_SIDE:
                ((LayoutChangerButtonView) v).setImeLayout(
@@ -970,18 +971,30 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
             // add the custom buttons
             for (int j = 0; j < length; j++) {
                 mInfo = buttonsArray.get(j);
-                mButton = new KeyButtonView(mContext, null);
-                mButton.setDeviceOrientation(landscape, mTablet);
-                mButton.setButtonActions(mInfo);
-                mButton.setLongPressTimeout(mLongPressTimeout);
-                mButton.setLayoutParams(getLayoutParams(landscape, mButtonWidth, mTablet ? 1f : 0.5f));
+                if (mInfo.singleAction != null &&
+                    (mInfo.singleAction == ACTION_IME ||
+                     mInfo.singleAction == ACTION_IME_LAYOUT)) {
+                    mChanger = new LayoutChangerButtonView(mContext, null);
+                    mChanger.setButtonActions(mInfo);
+                    mChanger.setImageResource(R.drawable.ic_sysbar_ime_arrows);
+                    mChanger.setLayoutParams(getLayoutParams(landscape, mTablet ? mMenuButtonWidth : separatorSize, 0f));
+                    addButton(navButtons, mChanger, landscape);
+                    addLightsOutButton(lightsOut, mChanger, landscape, false);
+                }
+                else {
+                    mButton = new KeyButtonView(mContext, null);
+                    mButton.setDeviceOrientation(landscape, mTablet);
+                    mButton.setButtonActions(mInfo);
+                    mButton.setLongPressTimeout(mLongPressTimeout);
+                    mButton.setLayoutParams(getLayoutParams(landscape, mButtonWidth, mTablet ? 1f : 0.5f));
 
-                if (!mButton.mHasBlankSingleAction) {
-                    addButton(navButtons, mButton, landscape);
-                    addLightsOutButton(lightsOut, mButton, landscape, false);
-                } else {
-                    addSeparator(navButtons, landscape, (int) mButtonWidth, mTablet ? 1f : 0.5f);
-                    addSeparator(lightsOut, landscape, (int) mButtonWidth, mTablet ? 1f : 0.5f);
+                    if (!mButton.mHasBlankSingleAction) {
+                        addButton(navButtons, mButton, landscape);
+                        addLightsOutButton(lightsOut, mButton, landscape, false);
+                    } else {
+                        addSeparator(navButtons, landscape, (int) mButtonWidth, mTablet ? 1f : 0.5f);
+                        addSeparator(lightsOut, landscape, (int) mButtonWidth, mTablet ? 1f : 0.5f);
+                    }
                 }
             }
 
