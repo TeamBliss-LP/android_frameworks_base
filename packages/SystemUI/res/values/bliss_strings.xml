@@ -9,6 +9,9 @@
     <string name="quick_settings_hwkeys_off">Hardware Keys Disabled</string>
     <string name="quick_settings_gesture_on">Gesture Anywhere enabled</string>
     <string name="quick_settings_gesture_off">Gesture Anywhere disabled</string>
+    <!-- Slim Action floats tile -->
+    <string name="quick_settings_slim_floats_on">Slim Floats Enabled</string>
+    <string name="quick_settings_slim_floats_off">Slim Floats Disabled</string>
 
     <!-- mount notifications -->
     <string name="ext_media_mounted_notification_title">mounted</string>

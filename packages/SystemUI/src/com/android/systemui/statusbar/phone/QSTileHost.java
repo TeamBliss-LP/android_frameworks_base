@@ -76,6 +76,7 @@ import com.android.systemui.qs.tiles.NavBarTile;
 import com.android.systemui.qs.tiles.HWKeysTile;
 import com.android.systemui.qs.tiles.AppCircleBarTile;
 import com.android.systemui.qs.tiles.UsbTetherTile;
+import com.android.systemui.qs.tiles.SlimFloatsTile;
 import com.android.systemui.qs.tiles.WifiTile;
 import com.android.systemui.qs.tiles.AppSideBarTile;
 import com.android.systemui.settings.CurrentUserTracker;
@@ -417,6 +418,8 @@ public class QSTileHost implements QSTile.Host {
                 return new MusicTile(this);
             case QSConstants.TILE_APPSIDEBAR:
                 return new AppSideBarTile(this);
+            case QSConstants.TILE_SLIM_FLOATS:
+                return new SlimFloatsTile(this);
             default:
                 throw new IllegalArgumentException("Bad tile spec: " + tileSpec);
         }
