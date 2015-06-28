@@ -4979,14 +4979,6 @@ public final class Settings {
          */
         public static final String NETWORK_TRAFFIC_HIDE_ARROW = "network_traffic_hide_arrow";
 
-
-        /**
-         * Launch apps in floating window or not
-         *
-         * @hide
-         */
-        public static final String SLIM_ACTIONS_USE_FLOATING_WINDOW = "slim_action_use_floating_window";
-        
         /**
          * Settings to backup. This is here so that it's in the same place as the settings
          * keys and easy to update.
