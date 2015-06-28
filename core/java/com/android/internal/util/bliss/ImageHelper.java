@@ -40,13 +40,12 @@ import android.util.TypedValue;
 public class ImageHelper {
 
     public static Drawable getColoredDrawable(Drawable d, int color) {
-        if (d == null) {
-            return null;
-        }
+        if (d == null) return null;
         if (d instanceof VectorDrawable) {
             d.setTint(color);
             return d;
         }
+        if (!(d instanceof BitmapDrawable)) return d;
         Bitmap colorBitmap = ((BitmapDrawable) d).getBitmap();
         Bitmap grayscaleBitmap = toGrayscale(colorBitmap);
         Paint pp = new Paint();
@@ -61,6 +60,7 @@ public class ImageHelper {
     }
 
     public static Bitmap drawableToBitmap (Drawable drawable) {
+        if (drawable == null) return null;
         if (drawable instanceof BitmapDrawable) {
             return ((BitmapDrawable) drawable).getBitmap();
         }
@@ -73,6 +73,7 @@ public class ImageHelper {
     }
 
     private static Bitmap toGrayscale(Bitmap bmpOriginal) {
+        if (bmpOriginal == null) return null;
         int width, height;
         height = bmpOriginal.getHeight();
         width = bmpOriginal.getWidth();
