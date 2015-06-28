@@ -573,9 +573,10 @@ public class PieController implements BaseStatusBar.NavigationBarCallback, PieVi
     private Drawable resizeIcon(ImageView view, Drawable d, boolean useSystemDimens) {
         int size = 0;
         Drawable dOriginal = d;
-        if (d == null) {
+        if (d == null && view != null) {
             dOriginal = view.getDrawable();
         }
+        if (dOriginal == null) return null;
         if (useSystemDimens) {
             size = mContext.getResources().getDimensionPixelSize(
                     com.android.internal.R.dimen.app_icon_size);
