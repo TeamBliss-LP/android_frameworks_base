@@ -588,6 +588,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         @Override
         public void onChange(boolean selfChange, Uri uri) {
             ContentResolver resolver = mContext.getContentResolver();
+            boolean doRecreate = false;
             if (uri.equals(Settings.System.getUriFor(
                     Settings.System.BATTERY_SAVER_MODE_COLOR))) {
                     mBatterySaverWarningColor = Settings.System.getIntForUser(
@@ -642,17 +643,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     Settings.System.PIE_CONTROLS))) {
                     attachPieContainer(isPieEnabled());
             } else if (uri.equals(Settings.System.getUriFor(
-                    Settings.System.QS_COLOR_SWITCH))) {
-                    mQSCSwitch = Settings.System.getIntForUser(
-                        resolver,
-                        Settings.System.QS_COLOR_SWITCH,
-                        0, mCurrentUserId) == 1;
-                    recreateStatusBar();
-                    updateRowStates();
-                    updateSpeedbump();
-                    updateClearAll();
-                    updateEmptyShadeView();
-            } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_CARRIER))) {
                     mShowStatusBarCarrier = Settings.System.getIntForUser(
                         resolver,
@@ -661,27 +651,40 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     showStatusBarCarrierLabel(mShowStatusBarCarrier);
             } else if (uri.equals(Settings.Global.getUriFor(
                     Settings.Global.WIFI_STATUS_BAR_SSID))) {
-                    mShowWifiSsidLabel = Settings.Global.getInt(
-                        resolver,
+                    mShowWifiSsidLabel = Settings.Global.getInt(resolver,
                         Settings.Global.WIFI_STATUS_BAR_SSID, 0) == 1;
                     showWifiSsidLabel(mShowWifiSsidLabel);
             } else if (uri.equals(Settings.System.getUriFor(
-                    Settings.System.ENABLE_TASK_MANAGER))) {
+                        Settings.System.ENABLE_TASK_MANAGER)) ||
+                    uri.equals(Settings.System.getUriFor(
+                        Settings.System.QS_COLOR_SWITCH)) ||
+                    uri.equals(Settings.System.getUriFor(
+                        Settings.System.QS_TEXT_COLOR)) ) {
+                    mQSCSwitch = Settings.System.getIntForUser(resolver,
+                        Settings.System.QS_COLOR_SWITCH, 0, mCurrentUserId) == 1;
                     mShowTaskManager = Settings.System.getIntForUser(
                         mContext.getContentResolver(),
                         Settings.System.ENABLE_TASK_MANAGER,
-                        0, UserHandle.USER_CURRENT) == 1;
-                    recreateStatusBar();
-                    updateRowStates();
-                    updateSpeedbump();
-                    updateClearAll();
-                    updateEmptyShadeView();
+                        0, mCurrentUserId) == 1;
+                    doRecreate = true;
             }
-            update();
+            updateEx(doRecreate);
         }
 
         @Override
         public void update() {
+            updateEx(false);
+        }
+
+        private void updateEx(boolean doRecreate) {
+            if (doRecreate) {
+                recreateStatusBar();
+                updateRowStates();
+                updateSpeedbump();
+                updateClearAll();
+                updateEmptyShadeView();
+            }
+
             ContentResolver resolver = mContext.getContentResolver();
             int mode = Settings.System.getIntForUser(resolver,
                     Settings.System.SCREEN_BRIGHTNESS_MODE,
@@ -699,7 +702,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     Settings.System.HEADS_UP_TOUCH_OUTSIDE, 0) == 1;
 
             mQSCSwitch = Settings.System.getIntForUser(resolver,
-                    Settings.System.QS_COLOR_SWITCH, 0, mCurrentUserId) == 1;
+                    Settings.System.QS_COLOR_SWITCH,
+                    0, mCurrentUserId) == 1;
 
             int sidebarPosition = Settings.System.getInt(resolver,
                     Settings.System.APP_SIDEBAR_POSITION,

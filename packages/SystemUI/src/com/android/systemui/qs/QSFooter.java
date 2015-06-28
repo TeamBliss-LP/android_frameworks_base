@@ -104,7 +104,9 @@ public class QSFooter implements OnClickListener, DialogInterface.OnClickListene
     }
 
     public void refreshState() {
-        mHandler.sendEmptyMessage(H.REFRESH_STATE);
+        if (mHandler != null) {
+            mHandler.sendEmptyMessage(H.REFRESH_STATE);
+        }
     }
 
     private void handleRefreshState() {

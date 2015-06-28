@@ -123,7 +123,8 @@ public class VisualizerTile extends QSTile<QSTile.State> implements KeyguardMoni
                         Settings.System.QS_COLOR_SWITCH, 0) == 1;
                 int color = Settings.System.getInt(
                         getContext().getContentResolver(),
-                        Settings.System.QS_ICON_COLOR, 0x96FFFFFF);
+                        Settings.System.QS_ICON_COLOR,
+                        r.getColor(R.color.visualizer_fill_color));
 
                 mVisualizer = new VisualizerView(mContext);
                 mVisualizer.setEnabled(false);

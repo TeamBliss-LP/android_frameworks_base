@@ -107,7 +107,7 @@ public class FlashlightTile extends QSTile<QSTile.BooleanState> implements
                     : R.drawable.ic_qs_flashlight_off);
         } else {
             final AnimationIcon icon = state.value ? mEnable : mDisable;
-            icon.setAllowAnimation(arg instanceof UserBoolean && ((UserBoolean) arg).userInitiated);
+            //icon.setAllowAnimation(arg instanceof UserBoolean && ((UserBoolean) arg).userInitiated);
             state.icon = icon;
         }
         int onOrOffId = state.value
