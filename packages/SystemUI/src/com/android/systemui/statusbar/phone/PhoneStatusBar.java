@@ -735,10 +735,12 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             mGreeting = Settings.System.getStringForUser(resolver,
                     Settings.System.STATUS_BAR_GREETING,
                     mCurrentUserId);
-            if (mGreeting != null && mBlissLabel != null && !TextUtils.isEmpty(mGreeting)) {
-                mBlissLabel.setText(mGreeting);
-            } else {
-                mBlissLabel.setText("");
+            if (mBlissLabel != null) {
+                if (mGreeting != null && !TextUtils.isEmpty(mGreeting)) {
+                    mBlissLabel.setText(mGreeting);
+                } else {
+                    mBlissLabel.setText("");
+                }
             }
             mShowLabelTimeout = Settings.System.getIntForUser(resolver,
                     Settings.System.STATUS_BAR_GREETING_TIMEOUT,
