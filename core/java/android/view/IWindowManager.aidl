@@ -292,11 +292,4 @@ interface IWindowManager
      * @hide
      */
     void toggleGlobalMenu();
-
-    /** FLOAT VIEW **/
-    Rect getAppFullscreenViewRect();
-    Rect getAppMinimumViewRect();
-    Rect getFloatViewRect();
-    void notifyFloatActivityTouched(IBinder token, boolean force);
-
 }
