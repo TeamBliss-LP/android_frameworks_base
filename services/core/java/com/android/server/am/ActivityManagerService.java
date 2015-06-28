@@ -678,65 +678,9 @@ public final class ActivityManagerService extends ActivityManagerNative
      */
     private final StringBuilder mStrictModeBuffer = new StringBuilder();
 
-    /**
-     * Keeps track of all IIntentReceivers that have been registered for
-     * broadcasts.  Hash keys are the receiver IBinder, hash value is
-     * a ReceiverList.
-     */
-    final HashMap<IBinder, ReceiverList> mRegisteredReceivers =
-            new HashMap<IBinder, ReceiverList>();
-
     static int getDropboxMaxSize() {
         return SystemProperties.getInt(SYSTEM_DROPBOX_MAX_SIZE, DROPBOX_MAX_SIZE) * 1024;
     }
-
-    /**
-     * Resolver for broadcast intents to registered receivers.
-     * Holds BroadcastFilter (subclass of IntentFilter).
-     */
-    final IntentResolver<BroadcastFilter, BroadcastFilter> mReceiverResolver
-            = new IntentResolver<BroadcastFilter, BroadcastFilter>() {
-        @Override
-        protected boolean allowFilterResult(
-                BroadcastFilter filter, List<BroadcastFilter> dest) {
-            IBinder target = filter.receiverList.receiver.asBinder();
-            for (int i=dest.size()-1; i>=0; i--) {
-                if (dest.get(i).receiverList.receiver.asBinder() == target) {
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        @Override
-        protected BroadcastFilter newResult(BroadcastFilter filter, int match, int userId) {
-            if (userId == UserHandle.USER_ALL || filter.owningUserId == UserHandle.USER_ALL
-                    || userId == filter.owningUserId) {
-                return super.newResult(filter, match, userId);
-            }
-            return null;
-        }
-
-        @Override
-        protected BroadcastFilter[] newArray(int size) {
-            return new BroadcastFilter[size];
-        }
-
-        @Override
-        protected boolean isPackageForFilter(String packageName, BroadcastFilter filter) {
-            return packageName.equals(filter.packageName);
-        }
-    };
-
-    /**
-     * State of all active sticky broadcasts per user.  Keys are the action of the
-     * sticky Intent, values are an ArrayList of all broadcasted intents with
-     * that action (which should usually be one).  The SparseArray is keyed
-     * by the user ID the sticky is for, and can include UserHandle.USER_ALL
-     * for stickies that are sent to all users.
-     */
-    final SparseArray<ArrayMap<String, ArrayList<Intent>>> mStickyBroadcasts =
-            new SparseArray<ArrayMap<String, ArrayList<Intent>>>();
 
     final ActiveServices mServices;
 
