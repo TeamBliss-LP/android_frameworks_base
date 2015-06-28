@@ -109,18 +109,6 @@
                     android:visibility="gone"
                     android:ellipsize="end" />
 
-                <TextView
-                    android:id="@+id/status_bar_wifi_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:textAppearance="@style/TextAppearance.StatusBar.WifiLabel"
-                    android:paddingStart="7dp"
-                    android:paddingEnd="7dp"
-                    android:visibility="gone"
-                    android:singleLine="true"
-                    android:ellipsize="end" />
-
                 <com.android.systemui.statusbar.StatusBarIconView android:id="@+id/moreIcon"
                     android:layout_width="@dimen/status_bar_icon_size"
                     android:layout_height="match_parent"

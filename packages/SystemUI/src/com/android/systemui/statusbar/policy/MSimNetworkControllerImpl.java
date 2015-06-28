@@ -1384,18 +1384,6 @@ public class MSimNetworkControllerImpl extends NetworkControllerImpl {
             }
         }
 
-        // wifi label
-        boolean mShowWifiSsidLabel = Settings.Global.getInt(
-                    mContext.getContentResolver(),
-                    Settings.Global.WIFI_STATUS_BAR_SSID, 0) == 1;
-        wifiLabel = wifiLabel.replace("\"", "");
-        mShowWifiSsidLabel = mShowWifiSsidLabel && !"".equals(wifiLabel);
-        if (DEBUGS) Log.d(TAG, "refreshViews: mShowWifiSsidLabel = " + mShowWifiSsidLabel);
-        for (TextView v : mWifiLabelViews) {
-            v.setText(wifiLabel);
-            v.setVisibility(mShowWifiSsidLabel ? View.VISIBLE : View.GONE);
-        }
-
         // mobile label
         boolean mShowCarrierLabel = !"".equals(mobileLabel);
         if (DEBUGS) Log.d(TAG, "refreshViews: mShowCarrierLabel = " + mShowCarrierLabel);

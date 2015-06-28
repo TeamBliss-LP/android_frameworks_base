@@ -418,9 +418,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     // Status bar carrier
     private boolean mShowStatusBarCarrier;
 
-    private TextView mWifiSsidLabel;
-    private boolean mShowWifiSsidLabel;
-
     // position
     int[] mPositionTmp = new int[2];
     boolean mExpandedVisible;
@@ -565,9 +562,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     Settings.System.NOTIFICATION_DRAWER_CLEAR_ALL_ICON_COLOR),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.Global.WIFI_STATUS_BAR_SSID),
-                    false, this);
-            resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.ENABLE_TASK_MANAGER),
                     false, this, UserHandle.USER_ALL);
             update();
@@ -649,11 +643,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                         Settings.System.STATUS_BAR_CARRIER,
                         0, mCurrentUserId) == 1;
                     showStatusBarCarrierLabel(mShowStatusBarCarrier);
-            } else if (uri.equals(Settings.Global.getUriFor(
-                    Settings.Global.WIFI_STATUS_BAR_SSID))) {
-                    mShowWifiSsidLabel = Settings.Global.getInt(resolver,
-                        Settings.Global.WIFI_STATUS_BAR_SSID, 0) == 1;
-                    showWifiSsidLabel(mShowWifiSsidLabel);
             } else if (uri.equals(Settings.System.getUriFor(
                         Settings.System.ENABLE_TASK_MANAGER)) ||
                     uri.equals(Settings.System.getUriFor(
@@ -1334,11 +1323,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                    .getColor(com.android.internal.R.color.battery_saver_mode_color);
         }
 
-        mWifiSsidLabel = (TextView)mStatusBarView.findViewById(R.id.status_bar_wifi_label);
-        mShowWifiSsidLabel = Settings.Global.getInt(
-                mContext.getContentResolver(),
-                Settings.Global.WIFI_STATUS_BAR_SSID, 0) == 1;
-
         mShowStatusBarCarrier = Settings.System.getIntForUser(
                 mContext.getContentResolver(),
                 Settings.System.STATUS_BAR_CARRIER,
@@ -1419,12 +1403,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
             mMSimNetworkController.addEmergencyLabelView(mHeader);
 
-            boolean canshowWifiLabel = mWifiSsidLabel != null;
-            if (canshowWifiLabel) {
-                mMSimNetworkController.addWifiLabelView(mWifiSsidLabel);
-                mWifiSsidLabel.setVisibility(mShowWifiSsidLabel ? View.VISIBLE : View.GONE);
-            }
-
             mCarrierLabel = (TextView)mStatusBarWindowContent.findViewById(R.id.carrier_label);
             mShowCarrierInPanel = (mCarrierLabel != null);
             if (mShowCarrierInPanel) {
@@ -1468,12 +1446,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             final boolean isAPhone = mNetworkController.hasVoiceCallingFeature();
             if (isAPhone) {
                 mNetworkController.addEmergencyLabelView(mHeader);
-            }
-
-            boolean canshowWifiLabel = mWifiSsidLabel != null;
-            if (canshowWifiLabel) {
-                mNetworkController.addWifiLabelView(mWifiSsidLabel);
-                mWifiSsidLabel.setVisibility(mShowWifiSsidLabel ? View.VISIBLE : View.GONE);
             }
 
             mCarrierLabel = (TextView)mStatusBarWindowContent.findViewById(R.id.carrier_label);
@@ -4448,17 +4420,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         }
     }
 
-    public void showWifiSsidLabel(boolean show) {
-        if (mStatusBarView == null || mContext == null) return;
-        View WifiSsidLabel = mStatusBarView.findViewById(R.id.status_bar_wifi_label);
-        if (WifiSsidLabel != null) {
-            WifiSsidLabel.setVisibility(show ? View.VISIBLE : View.GONE);
-            if (DEBUGS) Log.v(TAG, "showWifiSsidLabel: label visible: "+(show ? "true" : "false"));
-        } else {
-            if (DEBUGS) Log.v(TAG, "showWifiSsidLabel: label not found!");
-        }
-    }
-
     private void resetUserExpandedStates() {
         ArrayList<Entry> activeNotifications = mNotificationData.getActiveNotifications();
         final int notificationCount = activeNotifications.size();
@@ -4775,10 +4736,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         TextView carrier = (TextView) mStatusBarView.findViewById(R.id.status_bar_carrier_label);
         if (carrier != null) {
             FontSizeUtils.updateFontSize(carrier, R.dimen.status_bar_clock_size);
-        }
-        TextView wifi = (TextView) mStatusBarView.findViewById(R.id.status_bar_wifi_label);
-        if (wifi != null) {
-            FontSizeUtils.updateFontSize(wifi, R.dimen.status_bar_clock_size);
         }
     }
 

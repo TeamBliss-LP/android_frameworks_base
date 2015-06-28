@@ -240,9 +240,6 @@ public class NetworkControllerImpl extends BroadcastReceiver
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_SHOW_NETWORK_ACTIVITY),
                     false, this, UserHandle.USER_ALL);
-            resolver.registerContentObserver(Settings.Global.getUriFor(
-                    Settings.Global.WIFI_STATUS_BAR_SSID),
-                    false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_CARRIER),
                     false, this, UserHandle.USER_ALL);
@@ -1735,18 +1732,6 @@ public class NetworkControllerImpl extends BroadcastReceiver
             for (TextView v : mCombinedLabelViews) {
                 v.setText(combinedLabel);
             }
-        }
-
-        // wifi label
-        boolean mShowWifiSsidLabel = Settings.Global.getInt(
-                    mContext.getContentResolver(),
-                    Settings.Global.WIFI_STATUS_BAR_SSID, 0) == 1;
-        wifiLabel = wifiLabel.replace("\"", "");
-        mShowWifiSsidLabel = mShowWifiSsidLabel && !"".equals(wifiLabel);
-        if (DEBUGS) Log.d(TAG, "refreshViews: mShowWifiSsidLabel = " + mShowWifiSsidLabel);
-        for (TextView v : mWifiLabelViews) {
-            v.setText(wifiLabel);
-            v.setVisibility(mShowWifiSsidLabel ? View.VISIBLE : View.GONE);
         }
 
         // mobile label
