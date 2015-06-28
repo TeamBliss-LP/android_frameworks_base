@@ -240,9 +240,6 @@ public class NetworkControllerImpl extends BroadcastReceiver
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_SHOW_NETWORK_ACTIVITY),
                     false, this, UserHandle.USER_ALL);
-            resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_CARRIER),
-                    false, this, UserHandle.USER_ALL);
             mDirectionArrowsEnabled = Settings.System.getIntForUser(resolver,
                     Settings.System.STATUS_BAR_SHOW_NETWORK_ACTIVITY,
                     0, UserHandle.USER_CURRENT) == 0 ? false : true;
@@ -308,7 +305,6 @@ public class NetworkControllerImpl extends BroadcastReceiver
         filter.addAction(TelephonyIntents.SPN_STRINGS_UPDATED_ACTION);
         filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION_IMMEDIATE);
         filter.addAction(ConnectivityManager.INET_CONDITION_ACTION);
-        filter.addAction(Intent.ACTION_CUSTOM_CARRIER_LABEL_CHANGED);
         filter.addAction(Intent.ACTION_CONFIGURATION_CHANGED);
         filter.addAction(Intent.ACTION_AIRPLANE_MODE_CHANGED);
 
@@ -634,8 +630,6 @@ public class NetworkControllerImpl extends BroadcastReceiver
         } else if (action.equals(ConnectivityManager.CONNECTIVITY_ACTION_IMMEDIATE) ||
                  action.equals(ConnectivityManager.INET_CONDITION_ACTION)) {
             updateConnectivity(intent);
-        } else if (action.equals(Intent.ACTION_CUSTOM_CARRIER_LABEL_CHANGED)) {
-            refreshViews();
         } else if (action.equals(Intent.ACTION_CONFIGURATION_CHANGED)) {
             //parse the string to current language string in public resources
             if (mContext.getResources().getBoolean(
@@ -1336,11 +1330,6 @@ public class NetworkControllerImpl extends BroadcastReceiver
         int N;
         final boolean emergencyOnly = isEmergencyOnly();
 
-        final String customCarrierLabel = Settings.System.getStringForUser(
-                context.getContentResolver(),
-                Settings.System.CUSTOM_CARRIER_LABEL,
-                UserHandle.USER_CURRENT);
-
         if (!mHasMobileDataFeature) {
             mDataSignalIconId = mPhoneSignalIconId = 0;
             mQSPhoneSignalIconId = 0;
@@ -1527,7 +1516,6 @@ public class NetworkControllerImpl extends BroadcastReceiver
                     + Integer.toHexString(combinedSignalIconId)
                     + "/" + getResourceName(combinedSignalIconId)
                     + " combinedActivityIconId=0x" + Integer.toHexString(combinedActivityIconId)
-                    + " customCarrierLabel=" + customCarrierLabel
                     + " mobileLabel=" + mobileLabel
                     + " wifiLabel=" + wifiLabel
                     + " emergencyOnly=" + emergencyOnly
@@ -1567,11 +1555,6 @@ public class NetworkControllerImpl extends BroadcastReceiver
                     + " mBluetoothTetherIconId=0x"
                     + Integer.toHexString(mBluetoothTetherIconId)
                     + "/" + getResourceName(mBluetoothTetherIconId));
-        }
-
-        if (!TextUtils.isEmpty(customCarrierLabel)) {
-            combinedLabel = customCarrierLabel;
-            mobileLabel = customCarrierLabel;
         }
 
         // update QS

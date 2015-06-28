@@ -417,8 +417,6 @@ public class MSimNetworkControllerImpl extends NetworkControllerImpl {
                  action.equals(ConnectivityManager.INET_CONDITION_ACTION)) {
             updateConnectivity(intent);
             refreshViews(mDefaultPhoneId);
-        } else if (action.equals(Intent.ACTION_CUSTOM_CARRIER_LABEL_CHANGED)) {
-            refreshViews();
         } else if (action.equals(Intent.ACTION_CONFIGURATION_CHANGED)) {
             //parse the string to current language string in public resources
             if (mContext.getResources().getBoolean(com.android.internal.R.
@@ -1076,11 +1074,6 @@ public class MSimNetworkControllerImpl extends NetworkControllerImpl {
         String wifiLabel = "";
         int N;
 
-        final String customCarrierLabel = Settings.System.getStringForUser(
-                context.getContentResolver(),
-                Settings.System.CUSTOM_CARRIER_LABEL,
-                UserHandle.USER_CURRENT);
-
         if (DEBUG) {
             Slog.d(TAG,"refreshViews phoneId =" + phoneId + "mMSimDataConnected ="
                     + mMSimDataConnected[phoneId]);
@@ -1284,7 +1277,6 @@ public class MSimNetworkControllerImpl extends NetworkControllerImpl {
                     + " mMSimcombinedActivityIconId=0x" + Integer.toHexString
                             (mMSimcombinedActivityIconId[phoneId])
                     + " mobileLabel=" + mobileLabel
-                    + " customCarrierLabel=" + customCarrierLabel
                     + " mAirplaneMode=" + mAirplaneMode
                     + " mMSimDataActivity=" + mMSimDataActivity[phoneId]
                     + " mMSimPhoneSignalIconId=0x" + Integer.toHexString
@@ -1304,11 +1296,6 @@ public class MSimNetworkControllerImpl extends NetworkControllerImpl {
                     + "/" + getResourceName(mMSimMobileActivityIconId[phoneId])
                     + " mWifiIconId=0x" + Integer.toHexString(mWifiIconId)
                     + " mBluetoothTetherIconId=0x" + Integer.toHexString(mBluetoothTetherIconId));
-        }
-
-        if (!TextUtils.isEmpty(customCarrierLabel)) {
-            combinedLabel = customCarrierLabel;
-            mobileLabel = customCarrierLabel;
         }
 
         // update QS

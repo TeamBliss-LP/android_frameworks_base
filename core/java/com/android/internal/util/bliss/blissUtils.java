@@ -17,9 +17,6 @@
 package com.android.internal.util.bliss;
 
 import android.content.Context;
-import android.content.res.Resources;
-
-import java.util.Locale;
 
 public class blissUtils {
 
@@ -27,10 +24,4 @@ public class blissUtils {
         return context.getResources().getBoolean(
                 com.android.internal.R.bool.config_showNavigationBar);
     }
-
-    public static boolean isChineseLanguage() {
-       return Resources.getSystem().getConfiguration().locale.getLanguage().startsWith(
-               Locale.CHINESE.getLanguage());
-    }
-
 }
