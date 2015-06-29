@@ -23,10 +23,11 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.database.ContentObserver;
 import android.graphics.PorterDuff.Mode;
+import android.net.Uri;
 import android.os.Handler;
+import android.os.SystemProperties;
 import android.os.UserHandle;
 import android.provider.Settings;
-import android.os.SystemProperties;
 import android.telephony.SignalStrength;
 import android.telephony.SubscriptionManager;
 import android.telephony.SubscriptionInfo;
@@ -87,10 +88,10 @@ public class SignalClusterView
     private int mSecondaryTelephonyPadding;
 
     private int mActivityIcon = 0;
-    private int mNetworkColor;
-    private int mNetworkActivityColor;
-    private int mAirplaneModeColor;
-    private int mVpnColor;
+    private int mNetworkColor = DEFAULT_COLOR;
+    private int mNetworkActivityColor = DEFAULT_ACTIVITY_COLOR;
+    private int mAirplaneModeColor = DEFAULT_COLOR;
+    private int mVpnColor = DEFAULT_COLOR;
 
     class SettingsObserver extends ContentObserver {
         SettingsObserver(Handler handler) {
@@ -117,10 +118,16 @@ public class SignalClusterView
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_VPN_ICON_COLOR),
                     false, this, UserHandle.USER_ALL);
+            updateColorsFromSettings();
         }
 
         void unobserve() {
             mContext.getContentResolver().unregisterContentObserver(this);
+        }
+
+        @Override
+        public void onChange(boolean selfChange, Uri uri) {
+            updateColors();
         }
 
         @Override
@@ -392,7 +399,7 @@ public class SignalClusterView
                 if (!anyMobileVisible) {
                     firstMobileTypeId = state.mMobileTypeId;
                     anyMobileVisible = true;
-                    state.applyColor(mNetworkActivityColor);
+                    state.applyColors();
                 }
             }
         }
@@ -456,11 +463,14 @@ public class SignalClusterView
         public boolean apply(boolean isSecondaryIcon) {
             if (mMobileVisible && !mIsAirplaneMode) {
                 mMobile.setImageResource(mMobileStrengthId);
+                mMobile.setColorFilter(mNetworkColor, Mode.MULTIPLY);
                 mMobileGroup.setContentDescription(
                         mMobileTypeDescription + " " + mMobileDescription);
                 mMobileGroup.setVisibility(View.VISIBLE);
                 mMobileActivity.setImageResource(mMobileActivityId);
+                mMobileActivity.setColorFilter(mNetworkActivityColor, Mode.MULTIPLY);
                 mMobileType.setImageResource(mMobileTypeId);
+                mMobileType.setColorFilter(mNetworkColor, Mode.MULTIPLY);
                 mMobileRoaming.setVisibility(mShowRoamingIndicator ? View.VISIBLE : View.GONE);
             } else {
                 mMobileGroup.setVisibility(View.GONE);
@@ -484,16 +494,21 @@ public class SignalClusterView
                 event.getText().add(mMobileGroup.getContentDescription());
             }
         }
-        public void applyColor(int color) {
+        public void applyColors() {
             if (mMobileGroup != null && mMobile != null) {
-                mMobile.setColorFilter(color, Mode.MULTIPLY);
-                mMobileActivity.setColorFilter(color, Mode.MULTIPLY);
-                mMobileType.setColorFilter(color, Mode.MULTIPLY);
+                mMobile.setColorFilter(mNetworkColor, Mode.MULTIPLY);
+                mMobileActivity.setColorFilter(mNetworkActivityColor, Mode.MULTIPLY);
+                mMobileType.setColorFilter(mNetworkColor, Mode.MULTIPLY);
             }
         }
     }
 
     private void updateColors() {
+        updateColorsFromSettings();
+        apply();
+    }
+
+    private void updateColorsFromSettings() {
         ContentResolver resolver = mContext.getContentResolver();
 
         int networkNormalColor = Settings.System.getIntForUser(resolver,
@@ -519,7 +534,5 @@ public class SignalClusterView
                 mActivityIcon == 0 ? networkNormalColor : networkFullyColor;
         mNetworkActivityColor =
                 mActivityIcon == 0 ? networkActivityNormalColor : networkActivityFullyColor;
-
-        apply();
     }
 }
