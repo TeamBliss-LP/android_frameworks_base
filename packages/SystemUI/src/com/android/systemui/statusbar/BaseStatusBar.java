@@ -227,8 +227,8 @@ public abstract class BaseStatusBar extends SystemUI implements
     private Locale mLocale;
     private float mFontScale;
 
-    protected final int HEADSUP_DEFAULT_BACKGROUNDCOLOR = 0xff000000;
-    protected final int HEADSUP_DEFAULT_TEXTCOLOR = 0xffffffff;
+    protected final int HEADSUP_DEFAULT_BACKGROUNDCOLOR = 0xffffffff;
+    protected final int HEADSUP_DEFAULT_TEXTCOLOR = 0xff000000;
     protected boolean mUseHeadsUp = false;
     protected boolean mHeadsUpTicker = false;
     protected boolean mDisableNotificationAlerts = false;
