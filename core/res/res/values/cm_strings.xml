@@ -357,4 +357,7 @@
 
     <!-- USB OTG notification message -->
     <string name="usb_storage_notification_manage_message">Tap to manage</string>
+
+    <!-- Default fingerprint name when a new fingerprint is added -->
+    <string name="fingerprint_default_name">Fingerprint <xliff:g id="number">%d</xliff:g></string>
 </resources>
