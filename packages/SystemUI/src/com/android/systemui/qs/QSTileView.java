@@ -67,8 +67,8 @@ public class QSTileView extends ViewGroup {
     private TextView mLabel;
     private QSDualTileLabel mDualLabel;
     private int mdefaultTextColor = 0xffffffff;
-    private int mLabelColor;
-    private int mIconColor;
+    private int mLabelColor = 0xffffffff;
+    private int mIconColor = 0xffffffff;
     private boolean mQSCSwitch = false;
     private boolean mDual;
     private OnClickListener mClickPrimary;
@@ -403,7 +403,7 @@ public class QSTileView extends ViewGroup {
         if (!Objects.equals(state.enabled, iv.isEnabled())) {
             iv.setEnabled(state.enabled);
             if (state.enabled) {
-                iv.setColorFilter(mQSCSwitch ? mLabelColor : null);
+                iv.setColorFilter(getLabelColor(), PorterDuff.Mode.SRC_IN);
             } else {
                 iv.setColorFilter(Color.GRAY, PorterDuff.Mode.MULTIPLY);
             }
