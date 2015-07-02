@@ -118,4 +118,7 @@
     <string name="heads_up_disabled">Heads up notifications are disabled</string>
     <string name="heads_up_snooze_message">Heads up is disabled for <xliff:g id="number">%d</xliff:g> minutes.</string>
 
+    <!-- Title shown in recents popup for showing app launch in floating mode -->
+    <string name="recent_float_mode_title">Floating mode</string>
+
 </resources>
