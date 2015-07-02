@@ -2,6 +2,7 @@
  * Copyright (c) 2012-2014 The Linux Foundation. All rights reserved.
  * Not a Contribution.
  * Copyright (C) 2010 The Android Open Source Project
+ * Copyright (C) 2014-2015 The MoKee OpenSource Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -411,6 +412,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     private BatteryMeterView mBatteryView;
     private BatteryLevelTextView mBatteryLevel;
 
+    // Status bar carrier
+    private boolean mShowStatusBarCarrier;
+
     // position
     int[] mPositionTmp = new int[2];
     boolean mExpandedVisible;
@@ -505,6 +509,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.HEADS_UP_DISMISS_ON_REMOVE),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_CARRIER),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.NAVBAR_LEFT_IN_LANDSCAPE),
@@ -626,6 +633,13 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.PIE_CONTROLS))) {
                     attachPieContainer(isPieEnabled());
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_CARRIER))) {
+                    mShowStatusBarCarrier = Settings.System.getIntForUser(
+                        resolver,
+                        Settings.System.STATUS_BAR_CARRIER,
+                        0, mCurrentUserId) == 1;
+                    showStatusBarCarrierLabel(mShowStatusBarCarrier);
             } else if (uri.equals(Settings.System.getUriFor(
                         Settings.System.ENABLE_TASK_MANAGER)) ||
                     uri.equals(Settings.System.getUriFor(
@@ -1286,6 +1300,12 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             mBatterySaverWarningColor = mContext.getResources()
                    .getColor(com.android.internal.R.color.battery_saver_mode_color);
         }
+
+        mShowStatusBarCarrier = Settings.System.getIntForUser(
+                mContext.getContentResolver(),
+                Settings.System.STATUS_BAR_CARRIER,
+                0, mCurrentUserId) == 1;
+        showStatusBarCarrierLabel(mShowStatusBarCarrier);
 
         // set the inital view visibility
         setAreThereNotifications();
@@ -4313,6 +4333,17 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         }
     }
 
+    public void showStatusBarCarrierLabel(boolean show) {
+        if (mStatusBarView == null || mContext == null) return;
+        View statusBarCarrierLabel = mStatusBarView.findViewById(R.id.status_bar_carrier_label);
+        if (statusBarCarrierLabel != null) {
+            statusBarCarrierLabel.setVisibility(show ? View.VISIBLE : View.GONE);
+            if (DEBUGS) Log.v(TAG, "showStatusBarCarrierLabel: label visible: "+(show ? "true" : "false"));
+        } else {
+            if (DEBUGS) Log.v(TAG, "showStatusBarCarrierLabel: label not found!");
+        }
+    }
+
     private void resetUserExpandedStates() {
         ArrayList<Entry> activeNotifications = mNotificationData.getActiveNotifications();
         final int notificationCount = activeNotifications.size();
@@ -4619,6 +4650,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         TextView clock = (TextView) mStatusBarView.findViewById(R.id.clock);
         if (clock != null) {
             FontSizeUtils.updateFontSize(clock, R.dimen.status_bar_clock_size);
+        }
+        TextView carrier = (TextView) mStatusBarView.findViewById(R.id.status_bar_carrier_label);
+        if (carrier != null) {
+            FontSizeUtils.updateFontSize(carrier, R.dimen.status_bar_clock_size);
         }
     }
 
