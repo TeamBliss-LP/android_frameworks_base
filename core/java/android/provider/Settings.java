@@ -8781,6 +8781,12 @@ public final class Settings {
        public static final String WIFI_EPHEMERAL_OUT_OF_RANGE_TIMEOUT_MS =
                "wifi_ephemeral_out_of_range_timeout_ms";
 
+        /**
+         * Whether or not to show the Wi-Fi SSID of a connected AP
+         * @hide
+         */
+        public static final String WIFI_STATUS_BAR_SSID = "wifi_status_bar_ssid";
+
        /**
         * The number of milliseconds to delay when checking for data stalls during
         * non-aggressive detection. (screen is turned off.)

@@ -283,4 +283,10 @@
         <item name="android:textColor">@color/status_bar_clock_color</item>
     </style>
 
+    <style name="TextAppearance.StatusBar.WifiLabel" parent="@*android:style/TextAppearance.StatusBar.Icon">
+        <item name="android:textSize">@dimen/status_bar_clock_size</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textColor">@color/status_bar_clock_color</item>
+    </style>
+
 </resources>

@@ -79,6 +79,18 @@
                     android:ellipsize="end"
                     android:visibility="gone" />
 
+                <TextView
+                    android:id="@+id/status_bar_wifi_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:paddingStart="7dp"
+                    android:paddingEnd="7dp"
+                    android:visibility="gone"
+                    android:singleLine="true"
+                    android:ellipsize="end"
+                    android:textAppearance="@style/TextAppearance.StatusBar.WifiLabel" />
+
                 <ImageView
                     android:id="@+id/bliss_logo"
                     android:layout_width="wrap_content"
