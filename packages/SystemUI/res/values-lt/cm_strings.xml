@@ -37,6 +37,33 @@
   <string name="accessibility_quick_settings_location_battery_saving">Vietovės ataskaitos: akumuliatoriaus tausojimo režimas.</string>
   <string name="accessibility_quick_settings_location_gps_only">Vietovės ataskaitos: tik daviklių režimas.</string>
   <string name="accessibility_quick_settings_location_high_accuracy">Vietovės ataskaitos: didelio tikslumo režimas.</string>
+  <string name="accessibility_quick_settings_location_changed_battery_saving">Vietovės ataskaitos pakeistos į akumuliatoriaus tausojimo režimą.</string>
+  <string name="accessibility_quick_settings_location_changed_gps_only">Vietovės ataskaitos pakeistos į tik jutiklių režimą.</string>
+  <string name="accessibility_quick_settings_location_changed_high_accuracy">Vietovės ataskaitos pakeistos į didelio tikslumo režimą.</string>
+  <string name="accessibility_quick_settings_lock_screen_off">Ekrano užraktas išjungtas.</string>
+  <string name="accessibility_quick_settings_lock_screen_on">Ekrano užraktas įjungtas.</string>
+  <string name="accessibility_quick_settings_lock_screen_changed_off">Ekrano užraktas išjungtas.</string>
+  <string name="accessibility_quick_settings_lock_screen_changed_on">Ekrano užraktas įjungtas.</string>
+  <string name="accessibility_quick_settings_lte_off">LTE išjungtas.</string>
+  <string name="accessibility_quick_settings_lte_on">LTE įjungtas.</string>
+  <string name="accessibility_quick_settings_lte_changed_off">LTE išjungtas.</string>
+  <string name="accessibility_quick_settings_lte_changed_on">LTE įjungtas.</string>
+  <string name="accessibility_quick_settings_nfc_off">NFC išjungtas.</string>
+  <string name="accessibility_quick_settings_nfc_on">NFC įjungtas.</string>
+  <string name="accessibility_quick_settings_nfc_changed_off">NFC išjungtas.</string>
+  <string name="accessibility_quick_settings_nfc_changed_on">NFC įjungtas.</string>
+  <string name="accessibility_quick_settings_perf_profile_pwrsv">Akumuliatoriaus režimas: energijos tausojimo režimas.</string>
+  <string name="accessibility_quick_settings_perf_profile_bal">Akumuliatoriaus režimas: subalansuotas režimas.</string>
+  <string name="accessibility_quick_settings_perf_profile_perf">Akumuliatoriaus režimas: našumo režimas.</string>
+  <string name="accessibility_quick_settings_perf_profile_changed_pwrsv">Akumuliatoriaus režimas pakeistas į energijos tausojimo režimą.</string>
+  <string name="accessibility_quick_settings_perf_profile_changed_bal">Akumuliatoriaus režimas pakeistas į subalansuotą režimą.</string>
+  <string name="accessibility_quick_settings_perf_profile_changed_perf">Akumuliatoriaus režimas pakeistas į našumo režimą.</string>
+  <string name="accessibility_quick_settings_profiles_off">Profiliai išjungti.</string>
+  <string name="accessibility_quick_settings_profiles">Profilis: <xliff:g id="profile" example="Default">%s </xliff:g>.</string>
+  <string name="accessibility_quick_settings_profiles_changed_off">Profiliai išjungti.</string>
+  <string name="accessibility_quick_settings_profiles_changed">Profilis pakeistas į <xliff:g id="profile" example="Default">%s </xliff:g>.</string>
+  <string name="accessibility_quick_settings_screen_timeout">Ekrano skirtasis laikas: <xliff:g id="timeout" example="30 seconds">%s </xliff:g>.</string>
+  <string name="accessibility_quick_settings_screen_timeout_changed">Ekrano skirtasis laikas pakeistas į <xliff:g id="timeout" example="30 seconds">%s </xliff:g>.</string>
   <string name="accessibility_quick_settings_sync_off">Sinchronizavimas išjungtas.</string>
   <string name="accessibility_quick_settings_sync_on">Sinchronizavimas įjungtas.</string>
   <string name="accessibility_quick_settings_sync_changed_off">Sinchronizavimas išjungtas.</string>
@@ -99,4 +126,8 @@
   <string name="interruption_level_silent">Tylus</string>
   <string name="zen_silent_with_warning">Be pertrūkių, išskyrus signalus.</string>
   <string name="quick_settings_remove">Pašalinti plytelę</string>
+  <string name="quick_settings_dynamic_tile_detail_title">Dinaminė plytelė</string>
+  <string name="dynamic_qs_tile_next_alarm_label">Kitas signalas</string>
+  <string name="dynamic_qs_tile_ime_selector_label">Įvesties metodas</string>
+  <string name="dynamic_qs_tile_su_label">Prieiga prie „Root“</string>
 </resources>
