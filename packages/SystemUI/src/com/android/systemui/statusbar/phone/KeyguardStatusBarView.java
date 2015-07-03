@@ -18,8 +18,11 @@
 package com.android.systemui.statusbar.phone;
 
 import android.animation.LayoutTransition;
+import android.content.ContentResolver;
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
+import android.provider.Settings;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -56,6 +59,8 @@ public class KeyguardStatusBarView extends RelativeLayout {
     private int mSystemIconsSwitcherHiddenExpandedMargin;
     private Interpolator mFastOutSlowInInterpolator;
 
+    private TextView mCarrierLabel;
+
     public KeyguardStatusBarView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
@@ -63,6 +68,16 @@ public class KeyguardStatusBarView extends RelativeLayout {
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
+
+        final Resources res = getContext().getResources();
+        ContentResolver resolver = getContext().getContentResolver();
+        int defaultPrimaryTextColor =
+                res.getColor(R.color.keyguard_default_primary_text_color);
+        int primaryTextColor = Settings.System.getInt(resolver,
+                Settings.System.LOCK_SCREEN_TEXT_COLOR, defaultPrimaryTextColor);
+        mCarrierLabel = (TextView) findViewById(R.id.keyguard_carrier_text);
+        mCarrierLabel.setTextColor(primaryTextColor);
+
         mSystemIconsSuperContainer = findViewById(R.id.system_icons_super_container);
         mMultiUserSwitch = (MultiUserSwitch) findViewById(R.id.multi_user_switch);
         mMultiUserAvatar = (ImageView) findViewById(R.id.multi_user_avatar);
