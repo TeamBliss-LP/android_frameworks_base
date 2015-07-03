@@ -136,7 +136,7 @@ public class NetworkControllerImpl extends BroadcastReceiver
     private final BitSet mValidatedTransports = new BitSet();
 
     // States that don't belong to a subcontroller.
-    private boolean mAirplaneMode = false;
+    private static boolean mAirplaneMode = false;
     private boolean mHasNoSims;
     private Locale mLocale = null;
     // This list holds our ordering.
