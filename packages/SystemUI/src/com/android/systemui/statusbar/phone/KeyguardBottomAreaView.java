@@ -636,10 +636,9 @@ public class KeyguardBottomAreaView extends FrameLayout implements View.OnClickL
             mLockPatternUtils.updateEmergencyCallButtonState(mEmergencyButton, enabled, false);
         }
     }
-	
+
     public void updateTextColor(int color) {
         mIndicationText.setTextColor(color);
-
     }
 
     public void updateIconColor(int color) {
