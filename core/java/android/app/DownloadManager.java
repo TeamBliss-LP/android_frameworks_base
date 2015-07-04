@@ -1103,6 +1103,8 @@ public class DownloadManager {
      * @param id the id of the downloaded file.
      * @return the path of the given downloaded file id, if download was successful. null
      * otherwise.
+     *
+     * @hide
      */
     public String getPathForDownloadedFile(long id) {
         // to check if the file is in cache, get its destination from the database

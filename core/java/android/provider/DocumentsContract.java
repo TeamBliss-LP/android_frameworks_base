@@ -1031,6 +1031,8 @@ public final class DocumentsContract {
      * @param parentDocumentUri directory
      * @param displayName name of new document
      * @return if the document is child from the given parent.
+     *
+     * @hide
      */
     public static boolean isChildDocument(ContentResolver resolver, Uri documentUri,
             String displayName) {

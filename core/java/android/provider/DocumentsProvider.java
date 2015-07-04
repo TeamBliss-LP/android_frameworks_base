@@ -211,6 +211,8 @@ public abstract class DocumentsProvider extends ContentProvider {
      * @param displayName child to verify.
      * @return if given document is a child of the given parent.
      * @see DocumentsContract.Root#FLAG_SUPPORTS_IS_CHILD
+     *
+     * @hide
      */
     public boolean isDirectChildDocument(String parentDocumentId, String displayName) {
         return false;
