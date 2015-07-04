@@ -56,6 +56,8 @@ public class KeyguardStatusBarView extends RelativeLayout {
     private int mSystemIconsSwitcherHiddenExpandedMargin;
     private Interpolator mFastOutSlowInInterpolator;
 
+    private TextView mCarrierLabel;
+
     public KeyguardStatusBarView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
@@ -63,6 +65,8 @@ public class KeyguardStatusBarView extends RelativeLayout {
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
+
+        mCarrierLabel = (TextView) findViewById(R.id.keyguard_carrier_text);
         mSystemIconsSuperContainer = findViewById(R.id.system_icons_super_container);
         mMultiUserSwitch = (MultiUserSwitch) findViewById(R.id.multi_user_switch);
         mMultiUserAvatar = (ImageView) findViewById(R.id.multi_user_avatar);
@@ -72,6 +76,10 @@ public class KeyguardStatusBarView extends RelativeLayout {
                 android.R.interpolator.fast_out_slow_in);
         updateUserSwitcher();
         updateVisibilities();
+    }
+
+    public void updateTextColor(int color) {
+        mCarrierLabel.setTextColor(color);
     }
 
     private void loadDimens() {

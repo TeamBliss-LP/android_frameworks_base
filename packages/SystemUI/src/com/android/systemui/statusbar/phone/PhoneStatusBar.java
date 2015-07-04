@@ -1451,7 +1451,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 (ViewStub) mStatusBarWindowContent.findViewById(R.id.keyguard_user_switcher),
                 mKeyguardStatusBar, mNotificationPanel, mUserSwitcherController);
 
-
         // Set up the quick settings tile panel
         mQSPanel = (QSPanel) mStatusBarWindowContent.findViewById(R.id.quick_settings_panel);
         if (mQSPanel != null) {
@@ -2789,15 +2788,21 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
 
     public void setKeyguardTextAndIconColors() {
+        ContentResolver resolver = mContext.getContentResolver();
+        int defaultTextColor = mContext.getResources()
+                .getColor(R.color.keyguard_default_primary_text_color);
         int textColor =
-                Settings.System.getInt(mContext.getContentResolver(),
-                Settings.System.LOCK_SCREEN_TEXT_COLOR, 0xffffffff);
-        int iconColor =
-                Settings.System.getInt(mContext.getContentResolver(),
-                Settings.System.LOCK_SCREEN_ICON_COLOR, 0xffffffff);
+                Settings.System.getInt(resolver,
+                Settings.System.LOCK_SCREEN_TEXT_COLOR, defaultTextColor);
         if (mKeyguardBottomArea != null) {
+            int iconColor =
+                Settings.System.getInt(resolver,
+                Settings.System.LOCK_SCREEN_ICON_COLOR, defaultTextColor);
             mKeyguardBottomArea.updateTextColor(textColor);
             mKeyguardBottomArea.updateIconColor(iconColor);
+        }
+        if (mKeyguardStatusBar != null) {
+            mKeyguardStatusBar.updateTextColor(textColor);
         }
     }
 
