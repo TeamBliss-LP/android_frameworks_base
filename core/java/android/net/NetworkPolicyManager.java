@@ -203,10 +203,14 @@ public class NetworkPolicyManager {
         if (Time.compare(cycle, now) >= 0) {
             // cycle boundary is beyond now, use last cycle boundary; start by
             // pushing ourselves squarely into last month.
-            final Time lastMonth = new Time(now);
+            Time lastMonth = new Time(now);
             lastMonth.hour = lastMonth.minute = lastMonth.second = 0;
             lastMonth.monthDay = 1;
             lastMonth.month -= 1;
+            // prevent index out of bounds:
+            if (lastMonth.month < 0) {
+                lastMonth.month = 0;
+            }
             lastMonth.normalize(true);
 
             cycle.set(lastMonth);
