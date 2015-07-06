@@ -22,4 +22,6 @@
     <!-- Description of the Random button in a KeyboardView. [CHAR LIMIT=NONE] -->
     <string name="keyboardview_keycode_random">Reload random buttons</string>
 
+    <string name="weather_info_not_available">Weather informations not available</string>
+
 </resources>
