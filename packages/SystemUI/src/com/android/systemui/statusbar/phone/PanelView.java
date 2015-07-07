@@ -827,6 +827,7 @@ public abstract class PanelView extends FrameLayout {
         if (mHeightAnimator != null || mTracking) {
             return;
         }
+        mStatusBar.setVisualizerAnimating(true);
         cancelPeek();
         notifyExpandingStarted();
         startUnlockHintAnimationPhase1(new Runnable() {
@@ -835,6 +836,7 @@ public abstract class PanelView extends FrameLayout {
                 notifyExpandingFinished();
                 mStatusBar.onHintFinished();
                 mHintAnimationRunning = false;
+                mStatusBar.setVisualizerAnimating(false);
             }
         });
         mStatusBar.onUnlockHintStarted();
@@ -845,7 +847,6 @@ public abstract class PanelView extends FrameLayout {
      * Phase 1: Move everything upwards.
      */
     private void startUnlockHintAnimationPhase1(final Runnable onAnimationFinished) {
-        mStatusBar.requestVisualizer(false, 0);
         float target = Math.max(0, getMaxPanelHeight() - mHintDistance);
         ValueAnimator animator = createHeightAnimator(target);
         animator.setDuration(250);
@@ -899,7 +900,6 @@ public abstract class PanelView extends FrameLayout {
             public void onAnimationEnd(Animator animation) {
                 mHeightAnimator = null;
                 onAnimationFinished.run();
-                mStatusBar.requestVisualizer(null, 250);
             }
         });
         animator.start();
