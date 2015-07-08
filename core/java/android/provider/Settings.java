@@ -5024,6 +5024,13 @@ public final class Settings {
         public static final String HEADS_UP_FLOATING = "heads_up_floating";
 
         /**
+         * Launch Appsidebar apps in floating window or not
+         *
+         * @hide
+         */
+        public static final String APPSIDEBAR_FLOATING = "appsidebar_floating";
+
+        /**
          * Settings to backup. This is here so that it's in the same place as the settings
          * keys and easy to update.
          *
