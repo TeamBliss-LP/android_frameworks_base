@@ -5031,6 +5031,13 @@ public final class Settings {
         public static final String APPSIDEBAR_FLOATING = "appsidebar_floating";
 
         /**
+         * Launch Appcirclebar apps in floating window or not
+         *
+         * @hide
+         */
+        public static final String APPCIRCLEBAR_FLOATING = "appcirclebar_floating";
+
+        /**
          * Launch gesture anywhere in floating window or not
          * @hide
          */

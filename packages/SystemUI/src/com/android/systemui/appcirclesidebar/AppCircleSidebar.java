@@ -368,17 +368,32 @@ public class AppCircleSidebar extends TriggerOverlayView implements PackageAdapt
         updateAutoHideTimer(500);
         ComponentName cn = new ComponentName(packageName, className);
         Intent intent = Intent.makeMainActivity(cn);
+        if (Settings.System.getInt(mContext.getContentResolver(),
+                    Settings.System.APPCIRCLEBAR_FLOATING, 0) == 1) {
+            intent.setFlags(Intent.FLAG_FLOATING_WINDOW
+                    | Intent.FLAG_ACTIVITY_NEW_TASK);
+            mContext.startActivity(intent);
+        } else {
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         mContext.startActivity(intent);
+        }
     }
 
     private void launchApplicationFromHistory(String packageName, String className) {
         updateAutoHideTimer(500);
         ComponentName cn = new ComponentName(packageName, className);
         Intent intent = Intent.makeMainActivity(cn);
+        if (Settings.System.getInt(mContext.getContentResolver(),
+                    Settings.System.APPCIRCLEBAR_FLOATING, 0) == 1) {
+        intent.setFlags(Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY
+                           | Intent.FLAG_ACTIVITY_NEW_TASK
+                           | Intent.FLAG_FLOATING_WINDOW);
+        mContext.startActivity(intent);
+        } else {
         intent.setFlags(Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY
                            | Intent.FLAG_ACTIVITY_NEW_TASK);
         mContext.startActivity(intent);
+        }
     }
 
     private void killApp(String packageName) {
