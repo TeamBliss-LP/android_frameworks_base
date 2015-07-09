@@ -487,44 +487,35 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
     }
 
     private void updateSystemIconsLayoutParams() {
-        if (!mShowHeadsUpButton
-                && !mShowTaskManager
-                && !isStatusBarPowerMenuVisible()) {
-            return;
-        }
-
         RelativeLayout.LayoutParams lp =
             (LayoutParams) mSystemIconsSuperContainer.getLayoutParams();
+        final int settingsButtonId = mSettingsButton.getId();
+        final int mMultiUserSwitchId = mMultiUserSwitch.getId();
         int taskManager = mTaskManagerButton != null
                 ? mTaskManagerButton.getId()
-                : mSettingsButton.getId();
+                : settingsButtonId;
         int headsUp = mHeadsUpButton != null
                 ? mHeadsUpButton.getId()
-                : mSettingsButton.getId();
+                : settingsButtonId;
         int powerMenu = mStatusBarPowerMenu != null
                 ? mStatusBarPowerMenu.getId()
-                : mSettingsButton.getId();
-        int rule = mExpanded
-                ? taskManager
-                : mMultiUserSwitch.getId();
-        int ruleh = mExpanded
-                ? headsUp
-                : mMultiUserSwitch.getId();
-        int rulep = mExpanded
-                ? powerMenu
-                : mMultiUserSwitch.getId();
-        if (rule != lp.getRules()[RelativeLayout.START_OF]) {
-            if (mShowTaskManager) {
-                lp.addRule(RelativeLayout.START_OF, rule);
-            }
-            if (mShowHeadsUpButton) {
-                lp.addRule(RelativeLayout.START_OF, ruleh);
-            }
-            if (mStatusBarPowerMenuStyle != STATUS_BAR_POWER_MENU_OFF) {
-                lp.addRule(RelativeLayout.START_OF, rulep);
-            }
-            mSystemIconsSuperContainer.setLayoutParams(lp);
+                : settingsButtonId;
+        int rule  = mExpanded ? taskManager : mMultiUserSwitchId;
+        int ruleh = mExpanded ? headsUp     : mMultiUserSwitchId;
+        int rulep = mExpanded ? powerMenu   : mMultiUserSwitchId;
+
+        if (mStatusBarPowerMenuStyle != STATUS_BAR_POWER_MENU_OFF &&
+                rulep != lp.getRules()[RelativeLayout.START_OF]) {
+            lp.addRule(RelativeLayout.START_OF, rulep);
+        } else if (mShowHeadsUpButton && ruleh != lp.getRules()[RelativeLayout.START_OF]) {
+            lp.addRule(RelativeLayout.START_OF, ruleh);
+        } else if (mShowTaskManager && rule != lp.getRules()[RelativeLayout.START_OF]) {
+            lp.addRule(RelativeLayout.START_OF, rule);
+        } else {
+            lp.addRule(RelativeLayout.START_OF, settingsButtonId);
         }
+
+        mSystemIconsSuperContainer.setLayoutParams(lp);
     }
 
     private void updateListeners() {
@@ -1493,14 +1484,17 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
     }
 
     private void updateHeadsUpButton() {
-        ImageView image = (ImageView)findViewById(R.id.heads_up_button);
-        if (image == null) return;
-        if (getUserHeadsUpState()) {
-            image.setImageDrawable(
-                getResources().getDrawable(R.drawable.ic_heads_up_status_on));
-        } else {
-            image.setImageDrawable(
-                getResources().getDrawable(R.drawable.ic_heads_up_status_off));
+        ImageView iv = (ImageView)findViewById(R.id.heads_up_button);
+        if (iv == null) return;
+        if (mShowHeadsUpButton) {
+            if (getUserHeadsUpState()) {
+                iv.setImageDrawable(
+                    getResources().getDrawable(R.drawable.ic_heads_up_status_on));
+            } else {
+                iv.setImageDrawable(
+                    getResources().getDrawable(R.drawable.ic_heads_up_status_off));
+            }
         }
+        mHeadsUpButton.setVisibility(mExpanded && mShowHeadsUpButton ? View.VISIBLE : View.GONE);
     }
 }

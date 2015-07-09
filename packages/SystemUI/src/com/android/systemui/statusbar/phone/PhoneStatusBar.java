@@ -567,6 +567,12 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             resolver.registerContentObserver(Settings.Secure.getUriFor(
                     Settings.Secure.LOCKSCREEN_VISUALIZER_ENABLED),
                     false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_POWER_MENU),
+                    false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.HEADS_UP_SHOW_STATUS_BUTTON),
+                    false, this, UserHandle.USER_ALL);
             update();
         }
 
@@ -637,13 +643,17 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             } else if (uri.equals(Settings.System.getUriFor(
                         Settings.System.ENABLE_TASK_MANAGER)) ||
                     uri.equals(Settings.System.getUriFor(
+                        Settings.System.HEADS_UP_SHOW_STATUS_BUTTON)) ||
+                    uri.equals(Settings.System.getUriFor(
                         Settings.System.QS_COLOR_SWITCH)) ||
                     uri.equals(Settings.System.getUriFor(
-                        Settings.System.QS_TEXT_COLOR)) ) {
+                        Settings.System.QS_TEXT_COLOR)) ||
+                    uri.equals(Settings.System.getUriFor(
+                        Settings.System.STATUS_BAR_POWER_MENU)) ) {
                     mQSCSwitch = Settings.System.getIntForUser(resolver,
-                        Settings.System.QS_COLOR_SWITCH, 0, mCurrentUserId) == 1;
-                    mShowTaskManager = Settings.System.getIntForUser(
-                        mContext.getContentResolver(),
+                        Settings.System.QS_COLOR_SWITCH,
+                        0, mCurrentUserId) == 1;
+                    mShowTaskManager = Settings.System.getIntForUser(resolver,
                         Settings.System.ENABLE_TASK_MANAGER,
                         0, mCurrentUserId) == 1;
                     doRecreate = true;
@@ -680,7 +690,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
             mHeadsUpSwype = Settings.System.getInt(resolver,
                     Settings.System.HEADS_UP_DISMISS_ON_REMOVE, 0) == 1;
-
             mHeadsUpTouchOutside = Settings.System.getInt(resolver,
                     Settings.System.HEADS_UP_TOUCH_OUTSIDE, 0) == 1;
 
@@ -716,7 +725,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             showBlissLogo(mBlissLogo, mBlissLogoColor);
 
             mShowTaskManager = Settings.System.getIntForUser(resolver,
-                    Settings.System.ENABLE_TASK_MANAGER, 0, UserHandle.USER_CURRENT) == 1;
+                    Settings.System.ENABLE_TASK_MANAGER,
+                    0, UserHandle.USER_CURRENT) == 1;
 
             mGreeting = Settings.System.getStringForUser(resolver,
                     Settings.System.STATUS_BAR_GREETING,
