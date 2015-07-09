@@ -229,14 +229,10 @@ public abstract class BaseStatusBar extends SystemUI implements
     private Locale mLocale;
     private float mFontScale;
 
-    protected final int HEADSUP_DEFAULT_BACKGROUNDCOLOR = 0xffffffff;
-    protected final int HEADSUP_DEFAULT_TEXTCOLOR = 0xff000000;
     protected boolean mUseHeadsUp = false;
     protected boolean mHeadsUpTicker = false;
     protected boolean mDisableNotificationAlerts = false;
     protected boolean mHeadsUpUserEnabled = false;
-    protected int     mHeadsUpCustomBg = HEADSUP_DEFAULT_BACKGROUNDCOLOR;
-    protected int     mHeadsUpCustomText = HEADSUP_DEFAULT_TEXTCOLOR;
 
     protected DevicePolicyManager mDevicePolicyManager;
     protected IDreamManager mDreamManager;
@@ -1604,18 +1600,14 @@ public abstract class BaseStatusBar extends SystemUI implements
     }
 
     private boolean inflateViews(NotificationData.Entry entry, ViewGroup parent) {
-            return inflateViews(entry, parent, false, -1);
+            return inflateViews(entry, parent, false);
     }
 
     protected boolean inflateViewsForHeadsUp(NotificationData.Entry entry, ViewGroup parent) {
-            return inflateViews(entry, parent, true, -1);
+            return inflateViews(entry, parent, true);
     }
 
-    protected boolean inflateViewsForHeadsUp(NotificationData.Entry entry, ViewGroup parent, int customTextColor) {
-            return inflateViews(entry, parent, true, customTextColor);
-    }
-
-    protected boolean inflateViews(NotificationData.Entry entry, ViewGroup parent, boolean isHeadsUp, int customTextColor) {
+    private boolean inflateViews(NotificationData.Entry entry, ViewGroup parent, boolean isHeadsUp) {
         PackageManager pmUser = getPackageManagerForUser(
                 entry.notification.getUser().getIdentifier());
 
@@ -1688,15 +1680,6 @@ public abstract class BaseStatusBar extends SystemUI implements
             row.setOnClickListener(listener);
         } else {
             row.setOnClickListener(null);
-        }
-
-        // apply custom text color to heads up notifications ONLY
-        if (isHeadsUp && customTextColor != 0) {
-            mHeadsUpCustomText = customTextColor;
-            if (mPowerManager != null && !mPowerManager.isPowerSaveMode()) {
-                setRvItemTextColor(contentView, mHeadsUpCustomText);
-                setRvItemTextColor(bigContentView, mHeadsUpCustomText);
-            }
         }
 
         // set up the adaptive layout
@@ -1855,30 +1838,6 @@ public abstract class BaseStatusBar extends SystemUI implements
         row.setUserLocked(userLocked);
         row.setStatusBarNotification(entry.notification);
         return true;
-    }
-
-    private void setRvItemTextColor(RemoteViews view, int color) {
-        if (view == null) {
-            return;
-        }
-        try {
-            view.setTextColor(com.android.internal.R.id.title, color);
-        } catch(ActionException e) {}
-        try {
-            view.setTextColor(com.android.internal.R.id.text, color);
-        } catch(ActionException e) {}
-        try {
-            view.setTextColor(com.android.internal.R.id.big_text, color);
-        } catch(ActionException e) {}
-        try {
-            view.setTextColor(com.android.internal.R.id.time, color);
-        } catch(ActionException e) {}
-        try {
-            view.setTextColor(com.android.internal.R.id.text2, color);
-        } catch(ActionException e) {}
-        try {
-            view.setTextColor(com.android.internal.R.id.info, color);
-        } catch(ActionException e) {}
     }
 
     public NotificationClicker makeClicker(PendingIntent intent, String notificationKey,
@@ -2367,23 +2326,8 @@ public abstract class BaseStatusBar extends SystemUI implements
                     if (DEBUG) Log.d(TAG, "rebuilding heads up for key: " + key);
                     Entry newEntry = new Entry(notification, null);
                     ViewGroup holder = mHeadsUpNotificationView.getHolder();
-                    int custTextColor = Settings.System.getIntForUser(
-                        mContext.getContentResolver(), Settings.System.HEADS_UP_TEXT_COLOR,
-                        -1, UserHandle.USER_CURRENT);
-                    if (custTextColor == -1) {
-                        if (DEBUG) Log.d(TAG, "heads up: no custom text color!");
-                    } else {
-                        mHeadsUpCustomText = custTextColor;
-                    }
-                    if (DEBUG) Log.d(TAG, "updateNotification mHeadsUpCustomText= "
-                        + Integer.toHexString(mHeadsUpCustomText));
-
-                    if (inflateViewsForHeadsUp(newEntry, holder, mHeadsUpCustomText)) {
-                        mHeadsUpCustomBg = Settings.System.getIntForUser(
-                            mContext.getContentResolver(), Settings.System.HEADS_UP_BG_COLOR,
-                            0x00ffffff, UserHandle.USER_CURRENT);
-                        mHeadsUpNotificationView.showNotification(newEntry,
-                            mHeadsUpUserEnabled ? mHeadsUpCustomBg : -1);
+                    if (inflateViewsForHeadsUp(newEntry, holder)) {
+                        mHeadsUpNotificationView.showNotification(newEntry);
                         if (alertAgain) {
                             resetHeadsUpDecayTimer();
                         }
@@ -2413,7 +2357,7 @@ public abstract class BaseStatusBar extends SystemUI implements
                             n.tickerText);
                     oldEntry.icon.setNotification(n);
                     oldEntry.icon.set(ic);
-                    inflateViews(oldEntry, mStackScroller, wasHeadsUp, -1);
+                    inflateViews(oldEntry, mStackScroller, wasHeadsUp);
                     mNotificationData.updateRanking(ranking);
                     updateNotifications();
                 }
