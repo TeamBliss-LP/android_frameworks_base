@@ -553,12 +553,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     Settings.System.PIE_CONTROLS),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.HEADS_UP_BG_COLOR),
-                    false, this, UserHandle.USER_ALL);
-            resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.HEADS_UP_TEXT_COLOR),
-                    false, this, UserHandle.USER_ALL);
-            resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.APP_SIDEBAR_POSITION),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
@@ -629,19 +623,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     resetHeadsUpDecayTimer();
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_BATTERY_STATUS_TEXT_COLOR))) {
-                    updateBatteryLevelTextColor();
-            } else if (uri.equals(Settings.System.getUriFor(
-                    Settings.System.HEADS_UP_BG_COLOR))) {
-                    mHeadsUpCustomBg = Settings.System.getIntForUser(
-                        resolver,
-                        Settings.System.HEADS_UP_BG_COLOR,
-                        HEADSUP_DEFAULT_BACKGROUNDCOLOR,
-                        mCurrentUserId);
-            } else if (uri.equals(Settings.System.getUriFor(
-                    Settings.System.HEADS_UP_TEXT_COLOR))) {
-                    mHeadsUpCustomText = Settings.System.getIntForUser(resolver,
-                        Settings.System.HEADS_UP_TEXT_COLOR,
-                        HEADSUP_DEFAULT_TEXTCOLOR, mCurrentUserId);
+                updateBatteryLevelTextColor();
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.PIE_CONTROLS))) {
                     attachPieContainer(isPieEnabled());
@@ -1150,7 +1132,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     context.getResources().getColor(
                     R.color.notification_panel_solid_background)));
         }
-
         if (ENABLE_HEADS_UP) {
             mHeadsUpNotificationView =
                     (HeadsUpNotificationView) View.inflate(context,
@@ -2095,28 +2076,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             if (DEBUG) Log.d(TAG, "launching notification in heads up mode");
             Entry interruptionCandidate = new Entry(notification, null);
             ViewGroup holder = mHeadsUpNotificationView.getHolder();
-
-            // get custom color values:
-            int tmpTextColor = Settings.System.getIntForUser(
-                mContext.getContentResolver(),
-                Settings.System.HEADS_UP_TEXT_COLOR,
-                HEADSUP_DEFAULT_TEXTCOLOR, UserHandle.USER_CURRENT);
-            int tmpBackColor = Settings.System.getIntForUser(
-                mContext.getContentResolver(), Settings.System.HEADS_UP_BG_COLOR,
-                HEADSUP_DEFAULT_BACKGROUNDCOLOR, UserHandle.USER_CURRENT);
-            // sanity check to prevent same colors:
-            if (tmpTextColor == tmpBackColor) {
-                tmpTextColor = 0;
-                tmpBackColor = 0xffffffff;
-            } else {
-                mHeadsUpCustomText = tmpTextColor;
-                mHeadsUpCustomBg = tmpBackColor;
-            }
-            if (inflateViewsForHeadsUp(interruptionCandidate, holder, tmpTextColor)) {
-
+            if (inflateViewsForHeadsUp(interruptionCandidate, holder)) {
                 // 1. Populate mHeadsUpNotificationView
-                mHeadsUpNotificationView.showNotification(
-                    interruptionCandidate, tmpBackColor);
+                mHeadsUpNotificationView.showNotification(interruptionCandidate);
 
                 // do not show the notification in the shade, yet.
                 return;
