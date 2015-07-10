@@ -313,5 +313,5 @@
     <string name="zen_silent_with_warning">No interruptions, except alarms.</string>
 
     <!-- Content description of the dock battery level icon for accessibility (not shown on the screen). [CHAR LIMIT=NONE] -->
-    <string name="accessibility_dock_battery_level">Dock Battery <xliff:g id="number">%d</xliff:g> percent.</string>
+    <string name="accessibility_dock_battery_level">Dock battery <xliff:g id="number">%d</xliff:g> percent.</string>
 </resources>
