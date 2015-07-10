@@ -49,7 +49,7 @@ public class BatteryLevelTextView extends TextView implements
     private static final int DEFAULT_BATTERY_TEXT_COLOR = 0xffffffff;
 
     private BatteryStateRegistar mBatteryStateRegistar;
-    private boolean mBatteryPluggedIn;
+    private boolean mBatteryPresent;
     private boolean mBatteryCharging;
     private int mBatteryLevel = 0;
     private boolean mForceShow;
@@ -143,13 +143,11 @@ public class BatteryLevelTextView extends TextView implements
      }
 
     @Override
-    public void onBatteryLevelChanged(int level, boolean pluggedIn, boolean charging) {
-        mBatteryLevel = level;
-        String percentage = NumberFormat.getPercentInstance()
-                .format((double) mBatteryLevel / 100.0);
+    public void onBatteryLevelChanged(boolean present, int level, boolean pluggedIn,
+            boolean charging) {
         setText(getResources().getString(R.string.battery_level_template, level));
-        if (mBatteryPluggedIn != pluggedIn || mBatteryCharging != charging) {
-            mBatteryPluggedIn = pluggedIn;
+        if (mBatteryPresent != present || mBatteryCharging != charging) {
+            mBatteryPresent = present;
             mBatteryCharging = charging;
             updateVisibility();
         }
@@ -191,7 +189,7 @@ public class BatteryLevelTextView extends TextView implements
     }
 
     public void updateVisibility() {
-        boolean showNextPercent = mBatteryPluggedIn && (
+        boolean showNextPercent = mBatteryPresent && (
                 mPercentMode == BatteryController.PERCENTAGE_MODE_OUTSIDE
                 || (mBatteryCharging && mPercentMode == BatteryController.PERCENTAGE_MODE_INSIDE));
         if (mStyle == BatteryController.STYLE_GONE) {
