@@ -3728,7 +3728,7 @@ public final class Settings {
          * default: 0
          * @hide
          */
-        public static final String STATUS_BAR_BATTERY_STATUS_STYLE = "status_bar_battery_status_style";
+        public static final String STATUS_BAR_BATTERY_STYLE = "status_bar_battery_status_style";
 
         /**
          * Battery status (text) style on the status bar
@@ -3738,7 +3738,7 @@ public final class Settings {
          * default: 2
          * @hide
          */
-        public static final String STATUS_BAR_BATTERY_STATUS_PERCENT_STYLE = "status_bar_battery_status_percent_style";
+        public static final String STATUS_BAR_SHOW_BATTERY_PERCENT = "status_bar_battery_status_percent_style";
 
         /**
          * Battery charging animation speed on the status bar

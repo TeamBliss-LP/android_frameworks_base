@@ -84,6 +84,7 @@ import android.media.session.MediaSessionManager;
 import android.media.session.PlaybackState;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.BatteryManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -151,6 +152,7 @@ import com.android.systemui.BatteryMeterView;
 import com.android.systemui.bliss.SearchPanelSwipeView;
 import com.android.systemui.BatteryLevelTextView;
 import com.android.systemui.DemoMode;
+import com.android.systemui.DockBatteryMeterView;
 import com.android.systemui.EventLogConstants;
 import com.android.systemui.EventLogTags;
 import com.android.systemui.FontSizeUtils;
@@ -184,11 +186,12 @@ import com.android.systemui.statusbar.StatusBarState;
 import com.android.systemui.statusbar.phone.UnlockMethodCache.OnUnlockMethodChangedListener;
 import com.android.systemui.statusbar.policy.AccessibilityController;
 import com.android.systemui.statusbar.policy.BatteryController;
-import com.android.systemui.statusbar.policy.BatteryController.BatteryStateChangeCallback;
+import com.android.systemui.statusbar.policy.BatteryStateRegistar.BatteryStateChangeCallback;
 import com.android.systemui.statusbar.policy.BluetoothControllerImpl;
 import com.android.systemui.statusbar.policy.BrightnessMirrorController;
 import com.android.systemui.statusbar.policy.CastControllerImpl;
 import com.android.systemui.statusbar.policy.Clock;
+import com.android.systemui.statusbar.policy.DockBatteryController;
 import com.android.systemui.statusbar.policy.HeadsUpNotificationView;
 import com.android.systemui.statusbar.policy.HotspotControllerImpl;
 import com.android.systemui.statusbar.policy.KeyButtonView;
@@ -290,7 +293,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     // These are no longer handled by the policy, because we need custom strategies for them
     BluetoothControllerImpl mBluetoothController;
     SecurityControllerImpl mSecurityController;
+    BatteryManager mBatteryManager;
     BatteryController mBatteryController;
+    DockBatteryController mDockBatteryController;
     LocationControllerImpl mLocationController;
     NetworkControllerImpl mNetworkController;
     HotspotControllerImpl mHotspotController;
@@ -1337,8 +1342,11 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         if (mLocationController == null) {
             mLocationController = new LocationControllerImpl(mContext); // will post a notification
         }
+        if (mBatteryManager == null) {
+            mBatteryManager = (BatteryManager) mContext.getSystemService(Context.BATTERY_SERVICE);
+        }
         if (mBatteryController == null) {
-            mBatteryController = new BatteryController(mContext);
+            mBatteryController = new BatteryController(mContext, mHandler);
             mBatteryController.addStateChangedCallback(new BatteryStateChangeCallback() {
                 @Override
                 public void onPowerSaveChanged() {
@@ -1356,8 +1364,19 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 public void onBatteryLevelChanged(int level, boolean pluggedIn, boolean charging) {
                     // noop
                 }
+
+                @Override
+                public void onBatteryStyleChanged(int style, int percentMode) {
+                    // noop
+                }
             });
         }
+        if (mBatteryManager.isDockBatterySupported()) {
+            if (mDockBatteryController == null) {
+                mDockBatteryController = new DockBatteryController(mContext, mHandler);
+            }
+        }
+
         if (mHotspotController == null) {
             mHotspotController = new HotspotControllerImpl(mContext);
         }
@@ -1517,8 +1536,32 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
         mHeader.setBatteryController(mBatteryController);
         mBatteryView.setBatteryController(mBatteryController);
-        mBatteryLevel.setBatteryController(mBatteryController);
+        BatteryMeterView batteryMeterView =
+                ((BatteryMeterView) mStatusBarView.findViewById(R.id.battery));
+        batteryMeterView.setBatteryStateRegistar(mBatteryController);
+        batteryMeterView.setBatteryController(mBatteryController);
+        mBatteryLevel.setBatteryStateRegistar(mBatteryController);
         mKeyguardStatusBar.setBatteryController(mBatteryController);
+
+        mHeader.setDockBatteryController(mDockBatteryController);
+        mKeyguardStatusBar.setDockBatteryController(mDockBatteryController);
+        DockBatteryMeterView dockBatteryMeterView =
+                (DockBatteryMeterView) mStatusBarView.findViewById(R.id.dock_battery);
+        if (mDockBatteryController != null) {
+            dockBatteryMeterView.setBatteryStateRegistar(mDockBatteryController);
+            mBatteryLevel.setBatteryStateRegistar(mDockBatteryController);
+        } else {
+            if (dockBatteryMeterView != null) {
+                mStatusBarView.removeView(dockBatteryMeterView);
+            }
+            BatteryLevelTextView dockBatteryLevel =
+                    (BatteryLevelTextView) mStatusBarView.findViewById(R.id.dock_battery_level_text);
+            if (dockBatteryLevel != null) {
+                mStatusBarView.removeView(dockBatteryLevel);
+            }
+        }
+        mBatteryLevel.updateVisibility();
+
         mHeader.setNextAlarmController(mNextAlarmController);
         mHeader.setWeatherController(mWeatherController);
 
@@ -2838,10 +2881,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     }
 
     private void UpdateNotifDrawerClearAllIconColor() {
-        int color = Settings.System.getIntForUser(mContext.getContentResolver(),
+        if (mDismissView != null) {
+            int color = Settings.System.getIntForUser(mContext.getContentResolver(),
                 Settings.System.NOTIFICATION_DRAWER_CLEAR_ALL_ICON_COLOR,
                 0xffffffff, mCurrentUserId);
-        if (mDismissView != null) {
             mDismissView.updateIconColor(color);
         }
     }
@@ -4174,6 +4217,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         if (mBatteryController != null) {
             mBatteryController.dump(fd, pw, args);
         }
+        if (mDockBatteryController != null) {
+            mDockBatteryController.dump(fd, pw, args);
+        }
         if (mNextAlarmController != null) {
             mNextAlarmController.dump(fd, pw, args);
         }
@@ -4482,6 +4528,12 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     private void setControllerUsers() {
         if (mZenModeController != null) {
             mZenModeController.setUserId(mCurrentUserId);
+        }
+        if (mBatteryController != null) {
+            mBatteryController.setUserId(mCurrentUserId);
+        }
+        if (mDockBatteryController != null) {
+            mDockBatteryController.setUserId(mCurrentUserId);
         }
     }
 
@@ -5022,6 +5074,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         }
         if (modeChange || command.equals(COMMAND_BATTERY)) {
             dispatchDemoCommandToView(command, args, R.id.battery);
+            dispatchDemoCommandToView(command, args, R.id.dock_battery);
         }
         if (modeChange || command.equals(COMMAND_STATUS)) {
             if (mDemoStatusIcons == null) {
