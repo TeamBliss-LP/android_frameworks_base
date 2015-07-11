@@ -270,4 +270,8 @@
 
     <!-- Defaults for Settings.System.DEV_FORCE_SHOW_NAVBAR. -->
     <integer name="def_force_disable_navkeys">0</integer>
+
+    <!-- Default for Settings.System.SWAP_VOLUME_KEYS_ON_ROTATION -->
+    <bool name="def_swap_volume_keys_on_rotation">false</bool>
+
 </resources>
