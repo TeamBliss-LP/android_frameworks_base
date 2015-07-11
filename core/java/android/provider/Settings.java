@@ -3997,6 +3997,12 @@ public final class Settings {
         public static final String LOCK_SCREEN_ICON_COLOR = "lock_screen_icon_color";
 
         /**
+         * show carrier in statusbae while on lockscreen. The value is
+         * int (1: Show or 0: Hide).
+         */
+        public static final String LOCK_SCREEN_HIDE_CARRIER = "lock_screen_hide_carrier";
+
+        /**
          * Color of the clear all icon in the notification drawer
          * @hide
          */
