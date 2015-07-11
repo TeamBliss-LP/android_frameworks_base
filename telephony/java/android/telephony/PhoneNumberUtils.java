@@ -143,6 +143,54 @@ public class PhoneNumberUtils
         return !isDialable(ch) && !(('a' <= ch && ch <= 'z') || ('A' <= ch && ch <= 'Z'));
     }
 
+    /**
+     * On some CDMA networks +COUNTRYCODE must be rewritten to 0 when making a local
+     * call from within the user's home network.  We maintain a white list of
+     * (country code prefix) -> (rewrite rule) to perform this substitution.
+     *
+     * Since country codes are variable length it is easiest to compile a regex
+     */
+    private static SparseArray<RewriteRule> sCdmaLocalRewriteWhitelist;
+    private static Pattern sCdmaLocalRewritePattern;
+    static {
+        sCdmaLocalRewriteWhitelist = new SparseArray<RewriteRule>();
+        addRewriteRule(62, "ID", "0"); // indonesia
+
+        StringBuffer regex = new StringBuffer();
+        regex.append("[+](");
+        for (int i=0; i < sCdmaLocalRewriteWhitelist.size(); ++i) {
+            int countryCode = sCdmaLocalRewriteWhitelist.keyAt(i);
+            if (i > 0) {
+                regex.append("|");
+            }
+            regex.append(countryCode);
+        }
+        regex.append(")");
+        sCdmaLocalRewritePattern = Pattern.compile(regex.toString());
+    }
+
+    private static class RewriteRule {
+        public int countryCodePrefix;
+        public String isoCountryCode;
+        public String replacement;
+
+        public RewriteRule(int countryCodePrefix, String isoCountryCode, String replacement) {
+            this.countryCodePrefix = countryCodePrefix;
+            this.isoCountryCode = isoCountryCode;
+            this.replacement = replacement;
+        }
+
+        public String apply(String dialStr) {
+            return dialStr.replaceFirst("[+]" + countryCodePrefix, replacement);
+        }
+    }
+
+    private static void addRewriteRule(int countryCodePrefix,
+                                       String isoCountryCode, String replacement) {
+        sCdmaLocalRewriteWhitelist.put(countryCodePrefix,
+                new RewriteRule(countryCodePrefix, isoCountryCode, replacement));
+    }
+
     /** Extracts the phone number from an Intent.
      *
      * @param intent the intent to get the number of
