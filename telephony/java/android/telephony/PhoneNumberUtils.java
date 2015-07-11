@@ -16,6 +16,7 @@
 
 package android.telephony;
 
+import android.util.SparseArray;
 import com.android.i18n.phonenumbers.NumberParseException;
 import com.android.i18n.phonenumbers.PhoneNumberUtil;
 import com.android.i18n.phonenumbers.PhoneNumberUtil.PhoneNumberFormat;
@@ -156,7 +157,7 @@ public class PhoneNumberUtils
     private static Pattern sCdmaLocalRewritePattern;
     static {
         sCdmaLocalRewriteWhitelist = new SparseArray<RewriteRule>();
-        addRewriteRule(62, "ID", "0"); // indonesia
+        addRewriteRule(62, "IN", "0"); // indonesia
 
         StringBuffer regex = new StringBuffer();
         regex.append("[+](");
@@ -2510,6 +2511,29 @@ public class PhoneNumberUtils
     }
 
     /**
+     * Returns a rewrite rule for the country code prefix if the dial string matches the
+     * whitelist and the user is in their home network
+     *
+     * @param dialStr number being dialed
+     * @param currIso ISO code of currently attached network
+     * @param defaultIso ISO code of user's sim
+     * @return RewriteRule or null if conditions fail
+     */
+    private static RewriteRule getCdmaLocalRewriteRule(String dialStr,
+                                                       String currIso, String defaultIso) {
+        Matcher m = sCdmaLocalRewritePattern.matcher(dialStr);
+        if (m.find()) {
+            String dialPrefix = m.group(1);
+            RewriteRule rule = sCdmaLocalRewriteWhitelist.get(Integer.valueOf(dialPrefix));
+            if (currIso.equalsIgnoreCase(defaultIso) &&
+                    currIso.equalsIgnoreCase(rule.isoCountryCode)) {
+                return rule;
+            }
+        }
+        return null;
+    }
+
+    /**
      * Determines if the specified number is actually a URI
      * (i.e. a SIP address) rather than a regular PSTN phone number,
      * based on whether or not the number contains an "@" character.
@@ -2572,8 +2596,16 @@ public class PhoneNumberUtils
                 // Remove the leading plus sign
                 retStr = newStr;
             } else {
-                // Replaces the plus sign with the default IDP
-                retStr = networkDialStr.replaceFirst("[+]", getCurrentIdp(useNanp));
+                RewriteRule rewriteRule =
+                        getCdmaLocalRewriteRule(networkDialStr,
+                                SystemProperties.get(PROPERTY_OPERATOR_ISO_COUNTRY, ""),
+                                SystemProperties.get(PROPERTY_ICC_OPERATOR_ISO_COUNTRY, ""));
+                if (rewriteRule != null) {
+                    retStr = rewriteRule.apply(networkDialStr);
+                } else {
+                    // Replaces the plus sign with the default IDP
+                    retStr = networkDialStr.replaceFirst("[+]", getCurrentIdp(useNanp));
+                }
             }
         }
         if (DBG) log("processPlusCode, retStr=" + retStr);
