@@ -1181,8 +1181,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     removeSidebarView();
                 }
 
-                addSidebarView();
-
                 mNavigationBarView.setDisabledFlags(mDisabled);
                 mNavigationBarView.setBar(this);
                 addNavigationBarCallback(mNavigationBarView);
