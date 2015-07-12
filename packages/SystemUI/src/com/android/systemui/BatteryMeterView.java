@@ -56,7 +56,6 @@ public class BatteryMeterView extends View implements DemoMode,
     public static final String ACTION_LEVEL_TEST = "com.android.systemui.BATTERY_LEVEL_TEST";
 
     private static final String STATUS_BAR_BATTERY_STYLE = "status_bar_battery_status_style";
-    private static final String STATUS_BAR_BATTERY_STATUS_SHOW_CIRCLE_DOTTED = "status_bar_battery_status_show_circle_dotted";
     private static final String STATUS_BAR_BATTERY_STATUS_CIRCLE_DOT_LENGTH = "status_bar_battery_status_circle_dot_length";
     private static final String STATUS_BAR_BATTERY_STATUS_CIRCLE_DOT_INTERVAL = "status_bar_battery_status_circle_dot_interval";
     private static final String STATUS_BAR_SHOW_BATTERY_PERCENT = "status_bar_battery_status_percent_style";
@@ -144,9 +143,6 @@ public class BatteryMeterView extends View implements DemoMode,
 
             mResolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_BATTERY_STYLE),
-                    false, this);
-            mResolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_BATTERY_STATUS_SHOW_CIRCLE_DOTTED),
                     false, this);
             mResolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_BATTERY_STATUS_CIRCLE_DOT_LENGTH),
@@ -344,35 +340,38 @@ public class BatteryMeterView extends View implements DemoMode,
 
         boolean showInsidePercent = Settings.System.getIntForUser(mResolver,
                 Settings.System.STATUS_BAR_SHOW_BATTERY_PERCENT,
-                2, currentUserId) == 0;
+                2, currentUserId) == 1;
 
         int batteryStyle = Settings.System.getIntForUser(mResolver,
                 Settings.System.STATUS_BAR_BATTERY_STYLE,
                 0, currentUserId);
 
+        mIsCircleDotted = false;
         BatteryMeterMode meterMode = BatteryMeterMode.BATTERY_METER_ICON_PORTRAIT;
         switch (batteryStyle) {
-            case 1:
-                meterMode = BatteryMeterMode.BATTERY_METER_ICON_LANDSCAPE;
-                break;
             case 2:
                 meterMode = BatteryMeterMode.BATTERY_METER_CIRCLE;
                 break;
             case 3:
-                meterMode = BatteryMeterMode.BATTERY_METER_TEXT;
-                showInsidePercent = false;
+                meterMode = BatteryMeterMode.BATTERY_METER_CIRCLE;//DOTTED_CIRCLE;
+                mIsCircleDotted = true;
                 break;
             case 4:
                 meterMode = BatteryMeterMode.BATTERY_METER_GONE;
                 showInsidePercent = false;
                 break;
+            case 5:
+                meterMode = BatteryMeterMode.BATTERY_METER_ICON_LANDSCAPE;
+                break;
+            case 6:
+                meterMode = BatteryMeterMode.BATTERY_METER_TEXT;
+                showInsidePercent = false;
+                break;
             default:
+                meterMode = BatteryMeterMode.BATTERY_METER_ICON_PORTRAIT;
                 break;
         }
 
-        mIsCircleDotted = Settings.System.getIntForUser(mResolver,
-                Settings.System.STATUS_BAR_BATTERY_STATUS_SHOW_CIRCLE_DOTTED,
-                0, currentUserId) == 1;
         mDotLength = Settings.System.getIntForUser(mResolver,
                 Settings.System.STATUS_BAR_BATTERY_STATUS_CIRCLE_DOT_LENGTH,
                 3, currentUserId);

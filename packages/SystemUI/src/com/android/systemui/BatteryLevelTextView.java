@@ -194,8 +194,10 @@ public class BatteryLevelTextView extends TextView implements
                 || (mBatteryCharging && mPercentMode == BatteryController.PERCENTAGE_MODE_INSIDE));
         if (mStyle == BatteryController.STYLE_GONE) {
             showNextPercent = false;
+            mRequestedVisibility = GONE;
         } else if (mStyle == BatteryController.STYLE_TEXT) {
             showNextPercent = true;
+            mRequestedVisibility = VISIBLE;
         }
 
         if (mPercentMode != BatteryController.PERCENTAGE_MODE_OFF &&
