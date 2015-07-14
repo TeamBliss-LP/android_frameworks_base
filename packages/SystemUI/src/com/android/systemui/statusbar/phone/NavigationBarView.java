@@ -578,7 +578,6 @@ public class NavigationBarView extends LinearLayout {
         v.setLongpressAction(longpress);
         int i = mContext.getResources().getDimensionPixelSize(R.dimen.navigation_key_width);
         v.setLayoutParams(getLayoutParams(landscape, i));
-        v.setScaleType(KeyButtonView.ScaleType.CENTER_INSIDE);
 
         if (clickAction.equals(ActionConstants.ACTION_BACK)) {
             v.setId(R.id.back);
@@ -592,6 +591,9 @@ public class NavigationBarView extends LinearLayout {
             mButtonIdList.add(buttonId);
         }
 
+        if (clickAction.startsWith("**")) {
+            v.setScaleType(KeyButtonView.ScaleType.CENTER_INSIDE);
+        }
 
         boolean colorize = true;
         if (iconUri != null && !iconUri.equals(ActionConstants.ICON_EMPTY)
