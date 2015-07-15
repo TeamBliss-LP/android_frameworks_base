@@ -1271,14 +1271,15 @@ public final class Settings {
             MOVED_TO_SECURE.add(Secure.QS_TILES);
             MOVED_TO_SECURE.add(Secure.QS_USE_MAIN_TILES);
             MOVED_TO_SECURE.add(Secure.QS_SHOW_BRIGHTNESS_SLIDER);
-            for (String s : Secure.NAVIGATION_RING_TARGETS) {
-                MOVED_TO_SECURE.add(s);
-            }
             MOVED_TO_SECURE.add(Secure.NAVIGATION_BAR_TINT);
             MOVED_TO_SECURE.add(Secure.ENABLE_HW_KEYS);
             MOVED_TO_SECURE.add(Secure.KEYBOARD_BRIGHTNESS);
             MOVED_TO_SECURE.add(Secure.BUTTON_BRIGHTNESS);
             MOVED_TO_SECURE.add(Secure.BUTTON_BACKLIGHT_TIMEOUT);
+            MOVED_TO_SECURE.add(Secure.SEARCH_PANEL_ENABLED);
+            for (String s : Secure.NAVIGATION_RING_TARGETS) {
+                MOVED_TO_SECURE.add(s);
+            }
         }
 
         private static final HashSet<String> MOVED_TO_GLOBAL;
@@ -8157,18 +8158,6 @@ public final class Settings {
         public static final String QS_USE_FOUR_COLUMNS = "qs_use_four_columns";
 
         /**
-         * Custom navring actions
-         * @hide
-         */
-        public static final String[] NAVIGATION_RING_TARGETS = new String[] {
-                "navigation_ring_targets_0",
-                "navigation_ring_targets_1",
-                "navigation_ring_targets_2",
-                "navigation_ring_targets_3",
-                "navigation_ring_targets_4",
-        };
-
-        /**
          * Whether to enable "advanced mode" for the current user.
          * Boolean setting. 0 = no, 1 = yes.
          * @hide
@@ -8231,12 +8220,6 @@ public final class Settings {
         public static final String LOCKSCREEN_VISUALIZER_ENABLED = "lockscreen_visualizer";
 
         /**
-         * Whether search panel is enabled.
-         * @hide
-         */
-        public static final String SEARCH_PANEL_ENABLED = "search_panel_enabled";
-
-        /**
          * Whether to enable/disable device policy override.
          * @hide
          */
@@ -8251,6 +8234,22 @@ public final class Settings {
          */
         public static final String LOCKSCREEN_HIDE_TILES_WITH_SENSITIVE_DATA =
                 "lockscreen_hide_qs_tiles_with_sensitive_data";
+
+        /**
+         * Custom navring actions
+         * @hide
+         */
+        public static final String[] NAVIGATION_RING_TARGETS = new String[] {
+                "navigation_ring_targets_0",
+                "navigation_ring_targets_1",
+                "navigation_ring_targets_2",
+        };
+
+        /**
+         * Whether search panel is enabled.
+         * @hide
+         */
+        public static final String SEARCH_PANEL_ENABLED = "search_panel_enabled";
 
         /**
          * This are the settings to be backed up.

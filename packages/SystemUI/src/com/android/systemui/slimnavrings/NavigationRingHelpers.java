@@ -14,15 +14,17 @@
  * limitations under the License.
  */
 
-package com.android.systemui.cm;
+package com.android.systemui.slimnavrings;
 
 import android.app.SearchManager;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
+import android.graphics.PorterDuff;
 import android.hardware.TorchManager;
 import android.media.AudioManager;
 import android.os.UserHandle;
@@ -32,10 +34,11 @@ import com.android.systemui.R;
 
 import java.net.URISyntaxException;
 
-import static com.android.internal.util.cm.NavigationRingConstants.*;
+import static com.android.internal.util.bliss.ActionConstants.*;
+import com.android.internal.util.bliss.ActionHelper;
 
 public class NavigationRingHelpers {
-    public static final int MAX_ACTIONS = 5;
+    public static final int MAX_ACTIONS = 3;
 
     private NavigationRingHelpers() {
         // Do nothing here
@@ -47,8 +50,7 @@ public class NavigationRingHelpers {
         boolean isDefault = true;
 
         for (int i = 0; i < MAX_ACTIONS; i++) {
-            result[i] = Settings.Secure.getStringForUser(cr,
-                    Settings.Secure.NAVIGATION_RING_TARGETS[i], UserHandle.USER_CURRENT);
+            result[i] = Settings.Secure.getString(cr, Settings.Secure.NAVIGATION_RING_TARGETS[i]);
             if (result[i] != null) {
                 isDefault = false;
             }
@@ -56,7 +58,9 @@ public class NavigationRingHelpers {
 
         if (isDefault) {
             resetActionsToDefaults(context);
+            result[0] = ACTION_NULL;
             result[1] = ACTION_ASSIST;
+            result[2] = ACTION_NULL;
         }
 
         filterAction(result, ACTION_ASSIST, isAssistantAvailable(context));
@@ -79,16 +83,9 @@ public class NavigationRingHelpers {
 
     public static void resetActionsToDefaults(Context context) {
         final ContentResolver cr = context.getContentResolver();
-        Settings.Secure.putStringForUser(cr, Settings.Secure.NAVIGATION_RING_TARGETS[0], null,
-                UserHandle.USER_CURRENT);
-        Settings.Secure.putStringForUser(cr, Settings.Secure.NAVIGATION_RING_TARGETS[1],
-                ACTION_ASSIST, UserHandle.USER_CURRENT);
-        Settings.Secure.putStringForUser(cr, Settings.Secure.NAVIGATION_RING_TARGETS[2], null,
-                UserHandle.USER_CURRENT);
-        Settings.Secure.putStringForUser(cr, Settings.Secure.NAVIGATION_RING_TARGETS[3], null,
-                UserHandle.USER_CURRENT);
-        Settings.Secure.putStringForUser(cr, Settings.Secure.NAVIGATION_RING_TARGETS[4], null,
-                UserHandle.USER_CURRENT);
+        Settings.Secure.putString(cr, Settings.Secure.NAVIGATION_RING_TARGETS[0], ACTION_NULL);
+        Settings.Secure.putString(cr, Settings.Secure.NAVIGATION_RING_TARGETS[1], ACTION_ASSIST);
+        Settings.Secure.putString(cr, Settings.Secure.NAVIGATION_RING_TARGETS[2], ACTION_NULL);
     }
 
     public static boolean isAssistantAvailable(Context context) {
@@ -104,32 +101,32 @@ public class NavigationRingHelpers {
     public static Drawable getTargetDrawable(Context context, String action) {
         int resourceId = -1;
 
-        if (TextUtils.isEmpty(action) || action.equals(ACTION_NONE)) {
+        if (TextUtils.isEmpty(action) || action.equals(ACTION_NULL)) {
             resourceId = R.drawable.ic_navigation_ring_empty;
         } else if (action.equals(ACTION_SCREENSHOT)) {
             resourceId = R.drawable.ic_navigation_ring_screenshot;
-        } else if (action.equals(ACTION_IME_SWITCHER)) {
+        } else if (action.equals(ACTION_IME)) {
             resourceId = R.drawable.ic_navigation_ring_ime_switcher;
-        } else if (action.equals(ACTION_VIBRATE)) {
+        } else if (action.equals(ACTION_VIB)) {
             resourceId = getVibrateDrawableResId(context);
         } else if (action.equals(ACTION_SILENT)) {
             resourceId = getSilentDrawableResId(context);
-        } else if (action.equals(ACTION_RING_SILENT_VIBRATE)) {
+        } else if (action.equals(ACTION_VIB_SILENT)) {
             resourceId = getRingerDrawableResId(context);
-        } else if (action.equals(ACTION_KILL_TASK)) {
+        } else if (action.equals(ACTION_KILL)) {
             resourceId = R.drawable.ic_navigation_ring_killtask;
-        } else if (action.equals(ACTION_STANDBY)) {
+        } else if (action.equals(ACTION_POWER)) {
             resourceId = R.drawable.ic_navigation_ring_standby;
         } else if (action.equals(ACTION_TORCH)) {
             resourceId = getTorchDrawableResId(context);
         } else if (action.equals(ACTION_ASSIST)) {
             resourceId = R.drawable.ic_navigation_ring_search;
-        } else if (action.equals(ACTION_POWER_MENU)) {
-            resourceId = R.drawable.ic_navigation_ring_standby;
-        } else if (action.equals(ACTION_LAST_APP)) {
-            resourceId = R.drawable.ic_navigation_ring_last_app;
-        } else if (action.equals(ACTION_EXPANDED_DESKTOP)) {
-            resourceId = R.drawable.ic_navigation_ring_expanded_desktop;
+        } else if (action.startsWith("**")) {
+            // SlimActions without pre-defined navring icon, try to use navbar icon instead for now
+            Drawable slimActionDrawable = ActionHelper.getActionIconImage(context, action, null);
+            // Icons need to be black, not white
+            slimActionDrawable.setColorFilter(0xff000000, PorterDuff.Mode.MULTIPLY);
+            return slimActionDrawable;
         }
 
         if (resourceId < 0) {

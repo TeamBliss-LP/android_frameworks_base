@@ -55,4 +55,9 @@
 
     <color name="kg_carrier_text">#ffffffff</color>
 
+    <!-- Navigation ring target -->
+    <color name="navring_check_tint">@android:color/white</color>
+    <color name="navring_edit_fill">#FF558B2F</color>
+    <color name="navring_edit_tint">#FF689F38</color>
+
 </resources>
