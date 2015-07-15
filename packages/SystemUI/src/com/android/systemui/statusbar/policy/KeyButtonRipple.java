@@ -82,8 +82,8 @@ public class KeyButtonRipple extends Drawable {
         if (mRipplePaint == null) {
             mRipplePaint = new Paint();
             mRipplePaint.setAntiAlias(true);
+			mRipplePaint.setColor(mRippleColor);            
         }
-        mRipplePaint.setColor(mRippleColor);
         return mRipplePaint;
     }
 
@@ -179,6 +179,11 @@ public class KeyButtonRipple extends Drawable {
         } else {
             return false;
         }
+    }
+
+    @Override
+    public void jumpToCurrentState() {
+        cancelAnimations();
     }
 
     @Override

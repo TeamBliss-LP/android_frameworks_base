@@ -22,7 +22,11 @@ import android.app.ActivityManager;
 import android.app.ActivityManagerNative;
 import android.app.IActivityManager;
 import android.content.Context;
+import android.content.pm.PackageManager;
+import android.content.res.Resources;
+import android.content.res.ThemeConfig;
 import android.content.res.TypedArray;
+import android.database.ContentObserver;
 import android.graphics.Canvas;
 import android.graphics.PorterDuff.Mode;
 import android.graphics.RectF;
@@ -49,8 +53,8 @@ import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.ImageView;
 
-import com.android.internal.util.slim.ActionConstants;
-import com.android.internal.util.slim.Action;
+import com.android.internal.util.bliss.ActionConstants;
+import com.android.internal.util.bliss.Action;
 
 import com.android.systemui.R;
 
@@ -61,7 +65,7 @@ import static android.view.accessibility.AccessibilityNodeInfo.ACTION_LONG_CLICK
 
 public class KeyButtonView extends ImageView {
     private static final String TAG = "StatusBar.KeyButtonView";
-    private static final boolean DEBUG = NavbarUtils.DEBUG;
+    private static final boolean DEBUG = false;
 
     // TODO: Get rid of this
     public static final float DEFAULT_QUIESCENT_ALPHA = 1f;

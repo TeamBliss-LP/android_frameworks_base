@@ -376,6 +376,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     // settings
     View mFlipSettingsView;
     private QSPanel mQSPanel;
+    boolean mSearchPanelAllowed = true;
 
     String mGreeting = "";
 
@@ -434,8 +435,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     private int mNavigationBarWindowState = WINDOW_STATE_SHOWING;
 
-    private int mNavigationIconHints = 0;
-
     // the tracker view
     int mTrackingPosition; // the position of the top of the tracking view.
 
@@ -485,6 +484,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     private ScreenPinningRequest mScreenPinningRequest;
 
+    private int mNavigationIconHints = 0;
     private HandlerThread mHandlerThread;
 
     Runnable mLongPressBrightnessChange = new Runnable() {
@@ -541,7 +541,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_BATTERY_STATUS_TEXT_COLOR),
-<<<<<<< HEAD
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_BLISS_LOGO),
@@ -603,6 +602,33 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.MENU_VISIBILITY),
                     false, this, UserHandle.USER_ALL);
+			resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.LEGACY_MENU_LAYOUT),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.LEGACY_MENU_LEFT_ACTION),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.LEGACY_MENU_RIGHT_ACTION),
+                    false, this, UserHandle.USER_ALL);        
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.LEGACY_MENU_LEFT_LONG_ACTION),
+                    false, this, UserHandle.USER_ALL);   
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.LEGACY_MENU_RIGHT_LONG_ACTION),
+                    false, this, UserHandle.USER_ALL); 
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.LEGACY_MENU_LEFT_SHORTCUT_URI),
+                    false, this, UserHandle.USER_ALL);     
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.LEGACY_MENU_RIGHT_SHORTCUT_URI),
+                    false, this, UserHandle.USER_ALL);                        
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.LEGACY_MENU_LEFT_LONG_SHORTCUT_URI),
+                    false, this, UserHandle.USER_ALL);              
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.LEGACY_MENU_RIGHT_LONG_SHORTCUT_URI),
+                    false, this, UserHandle.USER_ALL);                       
             update();
         }
 
@@ -698,7 +724,25 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 || uri.equals(Settings.System.getUriFor(
                     Settings.System.MENU_LOCATION))
                 || uri.equals(Settings.System.getUriFor(
-                    Settings.System.MENU_VISIBILITY))) {
+                    Settings.System.MENU_VISIBILITY))
+				|| uri.equals(Settings.System.getUriFor(
+                    Settings.System.LEGACY_MENU_LAYOUT))
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.LEGACY_MENU_LEFT_ACTION))                                       
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.LEGACY_MENU_RIGHT_ACTION))
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.LEGACY_MENU_LEFT_LONG_ACTION))
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.LEGACY_MENU_RIGHT_LONG_ACTION))
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.LEGACY_MENU_LEFT_SHORTCUT_URI))
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.LEGACY_MENU_RIGHT_SHORTCUT_URI))                    
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.LEGACY_MENU_LEFT_LONG_SHORTCUT_URI))   
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.LEGACY_MENU_RIGHT_LONG_SHORTCUT_URI))) {                       
                 if (mNavigationBarView != null) {
                     mNavigationBarView.recreateNavigationBar();
                     prepareNavigationBarView();
@@ -1051,7 +1095,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         // TODO: use MediaSessionManager.SessionListener to hook us up to future updates
         // in session state
 
-        addNavigationBar(false);
+        addNavigationBar();
 
         // Status bar settings observer
         SettingsObserver observer = new SettingsObserver(mHandler);
@@ -1169,6 +1213,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         if (mNavigationBarView == null) {
             mNavigationBarView =
                 (NavigationBarView) View.inflate(context, R.layout.navigation_bar, null);
+            mNavigationBarView.updateResources(getNavbarThemedResources());
         }
 
         mNavigationBarView.setDisabledFlags(mDisabled);
@@ -1905,7 +1950,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         }
     }
 
-    private void prepareNavigationBarView(boolean forceReset) {
+    private void prepareNavigationBarView() {
         mNavigationBarView.reorient();
 
         View home = mNavigationBarView.getHomeButton();
@@ -1925,7 +1970,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     }
 
     // For small-screen devices (read: phones) that lack hardware navigation buttons
-    private void addNavigationBar(boolean forceReset) {
+    private void addNavigationBar() {
         if (DEBUG) Log.v(TAG, "addNavigationBar: about to add " + mNavigationBarView);
         if (mNavigationBarView == null) return;
 
@@ -1936,15 +1981,16 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             return;
         }
 
-        prepareNavigationBarView(forceReset);
+        prepareNavigationBarView();
 
         mWindowManager.addView(mNavigationBarView, getNavigationBarLayoutParams());
+        mNavigationBarOverlay.setNavigationBar(mNavigationBarView);
     }
 
     private void repositionNavigationBar() {
         if (mNavigationBarView == null || !mNavigationBarView.isAttachedToWindow()) return;
 
-        prepareNavigationBarView(false);
+        prepareNavigationBarView();
 
         mWindowManager.updateViewLayout(mNavigationBarView, getNavigationBarLayoutParams());
     }
@@ -2936,8 +2982,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                         | StatusBarManager.DISABLE_RECENT
                         | StatusBarManager.DISABLE_BACK
                         | StatusBarManager.DISABLE_SEARCH)) != 0) {
-            // the nav bar will take care of these
-            if (mNavigationBarView != null) mNavigationBarView.setDisabledFlags(state);
+
+            // All navigation bar listeners will take care of these
+            propagateDisabledFlags(state);
 
             if ((state & StatusBarManager.DISABLE_RECENT) != 0) {
                 // close recents if it's visible
