@@ -92,9 +92,9 @@ import java.util.ArrayList;
 import java.util.ArrayList;
 import java.util.List;
 
-public class NavigationBarView extends LinearLayout {
-    private static final boolean DEBUG = false;
-    private final static String TAG = "PhoneStatusBar/NavigationBarView";
+public class NavigationBarView extends LinearLayout implements BaseStatusBar.NavigationBarCallback {
+    final static boolean DEBUG = false;
+    final static String TAG = "PhoneStatusBar/NavigationBarView";
 
     // slippery nav bar when everything is disabled, e.g. during setup
     final static boolean SLIPPERY_WHEN_DISABLED = true;
