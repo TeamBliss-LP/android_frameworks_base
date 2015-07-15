@@ -114,6 +114,7 @@
   <java-symbol type="id" name="max_value" />
   <java-symbol type="id" name="textsize_seekbar" />
 
+  <java-symbol type="string" name="action_null" />
   <!-- Pie controls -->
   <java-symbol type="string" name="global_actions_pie_mode_on_status" />
   <java-symbol type="string" name="global_actions_pie_mode_off_status" />

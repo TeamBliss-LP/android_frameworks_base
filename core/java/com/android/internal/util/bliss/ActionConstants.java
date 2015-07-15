@@ -31,6 +31,7 @@ public class ActionConstants {
     public static final String ACTION_SETTINGS_PANEL       = "**settings_panel**";
     public static final String ACTION_RECENTS              = "**recents**";
     public static final String ACTION_SCREENSHOT           = "**screenshot**";
+    public static final String ACTION_SCREENRECORD         = "**screenrecord**";   
     public static final String ACTION_IME                  = "**ime**";
     public static final String ACTION_LAST_APP             = "**lastapp**";
     public static final String ACTION_KILL                 = "**kill**";

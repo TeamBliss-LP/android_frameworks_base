@@ -104,6 +104,31 @@ public class ActionHelper {
             getPieProvider(context), values, entries, false));
     }
 
+    // get and set the navbar configs from provider and return propper arraylist objects
+    // @ActionConfig
+    public static ArrayList<ActionConfig> getNavBarConfig(Context context) {
+        return (ConfigSplitHelper.getActionConfigValues(context,
+            getNavBarProvider(context), null, null, false));
+    }
+
+    // get @ActionConfig with description if needed and other then an app description
+    public static ArrayList<ActionConfig> getNavBarConfigWithDescription(
+            Context context, String values, String entries) {
+        return (ConfigSplitHelper.getActionConfigValues(context,
+            getNavBarProvider(context), values, entries, false));
+    }
+
+    private static String getNavBarProvider(Context context) {
+        String config = Settings.System.getStringForUser(
+                    context.getContentResolver(),
+                    Settings.System.NAVIGATION_BAR_CONFIG,
+                    UserHandle.USER_CURRENT);
+        if (config == null) {
+            config = ActionConstants.NAVIGATION_CONFIG_DEFAULT;
+        }
+        return config;
+    }
+
     private static String getPieProvider(Context context) {
         String config = Settings.System.getStringForUser(
                     context.getContentResolver(),
@@ -113,6 +138,19 @@ public class ActionHelper {
             config = ActionConstants.NAVIGATION_CONFIG_DEFAULT;
         }
         return config;
+    }
+
+    public static void setNavBarConfig(Context context,
+            ArrayList<ActionConfig> buttonsConfig, boolean reset) {
+        String config;
+        if (reset) {
+            config = ActionConstants.NAVIGATION_CONFIG_DEFAULT;
+        } else {
+            config = ConfigSplitHelper.setActionConfig(buttonsConfig, false);
+        }
+        Settings.System.putString(context.getContentResolver(),
+                    Settings.System.NAVIGATION_BAR_CONFIG,
+                    config);
     }
 
     public static void setPieConfig(Context context,
@@ -322,6 +360,9 @@ public class ActionHelper {
         } else if (clickAction.equals(ActionConstants.ACTION_NAVBAR)) {
             resId = systemUiResources.getIdentifier(
                         SYSTEMUI_METADATA_NAME + ":drawable/ic_sysbar_navbar", null, null);
+		} else if (clickAction.equals(ActionConstants.ACTION_SCREENRECORD)) {
+            resId = systemUiResources.getIdentifier(
+                        SYSTEMUI_METADATA_NAME + ":drawable/ic_sysbar_screenrecord", null, null);
         } else if (clickAction.equals(ActionConstants.ACTION_TORCH)) {
             resId = systemUiResources.getIdentifier(
                         SYSTEMUI_METADATA_NAME + ":drawable/ic_sysbar_torch", null, null);
@@ -334,5 +375,4 @@ public class ActionHelper {
         }
         return resId;
     }
-
 }

@@ -19,7 +19,7 @@
 <!--  navigation bar for sw600dp (small tablets) -->
 <com.android.systemui.statusbar.phone.NavigationBarView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:systemui="http://schemas.android.com/apk/res-auto"
+    xmlns:systemui="http://schemas.android.com/apk/res/com.android.systemui"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
     android:background="@drawable/system_bar_background"
@@ -29,6 +29,25 @@
         android:layout_height="match_parent"
         android:layout_width="match_parent"
         >
+
+        <RelativeLayout
+            android:layout_height="match_parent"
+            android:layout_width="match_parent">
+
+            <com.android.systemui.statusbar.policy.BatteryBarController
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:visibility="gone"
+                systemui:viewLocation="2"
+                android:layout_alignParentTop="true" />
+
+            <com.android.systemui.statusbar.policy.BatteryBarController
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:visibility="gone"
+                systemui:viewLocation="3"
+                android:layout_alignParentBottom="true" />
+        </RelativeLayout>
 
         <LinearLayout
             android:layout_height="match_parent"
@@ -41,11 +60,18 @@
             >
 
             <!-- navigation controls -->
-            <View
+            <com.android.systemui.statusbar.policy.KeyButtonView android:id="@+id/menu_left"
                 android:layout_width="@dimen/navigation_extra_key_width"
                 android:layout_height="match_parent"
+                android:src="@drawable/ic_sysbar_menu"
+                systemui:keyCode="82"
                 android:layout_weight="0"
-                android:layout_marginStart="2dp"
+                android:visibility="invisible"
+                android:contentDescription="@string/accessibility_menu" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
                 android:visibility="invisible"
                 />
             <Space 
@@ -130,14 +156,14 @@
                 android:layout_height="match_parent"
                 android:layout_marginStart="40dp"
                 android:src="@drawable/ic_sysbar_lights_out_dot_small"
-                android:scaleType="center"
+                android:scaleType="centerInside"
                 android:layout_weight="0"
                 />
             <ImageView
                 android:layout_width="128dp" android:paddingStart="25dp" android:paddingEnd="25dp"
                 android:layout_height="match_parent"
                 android:src="@drawable/ic_sysbar_lights_out_dot_large"
-                android:scaleType="center"
+                android:scaleType="centerInside"
                 android:layout_weight="0"
                 />
             <ImageView
@@ -145,7 +171,7 @@
                 android:layout_marginEnd="40dp"
                 android:layout_height="match_parent"
                 android:src="@drawable/ic_sysbar_lights_out_dot_small"
-                android:scaleType="center"
+                android:scaleType="centerInside"
                 android:layout_weight="0"
                 />
             <Space 
@@ -174,6 +200,26 @@
         android:visibility="gone"
         android:paddingTop="0dp"
         >
+
+        <RelativeLayout
+            android:layout_height="match_parent"
+            android:layout_width="match_parent">
+
+            <com.android.systemui.statusbar.policy.BatteryBarController
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:visibility="gone"
+                systemui:viewLocation="2"
+                android:layout_alignParentTop="true" />
+
+            <com.android.systemui.statusbar.policy.BatteryBarController
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:visibility="gone"
+                systemui:viewLocation="3"
+                android:layout_alignParentBottom="true" />
+
+        </RelativeLayout>
 
         <LinearLayout
             android:layout_height="match_parent"
@@ -274,14 +320,14 @@
                 android:layout_height="match_parent"
                 android:layout_marginStart="40dp"
                 android:src="@drawable/ic_sysbar_lights_out_dot_small"
-                android:scaleType="center"
+                android:scaleType="centerInside"
                 android:layout_weight="0"
                 />
             <ImageView
                 android:layout_width="162dp" android:paddingStart="42dp" android:paddingEnd="42dp"
                 android:layout_height="match_parent"
                 android:src="@drawable/ic_sysbar_lights_out_dot_large"
-                android:scaleType="center"
+                android:scaleType="centerInside"
                 android:layout_weight="0"
                 />
             <ImageView
@@ -289,7 +335,7 @@
                 android:layout_marginEnd="40dp"
                 android:layout_height="match_parent"
                 android:src="@drawable/ic_sysbar_lights_out_dot_small"
-                android:scaleType="center"
+                android:scaleType="centerInside"
                 android:layout_weight="0"
                 />
             <Space 
