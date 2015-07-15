@@ -4,23 +4,23 @@
 **
 ** Copyright 2011, The Android Open Source Project
 **
-** Licensed under the Apache License, Version 2.0 (the "License");
-** you may not use this file except in compliance with the License.
-** You may obtain a copy of the License at
+** Licensed under the Apache License, Version 2.0 (the "License"); 
+** you may not use this file except in compliance with the License. 
+** You may obtain a copy of the License at 
 **
-**     http://www.apache.org/licenses/LICENSE-2.0
+**     http://www.apache.org/licenses/LICENSE-2.0 
 **
-** Unless required by applicable law or agreed to in writing, software
-** distributed under the License is distributed on an "AS IS" BASIS,
-** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-** See the License for the specific language governing permissions and
+** Unless required by applicable law or agreed to in writing, software 
+** distributed under the License is distributed on an "AS IS" BASIS, 
+** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+** See the License for the specific language governing permissions and 
 ** limitations under the License.
 */
 -->
 
 <com.android.systemui.statusbar.phone.NavigationBarView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:systemui="http://schemas.android.com/apk/res/com.android.systemui"
+    xmlns:systemui="http://schemas.android.com/apk/res-auto"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
     android:background="@drawable/system_bar_background"
@@ -31,26 +31,6 @@
         android:layout_width="match_parent"
         >
 
-        <RelativeLayout
-            android:layout_height="match_parent"
-            android:layout_width="match_parent">
-
-            <com.android.systemui.statusbar.policy.BatteryBarController
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:visibility="gone"
-                systemui:viewLocation="2"
-                android:layout_alignParentTop="true" />
-
-            <com.android.systemui.statusbar.policy.BatteryBarController
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:visibility="gone"
-                systemui:viewLocation="3"
-                android:layout_alignParentBottom="true" />
-        </RelativeLayout>
-
-        <!-- layout for custom navbar -->
         <LinearLayout
             android:layout_height="match_parent"
             android:layout_width="match_parent"
@@ -62,14 +42,11 @@
             >
 
             <!-- navigation controls -->
-            <com.android.systemui.statusbar.policy.KeyButtonView android:id="@+id/menu_left"
+            <View
                 android:layout_width="@dimen/navigation_side_padding"
                 android:layout_height="match_parent"
-                android:src="@drawable/ic_sysbar_menu"
-                systemui:keyCode="82"
                 android:layout_weight="0"
                 android:visibility="invisible"
-                android:contentDescription="@string/accessibility_menu"
                 />
             <com.android.systemui.statusbar.policy.KeyButtonView android:id="@+id/back"
                 android:layout_width="@dimen/navigation_key_width"
@@ -77,10 +54,15 @@
                 android:src="@drawable/ic_sysbar_back"
                 systemui:keyCode="4"
                 android:layout_weight="0"
-                android:scaleType="centerInside"
+                android:scaleType="center"
                 android:contentDescription="@string/accessibility_back"
                 />
-
+            <View 
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:visibility="invisible"
+                />
             <com.android.systemui.statusbar.policy.KeyButtonView android:id="@+id/home"
                 android:layout_width="@dimen/navigation_key_width"
                 android:layout_height="match_parent"
@@ -88,19 +70,23 @@
                 systemui:keyCode="3"
                 systemui:keyRepeat="false"
                 android:layout_weight="0"
-                android:scaleType="centerInside"
+                android:scaleType="center"
                 android:contentDescription="@string/accessibility_home"
                 />
-
+            <View 
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:visibility="invisible"
+                />
             <com.android.systemui.statusbar.policy.KeyButtonView android:id="@+id/recent_apps"
                 android:layout_width="@dimen/navigation_key_width"
                 android:layout_height="match_parent"
                 android:src="@drawable/ic_sysbar_recent"
                 android:layout_weight="0"
-                android:scaleType="centerInside"
+                android:scaleType="center"
                 android:contentDescription="@string/accessibility_recent"
                 />
-
             <FrameLayout
                 android:layout_width="@dimen/navigation_side_padding"
                 android:layout_height="match_parent"
@@ -109,10 +95,10 @@
                     android:id="@+id/menu"
                     android:layout_width="@dimen/navigation_extra_key_width"
                     android:layout_height="match_parent"
-                    android:scaleType="centerInside"
                     android:contentDescription="@string/accessibility_menu"
                     android:src="@drawable/ic_sysbar_menu"
                     android:visibility="invisible"
+                    android:scaleType="centerInside"
                     android:layout_gravity="end"
                     systemui:keyCode="82" />
 
@@ -120,12 +106,11 @@
                     android:id="@+id/ime_switcher"
                     android:layout_width="@dimen/navigation_extra_key_width"
                     android:layout_height="match_parent"
-                    android:scaleType="centerInside"
                     android:contentDescription="@string/accessibility_ime_switch_button"
+                    android:scaleType="centerInside"
                     android:src="@drawable/ic_ime_switcher_default"
                     android:visibility="invisible"
                     android:layout_gravity="end" />
-
             </FrameLayout>
 
         </LinearLayout>
@@ -143,10 +128,10 @@
                 android:layout_height="match_parent"
                 android:layout_marginStart="@dimen/navigation_side_padding"
                 android:src="@drawable/ic_sysbar_lights_out_dot_small"
-                android:scaleType="centerInside"
+                android:scaleType="center"
                 android:layout_weight="0"
                 />
-            <View
+            <View 
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
@@ -156,10 +141,10 @@
                 android:layout_width="@dimen/navigation_key_width"
                 android:layout_height="match_parent"
                 android:src="@drawable/ic_sysbar_lights_out_dot_large"
-                android:scaleType="centerInside"
+                android:scaleType="center"
                 android:layout_weight="0"
                 />
-            <View
+            <View 
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
@@ -170,7 +155,7 @@
                 android:layout_marginEnd="@dimen/navigation_side_padding"
                 android:layout_height="match_parent"
                 android:src="@drawable/ic_sysbar_lights_out_dot_small"
-                android:scaleType="centerInside"
+                android:scaleType="center"
                 android:layout_weight="0"
                 />
         </LinearLayout>
@@ -195,32 +180,7 @@
         android:paddingTop="0dp"
         >
 
-        <RelativeLayout
-            android:layout_height="match_parent"
-            android:layout_width="match_parent">
-
-            <com.android.systemui.statusbar.policy.BatteryBarController
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:visibility="gone"
-                android:layout_alignParentLeft="true"
-                systemui:viewLocation="2"
-                android:rotation="180" />
-
-            <com.android.systemui.statusbar.policy.BatteryBarController
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:visibility="gone"
-                android:layout_alignParentRight="true"
-                systemui:viewLocation="3"
-                android:rotation="180" />
-
-        </RelativeLayout>
-
-        <!-- layout for custom navbar -->
-        <LinearLayout
+        <LinearLayout 
             android:layout_height="match_parent"
             android:layout_width="match_parent"
             android:orientation="vertical"
@@ -234,7 +194,7 @@
             <FrameLayout
                 android:layout_weight="0"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/navigation_side_padding">
+                android:layout_height="@dimen/navigation_side_padding" >
                 <com.android.systemui.statusbar.policy.KeyButtonView
                     android:id="@+id/ime_switcher"
                     android:layout_width="match_parent"
@@ -261,11 +221,11 @@
                 android:layout_height="@dimen/navigation_key_width"
                 android:layout_width="match_parent"
                 android:src="@drawable/ic_sysbar_recent_land"
-                android:scaleType="centerInside"
+                android:scaleType="center"
                 android:layout_weight="0"
                 android:contentDescription="@string/accessibility_recent"
                 />
-            <View
+            <View 
                 android:layout_height="match_parent"
                 android:layout_width="match_parent"
                 android:layout_weight="1"
@@ -275,13 +235,13 @@
                 android:layout_height="@dimen/navigation_key_width"
                 android:layout_width="match_parent"
                 android:src="@drawable/ic_sysbar_home_land"
-                android:scaleType="centerInside"
+                android:scaleType="center"
                 systemui:keyCode="3"
                 systemui:keyRepeat="false"
                 android:layout_weight="0"
                 android:contentDescription="@string/accessibility_home"
                 />
-            <View
+            <View 
                 android:layout_height="match_parent"
                 android:layout_width="match_parent"
                 android:layout_weight="1"
@@ -291,7 +251,7 @@
                 android:layout_height="@dimen/navigation_key_width"
                 android:layout_width="match_parent"
                 android:src="@drawable/ic_sysbar_back_land"
-                android:scaleType="centerInside"
+                android:scaleType="center"
                 systemui:keyCode="4"
                 android:layout_weight="0"
                 android:contentDescription="@string/accessibility_back"
@@ -305,7 +265,7 @@
         </LinearLayout>
 
         <!-- lights out layout to match exactly -->
-        <LinearLayout
+        <LinearLayout 
             android:layout_height="match_parent"
             android:layout_width="match_parent"
             android:orientation="vertical"
@@ -317,10 +277,10 @@
                 android:layout_marginTop="@dimen/navigation_side_padding"
                 android:layout_width="match_parent"
                 android:src="@drawable/ic_sysbar_lights_out_dot_small"
-                android:scaleType="centerInside"
+                android:scaleType="center"
                 android:layout_weight="0"
                 />
-            <View
+            <View 
                 android:layout_height="match_parent"
                 android:layout_width="match_parent"
                 android:layout_weight="1"
@@ -330,10 +290,10 @@
                 android:layout_height="@dimen/navigation_key_width"
                 android:layout_width="match_parent"
                 android:src="@drawable/ic_sysbar_lights_out_dot_large"
-                android:scaleType="centerInside"
+                android:scaleType="center"
                 android:layout_weight="0"
                 />
-            <View
+            <View 
                 android:layout_height="match_parent"
                 android:layout_width="match_parent"
                 android:layout_weight="1"
@@ -344,7 +304,7 @@
                 android:layout_marginBottom="@dimen/navigation_side_padding"
                 android:layout_width="match_parent"
                 android:src="@drawable/ic_sysbar_lights_out_dot_small"
-                android:scaleType="centerInside"
+                android:scaleType="center"
                 android:layout_weight="0"
                 />
         </LinearLayout>
@@ -361,12 +321,5 @@
             android:layout_gravity="top"
             />
     </FrameLayout>
-
-    <View
-        android:id="@+id/rot270"
-        android:layout_height="match_parent"
-        android:layout_width="match_parent"
-        android:visibility="gone"
-        />
 
 </com.android.systemui.statusbar.phone.NavigationBarView>

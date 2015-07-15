@@ -94,9 +94,6 @@
 
     <string name="gestures_message">Draw your gesture here</string>
 
-    <!-- Navigation bar -->
-    <string name="def_navbar_layout_warning">Empty layout: using default!</string>
-
     <!-- Battery status in pie controls -->
     <string name="pie_battery_status_charging">Charging (<xliff:g id="percent">%d</xliff:g>%%)</string>
     <string name="pie_battery_status_full">Charged</string>

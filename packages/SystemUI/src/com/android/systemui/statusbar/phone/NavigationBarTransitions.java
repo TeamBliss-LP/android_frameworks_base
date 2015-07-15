@@ -25,7 +25,6 @@ import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 
 import com.android.internal.statusbar.IStatusBarService;
-import com.android.internal.util.bliss.NavbarConstants.NavbarConstant;
 import com.android.systemui.R;
 import com.android.systemui.statusbar.policy.KeyButtonView;
 
@@ -41,10 +40,7 @@ public final class NavigationBarTransitions extends BarTransitions {
     private int mRequestedMode;
 
     public NavigationBarTransitions(NavigationBarView view) {
-        super(view, R.drawable.nav_background, R.color.navigation_bar_background_opaque,
-                R.color.navigation_bar_background_semi_transparent,
-                R.color.navigation_bar_background_transparent,
-                com.android.internal.R.color.battery_saver_mode_color);
+        super(view, R.drawable.nav_background);
         mView = view;
         mBarService = IStatusBarService.Stub.asInterface(
                 ServiceManager.getService(Context.STATUS_BAR_SERVICE));
@@ -84,11 +80,10 @@ public final class NavigationBarTransitions extends BarTransitions {
     private void applyMode(int mode, boolean animate, boolean force) {
         // apply to key buttons
         final float alpha = alphaForMode(mode);
-        View[] views = mView.getAllButtons();
-
-        for(View v : views) {
-            setKeyButtonViewQuiescentAlpha(v, alpha, animate);
-        }
+        setKeyButtonViewQuiescentAlpha(mView.getHomeButton(), alpha, animate);
+        setKeyButtonViewQuiescentAlpha(mView.getRecentsButton(), alpha, animate);
+        setKeyButtonViewQuiescentAlpha(mView.getMenuButton(), alpha, animate);
+        setKeyButtonViewQuiescentAlpha(mView.getImeSwitchButton(), alpha, animate);
 
         applyBackButtonQuiescentAlpha(mode, animate);
 
@@ -103,12 +98,10 @@ public final class NavigationBarTransitions extends BarTransitions {
 
     public void applyBackButtonQuiescentAlpha(int mode, boolean animate) {
         float backAlpha = 0;
-        View[] views = mView.getAllButtons();
-
-        for(View v : views) {
-            backAlpha = maxVisibleQuiescentAlpha(backAlpha, v);
-        }
-
+        backAlpha = maxVisibleQuiescentAlpha(backAlpha, mView.getHomeButton());
+        backAlpha = maxVisibleQuiescentAlpha(backAlpha, mView.getRecentsButton());
+        backAlpha = maxVisibleQuiescentAlpha(backAlpha, mView.getMenuButton());
+        backAlpha = maxVisibleQuiescentAlpha(backAlpha, mView.getImeSwitchButton());
         if (backAlpha > 0) {
             setKeyButtonViewQuiescentAlpha(mView.getBackButton(), backAlpha, animate);
         }
