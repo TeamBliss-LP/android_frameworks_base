@@ -243,6 +243,9 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
         mWeatherLine2 = (TextView) findViewById(R.id.weather_line_2);
         mSettingsObserver = new SettingsObserver(new Handler());
         loadDimens();
+        if (mQSCSwitch) {
+            updateBackgroundColor();
+        }
         updateEverything();
         addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
             @Override
@@ -425,7 +428,9 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
     }
 
     private void updateHeaderElements() {
+        if (mQSCSwitch) {
         updateBackgroundColor();
+        }
         updateTextColorSettings();
         updateIconColorSettings();
         updateHeadsUpButton();
@@ -1417,10 +1422,8 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
     private void updateBackgroundColor() {
         ContentResolver resolver = mContext.getContentResolver();
         int backgroundColor = Settings.System.getInt(resolver,
-                Settings.System.STATUS_BAR_EXPANDED_HEADER_BG_COLOR,
-                0xff384248);
-
-        getBackground().setColorFilter(backgroundColor, Mode.MULTIPLY);
+                Settings.System.STATUS_BAR_EXPANDED_HEADER_BG_COLOR, 0xff384248);
+            getBackground().setColorFilter(backgroundColor, Mode.SRC_OVER);
     }
 
     public void updateBatteryColorSettings(boolean isHeader) {
