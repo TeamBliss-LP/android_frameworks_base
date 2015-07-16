@@ -212,8 +212,7 @@
         android:layout_height="match_parent"
         android:layout_width="match_parent"
         android:visibility="gone"
-        android:paddingTop="0dp"
-        >
+        android:paddingTop="0dp">
 
         <RelativeLayout
             android:layout_height="match_parent"
@@ -247,8 +246,7 @@
             android:clipChildren="false"
             android:clipToPadding="false"
             android:id="@+id/nav_buttons"
-            android:animateLayoutChanges="true"
-            >
+            android:animateLayoutChanges="true">
 
             <!-- navigation controls -->
             <FrameLayout
@@ -285,7 +283,7 @@
                 android:layout_weight="0"
                 android:contentDescription="@string/accessibility_recent"
                 />
-            <View 
+            <View
                 android:layout_height="match_parent"
                 android:layout_width="match_parent"
                 android:layout_weight="1"
@@ -301,7 +299,7 @@
                 android:layout_weight="0"
                 android:contentDescription="@string/accessibility_home"
                 />
-            <View 
+            <View
                 android:layout_height="match_parent"
                 android:layout_width="match_parent"
                 android:layout_weight="1"
@@ -325,7 +323,7 @@
         </LinearLayout>
 
         <!-- lights out layout to match exactly -->
-        <LinearLayout 
+        <LinearLayout
             android:layout_height="match_parent"
             android:layout_width="match_parent"
             android:orientation="vertical"

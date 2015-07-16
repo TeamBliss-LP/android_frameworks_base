@@ -45,14 +45,15 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.VectorDrawable;
 import android.os.Handler;
 import android.os.Message;
+import android.os.PowerManager;
 import android.os.RemoteException;
 import android.os.UserHandle;
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.ContextThemeWrapper;
 import android.util.TypedValue;
+import android.view.ContextThemeWrapper;
 import android.view.Display;
 import android.view.GestureDetector;
 import android.view.Gravity;
@@ -62,7 +63,6 @@ import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.os.PowerManager;
 import android.view.GestureDetector;
 import android.view.inputmethod.InputMethodManager;
 import android.view.accessibility.AccessibilityManager;
@@ -80,7 +80,6 @@ import com.android.internal.util.bliss.DeviceUtils;
 import com.android.systemui.R;
 import com.android.systemui.statusbar.BaseStatusBar;
 import com.android.systemui.statusbar.DelegateViewHelper;
-import com.android.systemui.statusbar.policy.KeyButtonView;
 import com.android.systemui.statusbar.policy.DeadZone;
 import com.android.systemui.statusbar.policy.KeyButtonView;
 
@@ -117,20 +116,20 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
     private final static int HIDE_IME_ARROW = 0;
     private final static int SHOW_IME_ARROW = 1;
 
-	// Legacy menu tweaks by @siracuervo
-	private boolean mLegacyMenuLayout;
-	private String mCustomLeftShortcutUri;
-	private String mCustomLeftLongShortcutUri;
-	private String mCustomRightShortcutUri;
-	private String mCustomRightLongShortcutUri;
-	private	int mLegacyMenuLeftAction;   
-	private	int mLegacyMenuLeftLongAction;   
-	private	String leftaction;
-	private	int leftdrawable;
-	private	int mLegacyMenuRightAction;   
-	private	int mLegacyMenuRightLongAction;        
-	private	String rightaction;
-	private	int rightdrawable;
+    // Legacy menu tweaks by @siracuervo
+    private boolean mLegacyMenuLayout;
+    private String mCustomLeftShortcutUri;
+    private String mCustomLeftLongShortcutUri;
+    private String mCustomRightShortcutUri;
+    private String mCustomRightLongShortcutUri;
+    private int mLegacyMenuLeftAction;
+    private int mLegacyMenuLeftLongAction;
+    private String leftaction;
+    private int leftdrawable;
+    private int mLegacyMenuRightAction;
+    private int mLegacyMenuRightLongAction;
+    private String rightaction;
+    private int rightdrawable;
     // End of legacy menu tweaks
     private int mMenuVisibility;
     private int mMenuSetting;
@@ -489,7 +488,7 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
     }
 
     private void makeBar() {
-        if (mButtonsConfig.isEmpty() || mButtonsConfig == null) {
+        if (mButtonsConfig == null || mButtonsConfig.isEmpty()) {
             return;
         }
 
@@ -579,6 +578,10 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
         int i = mContext.getResources().getDimensionPixelSize(R.dimen.navigation_key_width);
         v.setLayoutParams(getLayoutParams(landscape, i));
 
+        if (clickAction.startsWith("**")) {
+            v.setScaleType(KeyButtonView.ScaleType.CENTER_INSIDE);
+        }
+
         if (clickAction.equals(ActionConstants.ACTION_BACK)) {
             v.setId(R.id.back);
         } else if (clickAction.equals(ActionConstants.ACTION_HOME)) {
@@ -589,10 +592,6 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
             int buttonId = v.generateViewId();
             v.setId(buttonId);
             mButtonIdList.add(buttonId);
-        }
-
-        if (clickAction.startsWith("**")) {
-            v.setScaleType(KeyButtonView.ScaleType.CENTER_INSIDE);
         }
 
         boolean colorize = true;
@@ -613,6 +612,8 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
                 colorize = false;
             }
             mAppIsBinded = true;
+        } else if (landscape && clickAction.startsWith("**")) {
+            v.setPaddingRelative(2,5,2,5);
         }
 
         Drawable d = ActionHelper.getActionIconImage(mContext, clickAction, iconUri);
@@ -628,171 +629,171 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
     }
 
 
-	public void getLegacyLeftMenuAction (Context context) {
-		mCustomLeftShortcutUri = Settings.System.getString(context.getContentResolver(),
-				Settings.System.LEGACY_MENU_LEFT_SHORTCUT_URI);
+    public void getLegacyLeftMenuAction (Context context) {
+        mCustomLeftShortcutUri = Settings.System.getString(context.getContentResolver(),
+                Settings.System.LEGACY_MENU_LEFT_SHORTCUT_URI);
         mLegacyMenuLeftAction = Settings.System.getInt(context.getContentResolver(),
                 Settings.System.LEGACY_MENU_LEFT_ACTION, 0);
 
-		if (mLegacyMenuLeftAction == 0) {
-				leftaction = ActionConstants.ACTION_MENU;
-				leftdrawable = R.drawable.ic_sysbar_menu;
-		} else if (mLegacyMenuLeftAction == 1) {
-				leftaction = ActionConstants.ACTION_HOME;
-				leftdrawable = R.drawable.ic_sysbar_home;
-		} else if (mLegacyMenuLeftAction == 2) {
-				leftaction = ActionConstants.ACTION_BACK;
-				leftdrawable = R.drawable.ic_sysbar_back;
-		} else if (mLegacyMenuLeftAction == 3) {
-				leftaction = ActionConstants.ACTION_RECENTS;			
-				leftdrawable = R.drawable.ic_sysbar_recent;
-		} else if (mLegacyMenuLeftAction == 4) {
-				leftaction = ActionConstants.ACTION_VOICE_SEARCH;			
-				leftdrawable = R.drawable.ic_sysbar_search;					
-		} else if (mLegacyMenuLeftAction == 5) {
-				leftaction = ActionConstants.ACTION_SEARCH;
-				leftdrawable = R.drawable.ic_sysbar_search;
-		} else if (mLegacyMenuLeftAction == 6) {
-				leftaction = ActionConstants.ACTION_POWER;
-				leftdrawable = R.drawable.ic_sysbar_sleep;		
-		} else if (mLegacyMenuLeftAction == 7) {
-				leftaction = ActionConstants.ACTION_NOTIFICATIONS;
-				leftdrawable = R.drawable.ic_sysbar_notifications;
-		} else if (mLegacyMenuLeftAction == 8) {
-				leftaction = ActionConstants.ACTION_SETTINGS_PANEL;
-				leftdrawable = R.drawable.ic_sysbar_qs; 
-		} else if (mLegacyMenuLeftAction == 9) {
-				leftaction = ActionConstants.ACTION_SCREENSHOT;
-				leftdrawable = R.drawable.ic_sysbar_screenshot; 
-		} else if (mLegacyMenuLeftAction == 10) {
-				leftaction = ActionConstants.ACTION_SCREENRECORD;
-				leftdrawable = R.drawable.ic_sysbar_screenrecord;
-		} else if (mLegacyMenuLeftAction == 11) {
-				leftaction = ActionConstants.ACTION_IME;
-				leftdrawable = R.drawable.ic_ime_switcher_default; 
-		} else if (mLegacyMenuLeftAction == 12) {
-				leftaction = ActionConstants.ACTION_LAST_APP;
-				leftdrawable = R.drawable.ic_sysbar_lastapp; 										
-		} else if (mLegacyMenuLeftAction == 13) {
-				leftaction = ActionConstants.ACTION_KILL;
-				leftdrawable = R.drawable.ic_sysbar_killtask;
-		} else if (mLegacyMenuLeftAction == 14) {
-				leftaction = ActionConstants.ACTION_ASSIST;
-				leftdrawable = R.drawable.ic_sysbar_search; 
-		} else if (mLegacyMenuLeftAction == 15) {
-				leftaction = ActionConstants.ACTION_VIB;
-				leftdrawable = R.drawable.ic_sysbar_vib; 						
-		} else if (mLegacyMenuLeftAction == 16) {
-				leftaction = ActionConstants.ACTION_VIB_SILENT;
-				leftdrawable = R.drawable.ic_sysbar_ring_vib_silent; 
-		} else if (mLegacyMenuLeftAction == 17) {
-				leftaction = ActionConstants.ACTION_SILENT;
-				leftdrawable = R.drawable.ic_sysbar_silent; 
-		} else if (mLegacyMenuLeftAction == 18) {
-				leftaction = ActionConstants.ACTION_POWER_MENU;
-				leftdrawable = R.drawable.ic_sysbar_power;	
-		} else if (mLegacyMenuLeftAction == 19) {
-				leftaction = ActionConstants.ACTION_TORCH;
-				leftdrawable = R.drawable.ic_sysbar_torch; 
-		} else if (mLegacyMenuLeftAction == 20) {
-		// must be a shortcut
-				leftaction = mCustomLeftShortcutUri;
-		}
-	}	
-	
-	public void getLegacyRightMenuAction (Context context) {
-        mLegacyMenuRightAction = Settings.System.getInt(context.getContentResolver(),
-                Settings.System.LEGACY_MENU_RIGHT_ACTION, 0); 
-                           
-		mCustomRightShortcutUri = Settings.System.getString(context.getContentResolver(),
-				Settings.System.LEGACY_MENU_RIGHT_SHORTCUT_URI);     
-				                       
-		if (mLegacyMenuRightAction == 0) {
-				rightaction = ActionConstants.ACTION_MENU;
-				rightdrawable = R.drawable.ic_sysbar_menu;
-		} else if (mLegacyMenuRightAction == 1) {
-				rightaction = ActionConstants.ACTION_HOME;
-				rightdrawable = R.drawable.ic_sysbar_home;
-		} else if (mLegacyMenuRightAction == 2) {
-				rightaction = ActionConstants.ACTION_BACK;
-				rightdrawable = R.drawable.ic_sysbar_back;
-		} else if (mLegacyMenuRightAction == 3) {
-				rightaction = ActionConstants.ACTION_RECENTS;			
-				rightdrawable = R.drawable.ic_sysbar_recent;
-		} else if (mLegacyMenuRightAction == 4) {
-				rightaction = ActionConstants.ACTION_VOICE_SEARCH;			
-				rightdrawable = R.drawable.ic_sysbar_search;					
-		} else if (mLegacyMenuRightAction == 5) {
-				rightaction = ActionConstants.ACTION_SEARCH;
-				rightdrawable = R.drawable.ic_sysbar_search;
-		} else if (mLegacyMenuRightAction == 6) {
-				rightaction = ActionConstants.ACTION_POWER;
-				rightdrawable = R.drawable.ic_sysbar_sleep;		
-		} else if (mLegacyMenuRightAction == 7) {
-				rightaction = ActionConstants.ACTION_NOTIFICATIONS;
-				rightdrawable = R.drawable.ic_sysbar_notifications;
-		} else if (mLegacyMenuRightAction == 8) {
-				rightaction = ActionConstants.ACTION_SETTINGS_PANEL;
-				rightdrawable = R.drawable.ic_sysbar_qs; 
-		} else if (mLegacyMenuRightAction == 9) {
-				rightaction = ActionConstants.ACTION_SCREENSHOT;
-				rightdrawable = R.drawable.ic_sysbar_screenshot; 
-		} else if (mLegacyMenuRightAction == 10) {
-				rightaction = ActionConstants.ACTION_SCREENRECORD;
-				rightdrawable = R.drawable.ic_sysbar_screenrecord;
-		} else if (mLegacyMenuRightAction == 11) {
-				rightaction = ActionConstants.ACTION_IME;
-				rightdrawable = R.drawable.ic_ime_switcher_default; 
-		} else if (mLegacyMenuRightAction == 12) {
-				rightaction = ActionConstants.ACTION_LAST_APP;
-				rightdrawable = R.drawable.ic_sysbar_lastapp; 										
-		} else if (mLegacyMenuRightAction == 13) {
-				rightaction = ActionConstants.ACTION_KILL;
-				rightdrawable = R.drawable.ic_sysbar_killtask;
-		} else if (mLegacyMenuRightAction == 14) {
-				rightaction = ActionConstants.ACTION_ASSIST;
-				rightdrawable = R.drawable.ic_sysbar_search; 
-		} else if (mLegacyMenuRightAction == 15) {
-				rightaction = ActionConstants.ACTION_VIB;
-				rightdrawable = R.drawable.ic_sysbar_vib; 						
-		} else if (mLegacyMenuRightAction == 16) {
-				rightaction = ActionConstants.ACTION_VIB_SILENT;
-				rightdrawable = R.drawable.ic_sysbar_ring_vib_silent; 
-		} else if (mLegacyMenuRightAction == 17) {
-				rightaction = ActionConstants.ACTION_SILENT;
-				rightdrawable = R.drawable.ic_sysbar_silent; 
-		} else if (mLegacyMenuRightAction == 18) {
-				rightaction = ActionConstants.ACTION_POWER_MENU;
-				rightdrawable = R.drawable.ic_sysbar_power;	
-		} else if (mLegacyMenuRightAction == 19) {
-				rightaction = ActionConstants.ACTION_TORCH;
-				rightdrawable = R.drawable.ic_sysbar_torch; 
-		} else if (mLegacyMenuRightAction == 20) {
-		// must be a shortcut
-				rightaction = mCustomRightShortcutUri;
-		}
+        if (mLegacyMenuLeftAction == 0) {
+                leftaction = ActionConstants.ACTION_MENU;
+                leftdrawable = R.drawable.ic_sysbar_menu;
+        } else if (mLegacyMenuLeftAction == 1) {
+                leftaction = ActionConstants.ACTION_HOME;
+                leftdrawable = R.drawable.ic_sysbar_home;
+        } else if (mLegacyMenuLeftAction == 2) {
+                leftaction = ActionConstants.ACTION_BACK;
+                leftdrawable = R.drawable.ic_sysbar_back;
+        } else if (mLegacyMenuLeftAction == 3) {
+                leftaction = ActionConstants.ACTION_RECENTS;
+                leftdrawable = R.drawable.ic_sysbar_recent;
+        } else if (mLegacyMenuLeftAction == 4) {
+                leftaction = ActionConstants.ACTION_VOICE_SEARCH;
+                leftdrawable = R.drawable.ic_sysbar_search;
+        } else if (mLegacyMenuLeftAction == 5) {
+                leftaction = ActionConstants.ACTION_SEARCH;
+                leftdrawable = R.drawable.ic_sysbar_search;
+        } else if (mLegacyMenuLeftAction == 6) {
+                leftaction = ActionConstants.ACTION_POWER;
+                leftdrawable = R.drawable.ic_sysbar_sleep;
+        } else if (mLegacyMenuLeftAction == 7) {
+                leftaction = ActionConstants.ACTION_NOTIFICATIONS;
+                leftdrawable = R.drawable.ic_sysbar_notifications;
+        } else if (mLegacyMenuLeftAction == 8) {
+                leftaction = ActionConstants.ACTION_SETTINGS_PANEL;
+                leftdrawable = R.drawable.ic_sysbar_qs;
+        } else if (mLegacyMenuLeftAction == 9) {
+                leftaction = ActionConstants.ACTION_SCREENSHOT;
+                leftdrawable = R.drawable.ic_sysbar_screenshot;
+        } else if (mLegacyMenuLeftAction == 10) {
+                leftaction = ActionConstants.ACTION_SCREENRECORD;
+                leftdrawable = R.drawable.ic_sysbar_screenrecord;
+        } else if (mLegacyMenuLeftAction == 11) {
+                leftaction = ActionConstants.ACTION_IME;
+                leftdrawable = R.drawable.ic_ime_switcher_default;
+        } else if (mLegacyMenuLeftAction == 12) {
+                leftaction = ActionConstants.ACTION_LAST_APP;
+                leftdrawable = R.drawable.ic_sysbar_lastapp;
+        } else if (mLegacyMenuLeftAction == 13) {
+                leftaction = ActionConstants.ACTION_KILL;
+                leftdrawable = R.drawable.ic_sysbar_killtask;
+        } else if (mLegacyMenuLeftAction == 14) {
+                leftaction = ActionConstants.ACTION_ASSIST;
+                leftdrawable = R.drawable.ic_sysbar_search;
+        } else if (mLegacyMenuLeftAction == 15) {
+                leftaction = ActionConstants.ACTION_VIB;
+                leftdrawable = R.drawable.ic_sysbar_vib;
+        } else if (mLegacyMenuLeftAction == 16) {
+                leftaction = ActionConstants.ACTION_VIB_SILENT;
+                leftdrawable = R.drawable.ic_sysbar_ring_vib_silent;
+        } else if (mLegacyMenuLeftAction == 17) {
+                leftaction = ActionConstants.ACTION_SILENT;
+                leftdrawable = R.drawable.ic_sysbar_silent;
+        } else if (mLegacyMenuLeftAction == 18) {
+                leftaction = ActionConstants.ACTION_POWER_MENU;
+                leftdrawable = R.drawable.ic_sysbar_power;
+        } else if (mLegacyMenuLeftAction == 19) {
+                leftaction = ActionConstants.ACTION_TORCH;
+                leftdrawable = R.drawable.ic_sysbar_torch;
+        } else if (mLegacyMenuLeftAction == 20) {
+        // must be a shortcut
+                leftaction = mCustomLeftShortcutUri;
+        }
     }
-    
+
+    public void getLegacyRightMenuAction (Context context) {
+        mLegacyMenuRightAction = Settings.System.getInt(context.getContentResolver(),
+                Settings.System.LEGACY_MENU_RIGHT_ACTION, 0);
+
+        mCustomRightShortcutUri = Settings.System.getString(context.getContentResolver(),
+                Settings.System.LEGACY_MENU_RIGHT_SHORTCUT_URI);
+
+        if (mLegacyMenuRightAction == 0) {
+                rightaction = ActionConstants.ACTION_MENU;
+                rightdrawable = R.drawable.ic_sysbar_menu;
+        } else if (mLegacyMenuRightAction == 1) {
+                rightaction = ActionConstants.ACTION_HOME;
+                rightdrawable = R.drawable.ic_sysbar_home;
+        } else if (mLegacyMenuRightAction == 2) {
+                rightaction = ActionConstants.ACTION_BACK;
+                rightdrawable = R.drawable.ic_sysbar_back;
+        } else if (mLegacyMenuRightAction == 3) {
+                rightaction = ActionConstants.ACTION_RECENTS;
+                rightdrawable = R.drawable.ic_sysbar_recent;
+        } else if (mLegacyMenuRightAction == 4) {
+                rightaction = ActionConstants.ACTION_VOICE_SEARCH;
+                rightdrawable = R.drawable.ic_sysbar_search;
+        } else if (mLegacyMenuRightAction == 5) {
+                rightaction = ActionConstants.ACTION_SEARCH;
+                rightdrawable = R.drawable.ic_sysbar_search;
+        } else if (mLegacyMenuRightAction == 6) {
+                rightaction = ActionConstants.ACTION_POWER;
+                rightdrawable = R.drawable.ic_sysbar_sleep;
+        } else if (mLegacyMenuRightAction == 7) {
+                rightaction = ActionConstants.ACTION_NOTIFICATIONS;
+                rightdrawable = R.drawable.ic_sysbar_notifications;
+        } else if (mLegacyMenuRightAction == 8) {
+                rightaction = ActionConstants.ACTION_SETTINGS_PANEL;
+                rightdrawable = R.drawable.ic_sysbar_qs;
+        } else if (mLegacyMenuRightAction == 9) {
+                rightaction = ActionConstants.ACTION_SCREENSHOT;
+                rightdrawable = R.drawable.ic_sysbar_screenshot;
+        } else if (mLegacyMenuRightAction == 10) {
+                rightaction = ActionConstants.ACTION_SCREENRECORD;
+                rightdrawable = R.drawable.ic_sysbar_screenrecord;
+        } else if (mLegacyMenuRightAction == 11) {
+                rightaction = ActionConstants.ACTION_IME;
+                rightdrawable = R.drawable.ic_ime_switcher_default;
+        } else if (mLegacyMenuRightAction == 12) {
+                rightaction = ActionConstants.ACTION_LAST_APP;
+                rightdrawable = R.drawable.ic_sysbar_lastapp;
+        } else if (mLegacyMenuRightAction == 13) {
+                rightaction = ActionConstants.ACTION_KILL;
+                rightdrawable = R.drawable.ic_sysbar_killtask;
+        } else if (mLegacyMenuRightAction == 14) {
+                rightaction = ActionConstants.ACTION_ASSIST;
+                rightdrawable = R.drawable.ic_sysbar_search;
+        } else if (mLegacyMenuRightAction == 15) {
+                rightaction = ActionConstants.ACTION_VIB;
+                rightdrawable = R.drawable.ic_sysbar_vib;
+        } else if (mLegacyMenuRightAction == 16) {
+                rightaction = ActionConstants.ACTION_VIB_SILENT;
+                rightdrawable = R.drawable.ic_sysbar_ring_vib_silent;
+        } else if (mLegacyMenuRightAction == 17) {
+                rightaction = ActionConstants.ACTION_SILENT;
+                rightdrawable = R.drawable.ic_sysbar_silent;
+        } else if (mLegacyMenuRightAction == 18) {
+                rightaction = ActionConstants.ACTION_POWER_MENU;
+                rightdrawable = R.drawable.ic_sysbar_power;
+        } else if (mLegacyMenuRightAction == 19) {
+                rightaction = ActionConstants.ACTION_TORCH;
+                rightdrawable = R.drawable.ic_sysbar_torch;
+        } else if (mLegacyMenuRightAction == 20) {
+        // must be a shortcut
+                rightaction = mCustomRightShortcutUri;
+        }
+    }
+
     private KeyButtonView generateMenuKey(boolean landscape, int keyId) {
-		// Action IDs
+        // Action IDs
         mLegacyMenuLeftLongAction = Settings.System.getInt(mContext.getContentResolver(),
-                Settings.System.LEGACY_MENU_LEFT_LONG_ACTION, 24);       
+                Settings.System.LEGACY_MENU_LEFT_LONG_ACTION, 24);
         mLegacyMenuRightLongAction = Settings.System.getInt(mContext.getContentResolver(),
-                Settings.System.LEGACY_MENU_RIGHT_LONG_ACTION, 24);  
+                Settings.System.LEGACY_MENU_RIGHT_LONG_ACTION, 24);
         mLegacyMenuLeftAction = Settings.System.getInt(mContext.getContentResolver(),
                 Settings.System.LEGACY_MENU_LEFT_ACTION, 0);
         mLegacyMenuRightAction = Settings.System.getInt(mContext.getContentResolver(),
                 Settings.System.LEGACY_MENU_RIGHT_ACTION, 0);
-		// Shortcut/app uri if exist
-		mCustomLeftShortcutUri = Settings.System.getString(mContext.getContentResolver(),
-				Settings.System.LEGACY_MENU_LEFT_SHORTCUT_URI);
-		mCustomRightShortcutUri = Settings.System.getString(mContext.getContentResolver(),
-				Settings.System.LEGACY_MENU_RIGHT_SHORTCUT_URI);
-		mCustomLeftLongShortcutUri = Settings.System.getString(mContext.getContentResolver(),
-				Settings.System.LEGACY_MENU_LEFT_LONG_SHORTCUT_URI);
-		mCustomRightLongShortcutUri = Settings.System.getString(mContext.getContentResolver(),
-				Settings.System.LEGACY_MENU_RIGHT_LONG_SHORTCUT_URI);
-						
+        // Shortcut/app uri if exist
+        mCustomLeftShortcutUri = Settings.System.getString(mContext.getContentResolver(),
+                Settings.System.LEGACY_MENU_LEFT_SHORTCUT_URI);
+        mCustomRightShortcutUri = Settings.System.getString(mContext.getContentResolver(),
+                Settings.System.LEGACY_MENU_RIGHT_SHORTCUT_URI);
+        mCustomLeftLongShortcutUri = Settings.System.getString(mContext.getContentResolver(),
+                Settings.System.LEGACY_MENU_LEFT_LONG_SHORTCUT_URI);
+        mCustomRightLongShortcutUri = Settings.System.getString(mContext.getContentResolver(),
+                Settings.System.LEGACY_MENU_RIGHT_LONG_SHORTCUT_URI);
+
         Drawable d = null;
         KeyButtonView v = new KeyButtonView(mContext, null);
         int width = mContext.getResources().getDimensionPixelSize(R.dimen.navigation_extra_key_width);
@@ -803,160 +804,160 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
             v.setLongpressAction(ActionConstants.ACTION_NULL);
             if (keyId == KEY_MENU_LEFT) {
                 v.setId(R.id.menu_left);
-					// Take the actions
-					getLegacyLeftMenuAction(mContext);   
-					// set the action             
-					v.setClickAction(leftaction);
-					// set the correct drawable, "leftdrawable" is defined in getLegacyLeftMenuAction method
-					if (mLegacyMenuLeftAction == 20) {
-						PackageManager pm = mContext.getPackageManager();					
-						try {
-							d =	pm.getActivityIcon(Intent.parseUri(mCustomLeftShortcutUri, 0));
+                    // Take the actions
+                    getLegacyLeftMenuAction(mContext);
+                    // set the action
+                    v.setClickAction(leftaction);
+                    // set the correct drawable, "leftdrawable" is defined in getLegacyLeftMenuAction method
+                    if (mLegacyMenuLeftAction == 20) {
+                        PackageManager pm = mContext.getPackageManager();
+                        try {
+                            d = pm.getActivityIcon(Intent.parseUri(mCustomLeftShortcutUri, 0));
 
-						} catch (NameNotFoundException e) {
-						} catch (URISyntaxException e) {
-							e.printStackTrace();
-						}
-						final int[] appIconPadding = getAppIconPadding();
-							if (landscape) {
-								v.setPaddingRelative(appIconPadding[1], appIconPadding[0],
-								appIconPadding[3], appIconPadding[2]);
-							} else {
-								v.setPaddingRelative(appIconPadding[0], appIconPadding[1],
-								appIconPadding[2], appIconPadding[3]);
-							}
-					// Take normal drawable
-					} else {
-							d = mContext.getResources().getDrawable(leftdrawable); 
-					}		
-					// set the longpress action						
-					if (mLegacyMenuLeftLongAction == 0) {
-						v.setLongpressAction(ActionConstants.ACTION_MENU);
-					} else if (mLegacyMenuLeftLongAction == 1) {
-						v.setLongpressAction(ActionConstants.ACTION_HOME);
-					} else if (mLegacyMenuLeftLongAction == 2) {
-						v.setLongpressAction(ActionConstants.ACTION_BACK);
-					} else if (mLegacyMenuLeftLongAction == 3) {
-						v.setLongpressAction(ActionConstants.ACTION_RECENTS);			
-					} else if (mLegacyMenuLeftLongAction == 4) {
-						v.setLongpressAction(ActionConstants.ACTION_VOICE_SEARCH);				
-					} else if (mLegacyMenuLeftLongAction == 5) {
-						v.setLongpressAction(ActionConstants.ACTION_SEARCH);
-					} else if (mLegacyMenuLeftLongAction == 6) {
-						v.setLongpressAction(ActionConstants.ACTION_POWER);
-					} else if (mLegacyMenuLeftLongAction == 7) {
-						v.setLongpressAction(ActionConstants.ACTION_NOTIFICATIONS);
-					} else if (mLegacyMenuLeftLongAction == 8) {
-						v.setLongpressAction(ActionConstants.ACTION_SETTINGS_PANEL);
-					} else if (mLegacyMenuLeftLongAction == 9) {
-						v.setLongpressAction(ActionConstants.ACTION_SCREENSHOT);
-					} else if (mLegacyMenuLeftLongAction == 10) {
-						v.setLongpressAction(ActionConstants.ACTION_SCREENRECORD);
-					} else if (mLegacyMenuLeftLongAction == 11) {
-						v.setLongpressAction(ActionConstants.ACTION_IME);
-					} else if (mLegacyMenuLeftLongAction == 12) {
-						v.setLongpressAction(ActionConstants.ACTION_LAST_APP);
-					} else if (mLegacyMenuLeftLongAction == 13) {
-						v.setLongpressAction(ActionConstants.ACTION_KILL);
-					} else if (mLegacyMenuLeftLongAction == 14) {
-						v.setLongpressAction(ActionConstants.ACTION_ASSIST);
-					} else if (mLegacyMenuLeftLongAction == 15) {
-						v.setLongpressAction(ActionConstants.ACTION_VIB);
-					} else if (mLegacyMenuLeftLongAction == 16) {
-						v.setLongpressAction(ActionConstants.ACTION_VIB_SILENT);
-					} else if (mLegacyMenuLeftLongAction == 17) {
-						v.setLongpressAction(ActionConstants.ACTION_SILENT);
-					} else if (mLegacyMenuLeftLongAction == 18) {
-						v.setLongpressAction(ActionConstants.ACTION_POWER_MENU);
-					} else if (mLegacyMenuLeftLongAction == 19) {
-						v.setLongpressAction(ActionConstants.ACTION_TORCH);
-					} else if (mLegacyMenuLeftLongAction == 20) {		
-						v.setLongpressAction(ActionConstants.ACTION_MEDIA_PREVIOUS);
-					} else if (mLegacyMenuLeftLongAction == 21) {
-						v.setLongpressAction(ActionConstants.ACTION_MEDIA_NEXT);	
-					} else if (mLegacyMenuLeftLongAction == 22) {			
-						v.setLongpressAction(ActionConstants.ACTION_MEDIA_PLAY_PAUSE);
-					} else if (mLegacyMenuLeftLongAction == 23) {			
-						v.setLongpressAction(mCustomLeftLongShortcutUri);						
-					} else if (mLegacyMenuLeftLongAction == 24) {													
-						v.setLongpressAction(ActionConstants.ACTION_NULL);				
-					}
-			} else {
+                        } catch (NameNotFoundException e) {
+                        } catch (URISyntaxException e) {
+                            e.printStackTrace();
+                        }
+                        final int[] appIconPadding = getAppIconPadding();
+                        if (landscape) {
+                            v.setPaddingRelative(appIconPadding[1], appIconPadding[0],
+                            appIconPadding[3], appIconPadding[2]);
+                        } else {
+                            v.setPaddingRelative(appIconPadding[0], appIconPadding[1],
+                            appIconPadding[2], appIconPadding[3]);
+                        }
+                    // Take normal drawable
+                    } else {
+                        d = mContext.getResources().getDrawable(leftdrawable);
+                    }
+                    // set the longpress action
+                    if (mLegacyMenuLeftLongAction == 0) {
+                        v.setLongpressAction(ActionConstants.ACTION_MENU);
+                    } else if (mLegacyMenuLeftLongAction == 1) {
+                        v.setLongpressAction(ActionConstants.ACTION_HOME);
+                    } else if (mLegacyMenuLeftLongAction == 2) {
+                        v.setLongpressAction(ActionConstants.ACTION_BACK);
+                    } else if (mLegacyMenuLeftLongAction == 3) {
+                        v.setLongpressAction(ActionConstants.ACTION_RECENTS);
+                    } else if (mLegacyMenuLeftLongAction == 4) {
+                        v.setLongpressAction(ActionConstants.ACTION_VOICE_SEARCH);
+                    } else if (mLegacyMenuLeftLongAction == 5) {
+                        v.setLongpressAction(ActionConstants.ACTION_SEARCH);
+                    } else if (mLegacyMenuLeftLongAction == 6) {
+                        v.setLongpressAction(ActionConstants.ACTION_POWER);
+                    } else if (mLegacyMenuLeftLongAction == 7) {
+                        v.setLongpressAction(ActionConstants.ACTION_NOTIFICATIONS);
+                    } else if (mLegacyMenuLeftLongAction == 8) {
+                        v.setLongpressAction(ActionConstants.ACTION_SETTINGS_PANEL);
+                    } else if (mLegacyMenuLeftLongAction == 9) {
+                        v.setLongpressAction(ActionConstants.ACTION_SCREENSHOT);
+                    } else if (mLegacyMenuLeftLongAction == 10) {
+                        v.setLongpressAction(ActionConstants.ACTION_SCREENRECORD);
+                    } else if (mLegacyMenuLeftLongAction == 11) {
+                        v.setLongpressAction(ActionConstants.ACTION_IME);
+                    } else if (mLegacyMenuLeftLongAction == 12) {
+                        v.setLongpressAction(ActionConstants.ACTION_LAST_APP);
+                    } else if (mLegacyMenuLeftLongAction == 13) {
+                        v.setLongpressAction(ActionConstants.ACTION_KILL);
+                    } else if (mLegacyMenuLeftLongAction == 14) {
+                        v.setLongpressAction(ActionConstants.ACTION_ASSIST);
+                    } else if (mLegacyMenuLeftLongAction == 15) {
+                        v.setLongpressAction(ActionConstants.ACTION_VIB);
+                    } else if (mLegacyMenuLeftLongAction == 16) {
+                        v.setLongpressAction(ActionConstants.ACTION_VIB_SILENT);
+                    } else if (mLegacyMenuLeftLongAction == 17) {
+                        v.setLongpressAction(ActionConstants.ACTION_SILENT);
+                    } else if (mLegacyMenuLeftLongAction == 18) {
+                        v.setLongpressAction(ActionConstants.ACTION_POWER_MENU);
+                    } else if (mLegacyMenuLeftLongAction == 19) {
+                        v.setLongpressAction(ActionConstants.ACTION_TORCH);
+                    } else if (mLegacyMenuLeftLongAction == 20) {
+                        v.setLongpressAction(ActionConstants.ACTION_MEDIA_PREVIOUS);
+                    } else if (mLegacyMenuLeftLongAction == 21) {
+                        v.setLongpressAction(ActionConstants.ACTION_MEDIA_NEXT);
+                    } else if (mLegacyMenuLeftLongAction == 22) {
+                        v.setLongpressAction(ActionConstants.ACTION_MEDIA_PLAY_PAUSE);
+                    } else if (mLegacyMenuLeftLongAction == 23) {
+                        v.setLongpressAction(mCustomLeftLongShortcutUri);
+                    } else if (mLegacyMenuLeftLongAction == 24) {
+                        v.setLongpressAction(ActionConstants.ACTION_NULL);
+                    }
+            } else {
                 v.setId(R.id.menu);
-				getLegacyRightMenuAction(mContext);
-				v.setClickAction(rightaction);
-				if (mLegacyMenuRightAction == 20) {
-					PackageManager pm = mContext.getPackageManager();					
-					try {
-						d =	pm.getActivityIcon(Intent.parseUri(mCustomRightShortcutUri, 0));
-					} catch (NameNotFoundException e) {
-					} catch (URISyntaxException e) {
-						e.printStackTrace();
-					}		
-					final int[] appIconPadding = getAppIconPadding();
-						if (landscape) {
-							v.setPaddingRelative(appIconPadding[1], appIconPadding[0],
-							appIconPadding[3], appIconPadding[2]);
-						} else {
-							v.setPaddingRelative(appIconPadding[0], appIconPadding[1],
-							appIconPadding[2], appIconPadding[3]);
-						}
-				// Take normal drawable
-				} else {
-						d = mContext.getResources().getDrawable(rightdrawable);   
-				}					
-					if (mLegacyMenuRightLongAction == 0) {
-						v.setLongpressAction(ActionConstants.ACTION_MENU);
-					} else if (mLegacyMenuRightLongAction == 1) {
-						v.setLongpressAction(ActionConstants.ACTION_HOME);
-					} else if (mLegacyMenuRightLongAction == 2) {
-						v.setLongpressAction(ActionConstants.ACTION_BACK);
-					} else if (mLegacyMenuRightLongAction == 3) {
-						v.setLongpressAction(ActionConstants.ACTION_RECENTS);			
-					} else if (mLegacyMenuRightLongAction == 4) {
-						v.setLongpressAction(ActionConstants.ACTION_VOICE_SEARCH);				
-					} else if (mLegacyMenuRightLongAction == 5) {
-						v.setLongpressAction(ActionConstants.ACTION_SEARCH);
-					} else if (mLegacyMenuRightLongAction == 6) {
-						v.setLongpressAction(ActionConstants.ACTION_POWER);
-					} else if (mLegacyMenuRightLongAction == 7) {
-						v.setLongpressAction(ActionConstants.ACTION_NOTIFICATIONS);
-					} else if (mLegacyMenuRightLongAction == 8) {
-						v.setLongpressAction(ActionConstants.ACTION_SETTINGS_PANEL);
-					} else if (mLegacyMenuRightLongAction == 9) {
-						v.setLongpressAction(ActionConstants.ACTION_SCREENSHOT);
-					} else if (mLegacyMenuRightLongAction == 10) {
-						v.setLongpressAction(ActionConstants.ACTION_SCREENRECORD);
-					} else if (mLegacyMenuRightLongAction == 11) {
-						v.setLongpressAction(ActionConstants.ACTION_IME);
-					} else if (mLegacyMenuRightLongAction == 12) {
-						v.setLongpressAction(ActionConstants.ACTION_LAST_APP);
-					} else if (mLegacyMenuRightLongAction == 13) {
-						v.setLongpressAction(ActionConstants.ACTION_KILL);
-					} else if (mLegacyMenuRightLongAction == 14) {
-						v.setLongpressAction(ActionConstants.ACTION_ASSIST);
-					} else if (mLegacyMenuRightLongAction == 15) {
-						v.setLongpressAction(ActionConstants.ACTION_VIB);
-					} else if (mLegacyMenuRightLongAction == 16) {
-						v.setLongpressAction(ActionConstants.ACTION_VIB_SILENT);
-					} else if (mLegacyMenuRightLongAction == 17) {
-						v.setLongpressAction(ActionConstants.ACTION_SILENT);
-					} else if (mLegacyMenuRightLongAction == 18) {
-						v.setLongpressAction(ActionConstants.ACTION_POWER_MENU);
-					} else if (mLegacyMenuRightLongAction == 19) {
-						v.setLongpressAction(ActionConstants.ACTION_TORCH);
-					} else if (mLegacyMenuRightLongAction == 20) {		
-						v.setLongpressAction(ActionConstants.ACTION_MEDIA_PREVIOUS);
-					} else if (mLegacyMenuRightLongAction == 21) {
-						v.setLongpressAction(ActionConstants.ACTION_MEDIA_NEXT);	
-					} else if (mLegacyMenuRightLongAction == 22) {			
-						v.setLongpressAction(ActionConstants.ACTION_MEDIA_PLAY_PAUSE);
-					} else if (mLegacyMenuRightLongAction == 23) {			
-						v.setLongpressAction(mCustomRightLongShortcutUri);						
-					} else if (mLegacyMenuRightLongAction == 24) {													
-						v.setLongpressAction(ActionConstants.ACTION_NULL);				
-					}				
-			}                
+                getLegacyRightMenuAction(mContext);
+                v.setClickAction(rightaction);
+                if (mLegacyMenuRightAction == 20) {
+                    PackageManager pm = mContext.getPackageManager();
+                    try {
+                        d = pm.getActivityIcon(Intent.parseUri(mCustomRightShortcutUri, 0));
+                    } catch (NameNotFoundException e) {
+                    } catch (URISyntaxException e) {
+                        e.printStackTrace();
+                    }
+                    final int[] appIconPadding = getAppIconPadding();
+                    if (landscape) {
+                        v.setPaddingRelative(appIconPadding[1], appIconPadding[0],
+                        appIconPadding[3], appIconPadding[2]);
+                    } else {
+                        v.setPaddingRelative(appIconPadding[0], appIconPadding[1],
+                        appIconPadding[2], appIconPadding[3]);
+                    }
+                // Take normal drawable
+                } else {
+                    d = mContext.getResources().getDrawable(rightdrawable);
+                }
+                    if (mLegacyMenuRightLongAction == 0) {
+                        v.setLongpressAction(ActionConstants.ACTION_MENU);
+                    } else if (mLegacyMenuRightLongAction == 1) {
+                        v.setLongpressAction(ActionConstants.ACTION_HOME);
+                    } else if (mLegacyMenuRightLongAction == 2) {
+                        v.setLongpressAction(ActionConstants.ACTION_BACK);
+                    } else if (mLegacyMenuRightLongAction == 3) {
+                        v.setLongpressAction(ActionConstants.ACTION_RECENTS);
+                    } else if (mLegacyMenuRightLongAction == 4) {
+                        v.setLongpressAction(ActionConstants.ACTION_VOICE_SEARCH);
+                    } else if (mLegacyMenuRightLongAction == 5) {
+                        v.setLongpressAction(ActionConstants.ACTION_SEARCH);
+                    } else if (mLegacyMenuRightLongAction == 6) {
+                        v.setLongpressAction(ActionConstants.ACTION_POWER);
+                    } else if (mLegacyMenuRightLongAction == 7) {
+                        v.setLongpressAction(ActionConstants.ACTION_NOTIFICATIONS);
+                    } else if (mLegacyMenuRightLongAction == 8) {
+                        v.setLongpressAction(ActionConstants.ACTION_SETTINGS_PANEL);
+                    } else if (mLegacyMenuRightLongAction == 9) {
+                        v.setLongpressAction(ActionConstants.ACTION_SCREENSHOT);
+                    } else if (mLegacyMenuRightLongAction == 10) {
+                        v.setLongpressAction(ActionConstants.ACTION_SCREENRECORD);
+                    } else if (mLegacyMenuRightLongAction == 11) {
+                        v.setLongpressAction(ActionConstants.ACTION_IME);
+                    } else if (mLegacyMenuRightLongAction == 12) {
+                        v.setLongpressAction(ActionConstants.ACTION_LAST_APP);
+                    } else if (mLegacyMenuRightLongAction == 13) {
+                        v.setLongpressAction(ActionConstants.ACTION_KILL);
+                    } else if (mLegacyMenuRightLongAction == 14) {
+                        v.setLongpressAction(ActionConstants.ACTION_ASSIST);
+                    } else if (mLegacyMenuRightLongAction == 15) {
+                        v.setLongpressAction(ActionConstants.ACTION_VIB);
+                    } else if (mLegacyMenuRightLongAction == 16) {
+                        v.setLongpressAction(ActionConstants.ACTION_VIB_SILENT);
+                    } else if (mLegacyMenuRightLongAction == 17) {
+                        v.setLongpressAction(ActionConstants.ACTION_SILENT);
+                    } else if (mLegacyMenuRightLongAction == 18) {
+                        v.setLongpressAction(ActionConstants.ACTION_POWER_MENU);
+                    } else if (mLegacyMenuRightLongAction == 19) {
+                        v.setLongpressAction(ActionConstants.ACTION_TORCH);
+                    } else if (mLegacyMenuRightLongAction == 20) {
+                        v.setLongpressAction(ActionConstants.ACTION_MEDIA_PREVIOUS);
+                    } else if (mLegacyMenuRightLongAction == 21) {
+                        v.setLongpressAction(ActionConstants.ACTION_MEDIA_NEXT);
+                    } else if (mLegacyMenuRightLongAction == 22) {
+                        v.setLongpressAction(ActionConstants.ACTION_MEDIA_PLAY_PAUSE);
+                    } else if (mLegacyMenuRightLongAction == 23) {
+                        v.setLongpressAction(mCustomRightLongShortcutUri);
+                    } else if (mLegacyMenuRightLongAction == 24) {
+                        v.setLongpressAction(ActionConstants.ACTION_NULL);
+                    }
+            }
             v.setVisibility(View.INVISIBLE);
             v.setContentDescription(getResources().getString(R.string.accessibility_menu));
         } else if (keyId == KEY_IME_LEFT) {
@@ -994,25 +995,23 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
     private int[] getAppIconPadding() {
         int[] padding = new int[4];
         // left
-        padding[0] = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2, getResources()
-                .getDisplayMetrics());
+        padding[0] = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2,
+            getResources().getDisplayMetrics());
         // top
-        padding[1] = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4, getResources()
-                .getDisplayMetrics());
+        padding[1] = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4,
+            getResources().getDisplayMetrics());
         // right
-        padding[2] = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2, getResources()
-                .getDisplayMetrics());
+        padding[2] = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2,
+            getResources().getDisplayMetrics());
         // bottom
         padding[3] = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 5,
-                getResources()
-                        .getDisplayMetrics());
+            getResources().getDisplayMetrics());
         return padding;
     }
 
     private LayoutParams getLayoutParams(boolean landscape, int dp) {
-        float px = dp * getResources().getDisplayMetrics().density;
-        return landscape ?
-                new LayoutParams(LayoutParams.MATCH_PARENT, dp, 1f) :
+        return //landscape ?
+                //new LayoutParams(LayoutParams.MATCH_PARENT, dp, 1f) :
                 new LayoutParams(dp, LayoutParams.MATCH_PARENT, 1f);
     }
 
@@ -1056,12 +1055,13 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
         if ((mNavigationIconHints & StatusBarManager.NAVIGATION_HINT_BACK_ALT) != 0 && !backAlt) {
             mTransitionListener.onBackAltCleared();
         }
+        /*
         if (DEBUG) {
             android.widget.Toast.makeText(getContext(),
                 "Navigation icon hints = " + hints,
                 500).show();
         }
-
+        */
         mNavigationIconHints = hints;
 
         final boolean showImeButton = ((hints & StatusBarManager.NAVIGATION_HINT_IME_SHOWN) != 0
@@ -1190,13 +1190,13 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
         }
 
         mLegacyMenuLayout = Settings.System.getInt(mContext.getContentResolver(),
-                    Settings.System.LEGACY_MENU_LAYOUT, 1) == 1; 
-                    
+                    Settings.System.LEGACY_MENU_LAYOUT, 1) == 1;
+
         View leftMenuKeyView = getLeftMenuButton();
         View rightMenuKeyView = getRightMenuButton();
-		View imeSwitcherView = getImeSwitchButton();
-	
-		if (mLegacyMenuLayout) {
+        View imeSwitcherView = getImeSwitchButton();
+
+        if (mLegacyMenuLayout) {
         // Only show Menu if IME switcher and IME arrowsnot shown.
         boolean showLeftMenuButton = (((mMenuVisibility == MENU_VISIBILITY_ALWAYS || show)
                 && (mMenuSetting == SHOW_LEFT_MENU || mMenuSetting == SHOW_BOTH_MENU)
@@ -1214,11 +1214,11 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
         rightMenuKeyView.setVisibility(showRightMenuButton ? View.VISIBLE
                 : ((mIsImeButtonVisible || mIsImeArrowVisible) ? View.GONE : View.INVISIBLE));
         mShowMenu = show;
-		} else { 
-			leftMenuKeyView.setVisibility(View.GONE);
-			rightMenuKeyView.setVisibility(View.GONE);
-			imeSwitcherView.setVisibility(View.GONE);
-		}
+        } else {
+            leftMenuKeyView.setVisibility(View.GONE);
+            rightMenuKeyView.setVisibility(View.GONE);
+            imeSwitcherView.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -1258,7 +1258,8 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
 
         if (Settings.System.getIntForUser(mContext.getContentResolver(),
                 Settings.System.NAVIGATION_BAR_CAN_MOVE,
-                DeviceUtils.isPhone(mContext) ? 1 : 0, UserHandle.USER_CURRENT) != 1) {
+                DeviceUtils.isPhone(mContext) ? 1 : 0,
+                UserHandle.USER_CURRENT) != 1) {
             mCurrentView = mRotatedViews[Surface.ROTATION_0];
         } else {
             mCurrentView = mRotatedViews[rot];
@@ -1275,9 +1276,7 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
         mBarTransitions.init(mVertical);
         setDisabledFlags(mDisabledFlags, true /* force */);
 
-        if (DEBUG) {
-            Log.d(TAG, "reorient(): rot=" + mDisplay.getRotation());
-        }
+        if (DEBUG) Log.d(TAG, "reorient(): rot=" + ""+rot);
 
         // swap to x coordinate if orientation is not in vertical
         if (mDelegateHelper != null) {
@@ -1433,7 +1432,7 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
         if (mRot90 != null) {
             mRot90.setForeground(drawable);
         }
-	}
+    }
 
     private void updateSettings() {
         ContentResolver resolver = mContext.getContentResolver();
@@ -1460,31 +1459,31 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
                 UserHandle.USER_CURRENT);
 
         mLegacyMenuLayout = Settings.System.getInt(mContext.getContentResolver(),
-                    Settings.System.LEGACY_MENU_LAYOUT, 1) == 1;  
-                    
+                    Settings.System.LEGACY_MENU_LAYOUT, 1) == 1;
+
         mLegacyMenuLeftAction = Settings.System.getInt(resolver,
                 Settings.System.LEGACY_MENU_LEFT_ACTION, 0);
-                
+
         mLegacyMenuRightAction = Settings.System.getInt(resolver,
-                Settings.System.LEGACY_MENU_RIGHT_ACTION, 0);             
-                
+                Settings.System.LEGACY_MENU_RIGHT_ACTION, 0);
+
         mLegacyMenuLeftLongAction = Settings.System.getInt(resolver,
                 Settings.System.LEGACY_MENU_LEFT_LONG_ACTION, 22);
-                
+
         mLegacyMenuRightLongAction = Settings.System.getInt(resolver,
-                Settings.System.LEGACY_MENU_RIGHT_LONG_ACTION, 22);           
-                
-		mCustomLeftShortcutUri = Settings.System.getString(resolver,
-				Settings.System.LEGACY_MENU_LEFT_SHORTCUT_URI);
-				
-		mCustomRightShortcutUri = Settings.System.getString(resolver,
-				Settings.System.LEGACY_MENU_RIGHT_SHORTCUT_URI);
-				
-		mCustomLeftLongShortcutUri = Settings.System.getString(resolver,
-				Settings.System.LEGACY_MENU_LEFT_LONG_SHORTCUT_URI);								
-				
-		mCustomRightLongShortcutUri = Settings.System.getString(resolver,
-				Settings.System.LEGACY_MENU_RIGHT_LONG_SHORTCUT_URI);	
+                Settings.System.LEGACY_MENU_RIGHT_LONG_ACTION, 22);
+
+        mCustomLeftShortcutUri = Settings.System.getString(resolver,
+                Settings.System.LEGACY_MENU_LEFT_SHORTCUT_URI);
+
+        mCustomRightShortcutUri = Settings.System.getString(resolver,
+                Settings.System.LEGACY_MENU_RIGHT_SHORTCUT_URI);
+
+        mCustomLeftLongShortcutUri = Settings.System.getString(resolver,
+                Settings.System.LEGACY_MENU_LEFT_LONG_SHORTCUT_URI);
+
+        mCustomRightLongShortcutUri = Settings.System.getString(resolver,
+                Settings.System.LEGACY_MENU_RIGHT_LONG_SHORTCUT_URI);
 
         mImeArrowVisibility = (Settings.System.getIntForUser(resolver,
                 Settings.System.STATUS_BAR_IME_ARROWS, HIDE_IME_ARROW,
