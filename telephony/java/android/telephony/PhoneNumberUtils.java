@@ -157,7 +157,8 @@ public class PhoneNumberUtils
     private static Pattern sCdmaLocalRewritePattern;
     static {
         sCdmaLocalRewriteWhitelist = new SparseArray<RewriteRule>();
-        addRewriteRule(62, "IN", "0"); // indonesia
+        addRewriteRule(62, "ID", "0"); // indonesia
+        addRewriteRule(380, "UA", "0"); // ukraine
 
         StringBuffer regex = new StringBuffer();
         regex.append("[+](");
