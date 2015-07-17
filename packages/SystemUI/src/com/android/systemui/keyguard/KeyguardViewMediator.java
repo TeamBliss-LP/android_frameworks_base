@@ -993,6 +993,12 @@ public class KeyguardViewMediator extends SystemUI {
                 mStatusBarKeyguardViewManager.setOccluded(isOccluded);
                 updateActivityLockScreenState();
                 adjustStatusBarLocked();
+
+                if (isOccluded) {
+                    mUpdateMonitor.stopAuthenticatingFingerprint();
+                } else {
+                    mUpdateMonitor.startFingerAuthIfUsingFingerprint();
+                }
             }
         }
     }
