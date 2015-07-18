@@ -172,7 +172,6 @@ public final class SystemServer {
     private ContentResolver mContentResolver;
 
     private boolean mOnlyCore;
-    private boolean mFirstBoot;
 
     /**
      * Called to initialize native system services.
@@ -377,7 +376,6 @@ public final class SystemServer {
         Slog.i(TAG, "Package Manager");
         mPackageManagerService = PackageManagerService.main(mSystemContext, installer,
                 mFactoryTestMode != FactoryTest.FACTORY_TEST_OFF, mOnlyCore);
-        mFirstBoot = mPackageManagerService.isFirstBoot();
         mPackageManager = mSystemContext.getPackageManager();
 
         Slog.i(TAG, "User Service");
