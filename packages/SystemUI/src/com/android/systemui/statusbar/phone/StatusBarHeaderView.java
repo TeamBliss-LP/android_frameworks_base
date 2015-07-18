@@ -362,7 +362,9 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
         DockBatteryMeterView v = ((DockBatteryMeterView) findViewById(R.id.dock_battery));
         if (dockBatteryController != null) {
             v.setBatteryStateRegistar(dockBatteryController);
-            mDockBatteryLevel.setBatteryStateRegistar(dockBatteryController);
+            if (mDockBatteryLevel != null) {
+                mDockBatteryLevel.setBatteryStateRegistar(dockBatteryController);
+            }
         } else {
             if (v != null) {
                 removeView(v);
@@ -1383,21 +1385,6 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
     }
 
     private void updateBatteryPercentageSettings() {
-        ContentResolver resolver = mContext.getContentResolver();
-        int batteryStyle = Settings.System.getInt(resolver,
-                Settings.System.STATUS_BAR_BATTERY_STYLE, 0);
-        boolean showExpandedBatteryPercentage = Settings.System.getInt(resolver,
-                Settings.System.STATUS_BAR_SHOW_BATTERY_PERCENT, 2) == 2;
-
-        switch (batteryStyle) {
-            case 3: //BATTERY_METER_TEXT
-            case 4: //BATTERY_METER_GONE
-                showExpandedBatteryPercentage = false;
-                break;
-            default:
-                break;
-        }
-        mShowBatteryTextExpanded = showExpandedBatteryPercentage;
         updateBatteryLevelVisibility();
     }
 
