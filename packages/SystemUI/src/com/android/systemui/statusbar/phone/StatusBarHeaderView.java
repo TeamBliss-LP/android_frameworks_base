@@ -502,6 +502,7 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
             (LayoutParams) mSystemIconsSuperContainer.getLayoutParams();
         final int settingsButtonId = mSettingsButton.getId();
         final int mMultiUserSwitchId = mMultiUserSwitch.getId();
+        int newRule = mExpanded ? settingsButtonId : mMultiUserSwitchId;
         int taskManager = mTaskManagerButton != null
                 ? mTaskManagerButton.getId()
                 : settingsButtonId;
@@ -511,22 +512,21 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
         int powerMenu = mStatusBarPowerMenu != null
                 ? mStatusBarPowerMenu.getId()
                 : settingsButtonId;
-        int rule  = mExpanded ? taskManager : mMultiUserSwitchId;
-        int ruleh = mExpanded ? headsUp     : mMultiUserSwitchId;
-        int rulep = mExpanded ? powerMenu   : mMultiUserSwitchId;
+        int rule  = mExpanded ? taskManager : newRule;
+        int ruleh = mExpanded ? headsUp     : newRule;
+        int rulep = mExpanded ? powerMenu   : newRule;
 
-        if (mStatusBarPowerMenuStyle != STATUS_BAR_POWER_MENU_OFF &&
-                rulep != lp.getRules()[RelativeLayout.START_OF]) {
-            lp.addRule(RelativeLayout.START_OF, rulep);
-        } else if (mShowHeadsUpButton && ruleh != lp.getRules()[RelativeLayout.START_OF]) {
-            lp.addRule(RelativeLayout.START_OF, ruleh);
-        } else if (mShowTaskManager && rule != lp.getRules()[RelativeLayout.START_OF]) {
-            lp.addRule(RelativeLayout.START_OF, rule);
-        } else {
-            lp.addRule(RelativeLayout.START_OF, settingsButtonId);
+        if (mStatusBarPowerMenuStyle != STATUS_BAR_POWER_MENU_OFF) {
+            newRule = rulep;
+        } else if (mShowHeadsUpButton) {
+            newRule = ruleh;
+        } else if (mShowTaskManager) {
+            newRule = rule;
         }
-
-        mSystemIconsSuperContainer.setLayoutParams(lp);
+        if (newRule != lp.getRules()[RelativeLayout.START_OF]) {
+            lp.addRule(RelativeLayout.START_OF, newRule);
+            mSystemIconsSuperContainer.setLayoutParams(lp);
+        }
     }
 
     private void updateListeners() {
