@@ -36,25 +36,18 @@ import com.android.systemui.cm.UserContentObserver;
 import com.android.systemui.statusbar.policy.BatteryController;
 import com.android.systemui.statusbar.policy.BatteryStateRegistar;
 
-import java.text.NumberFormat;
-
 public class BatteryLevelTextView extends TextView implements
         BatteryController.BatteryStateChangeCallback{
-
-    private static final String STATUS_BAR_BATTERY_STYLE =
-            "status_bar_battery_status_style";
-    private static final String STATUS_BAR_SHOW_BATTERY_PERCENT =
-            "status_bar_battery_status_percent_style";
 
     private static final int DEFAULT_BATTERY_TEXT_COLOR = 0xffffffff;
 
     private BatteryStateRegistar mBatteryStateRegistar;
     private boolean mBatteryPresent;
     private boolean mBatteryCharging;
-    private int mBatteryLevel = 0;
     private boolean mForceShow;
     private boolean mAttached;
     private int mRequestedVisibility;
+    private int mBatteryLevel = 0;
     private int mNewColor;
     private int mOldColor;
     private Animator mColorTransitionAnimator;
@@ -64,7 +57,7 @@ public class BatteryLevelTextView extends TextView implements
 
     private ContentResolver mResolver;
 
-    private SettingsObserver mObserver = new SettingsObserver(new Handler());
+    private SettingsObserver mObserver;
 
     private class SettingsObserver extends UserContentObserver {
         public SettingsObserver(Handler handler) {
@@ -98,7 +91,7 @@ public class BatteryLevelTextView extends TextView implements
         @Override
         public void update() {
             setTextColor(false);
-            setVisibility(mRequestedVisibility);
+            updateVisibility();
         }
     };
 
@@ -112,6 +105,7 @@ public class BatteryLevelTextView extends TextView implements
             DEFAULT_BATTERY_TEXT_COLOR);
         mOldColor = mNewColor;
         mColorTransitionAnimator = createColorTransitionAnimator(0, 1);
+        mObserver = new SettingsObserver(new Handler());
     }
 
     public void setForceShown(boolean forceShow) {
@@ -145,6 +139,7 @@ public class BatteryLevelTextView extends TextView implements
     @Override
     public void onBatteryLevelChanged(boolean present, int level, boolean pluggedIn,
             boolean charging) {
+        mBatteryLevel = level;
         setText(getResources().getString(R.string.battery_level_template, level));
         if (mBatteryPresent != present || mBatteryCharging != charging) {
             mBatteryPresent = present;
@@ -154,15 +149,15 @@ public class BatteryLevelTextView extends TextView implements
     }
 
     @Override
+    public void onPowerSaveChanged() {
+        // Not used
+    }
+
+    @Override
     public void onBatteryStyleChanged(int style, int percentMode) {
         mStyle = style;
         mPercentMode = percentMode;
         updateVisibility();
-    }
-
-    @Override
-    public void onPowerSaveChanged() {
-        // Not used
     }
 
     @Override
@@ -189,19 +184,20 @@ public class BatteryLevelTextView extends TextView implements
     }
 
     public void updateVisibility() {
-        boolean showNextPercent = mBatteryPresent && (
-                mPercentMode == BatteryController.PERCENTAGE_MODE_OUTSIDE
-                || (mBatteryCharging && mPercentMode == BatteryController.PERCENTAGE_MODE_INSIDE));
-        if (mStyle == BatteryController.STYLE_GONE) {
+        boolean showNextPercent = mBatteryPresent &&
+            mStyle != BatteryController.STYLE_GONE && (
+                (!mBatteryCharging && mPercentMode ==
+                 BatteryController.PERCENTAGE_MODE_OUTSIDE) ||
+                (mBatteryCharging && mPercentMode ==
+                    BatteryController.PERCENTAGE_MODE_INSIDE));
+        if (mPercentMode == BatteryController.PERCENTAGE_MODE_OFF ||
+                mStyle == BatteryController.STYLE_GONE) {
             showNextPercent = false;
-            mRequestedVisibility = GONE;
         } else if (mStyle == BatteryController.STYLE_TEXT) {
             showNextPercent = true;
-            mRequestedVisibility = VISIBLE;
         }
 
-        if (mPercentMode != BatteryController.PERCENTAGE_MODE_OFF &&
-            mBatteryStateRegistar != null && (showNextPercent || mForceShow)) {
+        if (mBatteryStateRegistar != null && (showNextPercent || mForceShow)) {
             super.setVisibility(mRequestedVisibility);
         } else {
             super.setVisibility(GONE);

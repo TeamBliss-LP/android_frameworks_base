@@ -56,6 +56,7 @@ public class KeyguardStatusBarView extends RelativeLayout {
     private Interpolator mFastOutSlowInInterpolator;
 
     private TextView mCarrierLabel;
+    private int mTextColor = 0xFFFFFF;
 
     public KeyguardStatusBarView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -79,7 +80,12 @@ public class KeyguardStatusBarView extends RelativeLayout {
     }
 
     public void updateTextColor(int color) {
-        mCarrierLabel.setTextColor(color);
+        mTextColor = color;
+        mCarrierLabel.setTextColor(mTextColor);
+        mBatteryLevel.setTextColor(mTextColor);
+        if (mDockBatteryLevel != null) {
+            mDockBatteryLevel.setTextColor(mTextColor);
+        }
     }
 
     private void loadDimens() {
@@ -97,7 +103,6 @@ public class KeyguardStatusBarView extends RelativeLayout {
             removeView(mMultiUserSwitch);
         }
         mBatteryLevel.setVisibility(View.VISIBLE);
-        mBatteryLevel.setTextColor(false);
         if (mDockBatteryLevel != null) {
             mDockBatteryLevel.setVisibility(View.VISIBLE);
         }
@@ -131,7 +136,9 @@ public class KeyguardStatusBarView extends RelativeLayout {
         DockBatteryMeterView v = ((DockBatteryMeterView) findViewById(R.id.dock_battery));
         if (dockBatteryController != null) {
             v.setBatteryStateRegistar(dockBatteryController);
-            mDockBatteryLevel.setBatteryStateRegistar(dockBatteryController);
+            if (mDockBatteryLevel != null) {
+                mDockBatteryLevel.setBatteryStateRegistar(dockBatteryController);
+            }
         } else {
             if (v != null ) {
                 removeView(v);

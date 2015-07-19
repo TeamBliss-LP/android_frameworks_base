@@ -196,6 +196,9 @@ public class BatteryController extends BroadcastReceiver implements BatteryState
         private void update() {
             mStyle = Settings.System.getIntForUser(mResolver,
                     Settings.System.STATUS_BAR_BATTERY_STYLE, 0, mUserId);
+            if (mStyle == 1) {
+                mStyle = 5;
+            }
             mPercentMode = Settings.System.getIntForUser(mResolver,
                     Settings.System.STATUS_BAR_SHOW_BATTERY_PERCENT, 0, mUserId);
 
