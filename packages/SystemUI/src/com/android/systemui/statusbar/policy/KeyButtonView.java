@@ -156,6 +156,10 @@ public class KeyButtonView extends ImageView {
         setOnClickListener(mClickListener);
     }
 
+    public String getClickAction() {
+        return mClickAction;
+    }
+
     public void setLongpressAction(String action) {
         mLongpressAction = action;
         if (!action.equals(ActionConstants.ACTION_NULL)) {

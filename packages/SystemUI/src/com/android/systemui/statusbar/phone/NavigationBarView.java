@@ -121,7 +121,6 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
     private final static int SHOW_IME_ARROW = 1;
 
     // Legacy menu tweaks by @siracuervo
-    private boolean mLegacyMenuLayout;
     private String mCustomLeftShortcutUri;
     private String mCustomLeftLongShortcutUri;
     private String mCustomRightShortcutUri;
@@ -156,10 +155,10 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
     int mDisabledFlags = 0;
     int mNavigationIconHints = 0;
 
-    private BackButtonDrawable mBackIcon, mBackLandIcon, mBackAltIcon;
+    //private BackButtonDrawable mBackIcon, mBackLandIcon, mBackAltIcon;
 
-    private Drawable mRecentIcon;
-    private Drawable mRecentLandIcon;
+    //private Drawable mRecentIcon;
+    //private Drawable mRecentLandIcon;
 
     private int mRippleColor;
 
@@ -314,7 +313,7 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
         mShowMenu = false;
         mDelegateHelper = new DelegateViewHelper(this);
         mTaskSwitchHelper = new NavigationBarViewTaskSwitchHelper(context);
-        getIcons(res);
+        //getIcons(res);
 
         mBarTransitions = new NavigationBarTransitions(this);
         mButtonsConfig = ActionHelper.getNavBarConfig(mContext);
@@ -471,22 +470,62 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
         mOverrideMenuKeys = b;
         setMenuVisibility(mShowMenu, true /* force */);
     }
-
+/*
     private void getIcons(Resources res) {
         mBackIcon = new BackButtonDrawable(res.getDrawable(R.drawable.ic_sysbar_back));
         mBackLandIcon = new BackButtonDrawable(res.getDrawable(R.drawable.ic_sysbar_back_land));
         mRecentIcon = res.getDrawable(R.drawable.ic_sysbar_recent);
         mRecentLandIcon = res.getDrawable(R.drawable.ic_sysbar_recent_land);
     }
-
+*/
     public void updateResources(Resources res) {
         mThemedResources = res;
-        getIcons(mThemedResources);
+        //getIcons(mThemedResources);
         mBarTransitions.updateResources(res);
         for (int i = 0; i < mRotatedViews.length; i++) {
             ViewGroup container = (ViewGroup) mRotatedViews[i];
             if (container != null) {
+                updateKeyButtonViewResources(container);
                 updateLightsOutResources(container);
+            }
+        }
+    }
+
+    private void updateKeyButtonViewResources(ViewGroup container) {
+        if (mCurrentView == null || mButtonsConfig == null ||
+            mButtonsConfig.isEmpty()) {
+            return;
+        }
+        Drawable d;
+        boolean colorize;
+        String clickAction, iconUri;
+        ActionConfig actionConfig;
+        for (int j = 0; j < mButtonsConfig.size(); j++) {
+            actionConfig = mButtonsConfig.get(j);
+            KeyButtonView v = (KeyButtonView) findViewWithTag((mVertical ? "key_land_" : "key_") + j);
+            if (v != null && v instanceof KeyButtonView) {
+                int vid = v.getId();
+                clickAction = actionConfig.getClickAction();
+                iconUri = actionConfig.getIcon();
+                d = ActionHelper.getActionIconImage(mContext, clickAction, iconUri);
+                if (d != null) {
+                    v.setImageBitmap(null);
+                    colorize = true;
+                    if (iconUri != null && !iconUri.equals(ActionConstants.ICON_EMPTY)
+                            && !iconUri.startsWith(ActionConstants.SYSTEM_ICON_IDENTIFIER)
+                            && mNavBarButtonColorMode == 1) {
+                        colorize = false;
+                    } else if (!clickAction.startsWith("**")) {
+                        if (mNavBarButtonColorMode != 0) {
+                            colorize = false;
+                        }
+                    }
+                    if (colorize && mNavBarButtonColorMode != 3) {
+                        d = ColorHelper.getColoredDrawable(d, mNavBarButtonColor);
+                    }
+                    v.setImageBitmap(ColorHelper.drawableToBitmap(d));
+                }
+                v.setRippleColor(mRippleColor);
             }
         }
     }
@@ -512,7 +551,7 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
 
     @Override
     public void setLayoutDirection(int layoutDirection) {
-        getIcons(mThemedResources != null ? mThemedResources : getContext().getResources());
+        //getIcons(mThemedResources != null ? mThemedResources : getContext().getResources());
         updateSettings();
 
         super.setLayoutDirection(layoutDirection);
@@ -1228,31 +1267,32 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
             return;
         }
 
-        mLegacyMenuLayout = Settings.System.getInt(mContext.getContentResolver(),
-                    Settings.System.LEGACY_MENU_LAYOUT, 1) == 1;
+        final boolean mLegacyMenuLayout = Settings.System.getInt(
+            mContext.getContentResolver(),
+            Settings.System.LEGACY_MENU_LAYOUT, 1) == 1;
 
         View leftMenuKeyView = getLeftMenuButton();
         View rightMenuKeyView = getRightMenuButton();
         View imeSwitcherView = getImeSwitchButton();
 
         if (mLegacyMenuLayout) {
-        // Only show Menu if IME switcher and IME arrowsnot shown.
-        boolean showLeftMenuButton = (((mMenuVisibility == MENU_VISIBILITY_ALWAYS || show)
-                && (mMenuSetting == SHOW_LEFT_MENU || mMenuSetting == SHOW_BOTH_MENU)
-                && (mMenuVisibility != MENU_VISIBILITY_NEVER))
-                || mOverrideMenuKeys)
-                && !mIsImeArrowVisible;
-        boolean showRightMenuButton = (((mMenuVisibility == MENU_VISIBILITY_ALWAYS || show)
-                && (mMenuSetting == SHOW_RIGHT_MENU || mMenuSetting == SHOW_BOTH_MENU)
-                && (mMenuVisibility != MENU_VISIBILITY_NEVER))
-                || mOverrideMenuKeys)
-                && !(mIsImeButtonVisible || mIsImeArrowVisible);
+            // Only show Menu if IME switcher and IME arrowsnot shown.
+            boolean showLeftMenuButton = (((mMenuVisibility == MENU_VISIBILITY_ALWAYS || show)
+                    && (mMenuSetting == SHOW_LEFT_MENU || mMenuSetting == SHOW_BOTH_MENU)
+                    && (mMenuVisibility != MENU_VISIBILITY_NEVER))
+                    || mOverrideMenuKeys)
+                    && !mIsImeArrowVisible;
+            boolean showRightMenuButton = (((mMenuVisibility == MENU_VISIBILITY_ALWAYS || show)
+                    && (mMenuSetting == SHOW_RIGHT_MENU || mMenuSetting == SHOW_BOTH_MENU)
+                    && (mMenuVisibility != MENU_VISIBILITY_NEVER))
+                    || mOverrideMenuKeys)
+                    && !(mIsImeButtonVisible || mIsImeArrowVisible);
 
-        leftMenuKeyView.setVisibility(showLeftMenuButton ? View.VISIBLE
-                : (mIsImeArrowVisible ? View.GONE : View.INVISIBLE));
-        rightMenuKeyView.setVisibility(showRightMenuButton ? View.VISIBLE
-                : ((mIsImeButtonVisible || mIsImeArrowVisible) ? View.GONE : View.INVISIBLE));
-        mShowMenu = show;
+            leftMenuKeyView.setVisibility(showLeftMenuButton ? View.VISIBLE
+                    : (mIsImeArrowVisible ? View.GONE : View.INVISIBLE));
+            rightMenuKeyView.setVisibility(showRightMenuButton ? View.VISIBLE
+                    : ((mIsImeButtonVisible || mIsImeArrowVisible) ? View.GONE : View.INVISIBLE));
+            mShowMenu = show;
         } else {
             leftMenuKeyView.setVisibility(View.GONE);
             rightMenuKeyView.setVisibility(View.GONE);
@@ -1498,9 +1538,6 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
         mMenuVisibility = Settings.System.getIntForUser(resolver,
                 Settings.System.MENU_VISIBILITY, MENU_VISIBILITY_SYSTEM,
                 UserHandle.USER_CURRENT);
-
-        mLegacyMenuLayout = Settings.System.getInt(mContext.getContentResolver(),
-                    Settings.System.LEGACY_MENU_LAYOUT, 1) == 1;
 
         mLegacyMenuLeftAction = Settings.System.getInt(resolver,
                 Settings.System.LEGACY_MENU_LEFT_ACTION, 0);
