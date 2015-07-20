@@ -1385,6 +1385,17 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
     }
 
     private void updateBatteryPercentageSettings() {
+        ContentResolver resolver = mContext.getContentResolver();
+        int batteryStyle = Settings.System.getIntForUser(resolver,
+                Settings.System.STATUS_BAR_BATTERY_STYLE,
+                0, UserHandle.USER_CURRENT);
+        mShowBatteryTextExpanded = Settings.System.getIntForUser(resolver,
+                Settings.System.STATUS_BAR_SHOW_BATTERY_PERCENT,
+                2, UserHandle.USER_CURRENT) == 2;
+
+        if (batteryStyle == 4) { //BATTERY_METER_GONE
+            mShowBatteryTextExpanded = false;
+        }
         updateBatteryLevelVisibility();
     }
 
