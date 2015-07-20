@@ -201,7 +201,6 @@ public class BatteryLevelTextView extends TextView implements
         } else {
             super.setVisibility(GONE);
         }
-        mForceShow = false;
     }
 
     public void setTextColor(boolean isHeader) {
