@@ -500,32 +500,40 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
         boolean colorize;
         String clickAction, iconUri;
         ActionConfig actionConfig;
-        for (int j = 0; j < mButtonsConfig.size(); j++) {
-            actionConfig = mButtonsConfig.get(j);
-            KeyButtonView v = (KeyButtonView) findViewWithTag((mVertical ? "key_land_" : "key_") + j);
-            if (v != null && v instanceof KeyButtonView) {
-                int vid = v.getId();
-                clickAction = actionConfig.getClickAction();
-                iconUri = actionConfig.getIcon();
-                d = ActionHelper.getActionIconImage(mContext, clickAction, iconUri);
-                if (d != null) {
-                    v.setImageBitmap(null);
-                    colorize = true;
-                    if (iconUri != null && !iconUri.equals(ActionConstants.ICON_EMPTY)
-                            && !iconUri.startsWith(ActionConstants.SYSTEM_ICON_IDENTIFIER)
-                            && mNavBarButtonColorMode == 1) {
-                        colorize = false;
-                    } else if (!clickAction.startsWith("**")) {
-                        if (mNavBarButtonColorMode != 0) {
+        for (int i = 0; i <= 1; i++) {
+            boolean landscape = (i == 1);
+
+            LinearLayout navButtonLayout = (LinearLayout) (landscape ?
+                mRot90.findViewById(R.id.nav_buttons) :
+                mRot0.findViewById(R.id.nav_buttons));
+
+            for (int j = 0; j < mButtonsConfig.size(); j++) {
+                actionConfig = mButtonsConfig.get(j);
+                KeyButtonView v = (KeyButtonView) navButtonLayout.findViewWithTag((landscape ? "key_land_" : "key_") + j);
+                if (v != null && v instanceof KeyButtonView) {
+                    int vid = v.getId();
+                    clickAction = actionConfig.getClickAction();
+                    iconUri = actionConfig.getIcon();
+                    d = ActionHelper.getActionIconImage(mContext, clickAction, iconUri);
+                    if (d != null) {
+                        v.setImageBitmap(null);
+                        colorize = true;
+                        if (iconUri != null && !iconUri.equals(ActionConstants.ICON_EMPTY)
+                                && !iconUri.startsWith(ActionConstants.SYSTEM_ICON_IDENTIFIER)
+                                && mNavBarButtonColorMode == 1) {
                             colorize = false;
+                        } else if (!clickAction.startsWith("**")) {
+                            if (mNavBarButtonColorMode != 0) {
+                                colorize = false;
+                            }
                         }
+                        if (colorize && mNavBarButtonColorMode != 3) {
+                            d = ColorHelper.getColoredDrawable(d, mNavBarButtonColor);
+                        }
+                        v.setImageBitmap(ColorHelper.drawableToBitmap(d));
                     }
-                    if (colorize && mNavBarButtonColorMode != 3) {
-                        d = ColorHelper.getColoredDrawable(d, mNavBarButtonColor);
-                    }
-                    v.setImageBitmap(ColorHelper.drawableToBitmap(d));
+                    v.setRippleColor(mRippleColor);
                 }
-                v.setRippleColor(mRippleColor);
             }
         }
     }
