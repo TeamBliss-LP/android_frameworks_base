@@ -108,8 +108,8 @@ public class Action {
                 return;
             } else if (action.equals(ActionConstants.ACTION_KILL)) {
                 if (isKeyguardShowing) return;
-				TaskUtils.killActiveTask(context, mCurrentUserId);
-					Toast.makeText(context, R.string.app_killed_message, Toast.LENGTH_SHORT).show();
+                    TaskUtils.killActiveTask(context, mCurrentUserId);
+                    Toast.makeText(context, R.string.app_killed_message, Toast.LENGTH_SHORT).show();
                 return;
             } else if (action.equals(ActionConstants.ACTION_NOTIFICATIONS)) {
                 if (isKeyguardShowing && isKeyguardSecure) {
@@ -128,7 +128,7 @@ public class Action {
                     barService.expandSettingsPanel();
                 } catch (RemoteException e) {}
             } else if (action.equals(ActionConstants.ACTION_LAST_APP)) {
-                if (isKeyguardShowing) return;               
+                if (isKeyguardShowing) return;
                 TaskUtils.toggleLastApp(context, mCurrentUserId);
                 return;
             } else if (action.equals(ActionConstants.ACTION_TORCH)) {
@@ -160,12 +160,6 @@ public class Action {
                 return;
             } else if (action.equals(ActionConstants.ACTION_IME_NAVIGATION_DOWN)) {
                 triggerVirtualKeypress(KeyEvent.KEYCODE_DPAD_DOWN, isLongpress);
-                return;
-            } else if (action.equals(ActionConstants.ACTION_POWER_MENU)) {
-                try {
-                    windowManagerService.toggleGlobalMenu();
-                } catch (RemoteException e) {
-                }
                 return;
             } else if (action.equals(ActionConstants.ACTION_POWER)) {
                 PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
@@ -205,45 +199,11 @@ public class Action {
                         Settings.System.NAVIGATION_BAR_SHOW,
                         navBarState ? 0 : 1, UserHandle.USER_CURRENT);
                 return;
-            } else if (action.equals(ActionConstants.ACTION_KILL)) {
-                if (isKeyguardShowing) {
-                    return;
-                }
-                try {
-                    barService.toggleKillApp();
-                } catch (RemoteException e) {
-                }
-                return;
-            } else if (action.equals(ActionConstants.ACTION_NOTIFICATIONS)) {
-                if (isKeyguardShowing && isKeyguardSecure) {
-                    return;
-                }
-                try {
-                    barService.expandNotificationsPanel();
-                } catch (RemoteException e) {
-                }
-                return;
             } else if (action.equals(ActionConstants.ACTION_RESTARTUI)) {
                 if (isKeyguardShowing && isKeyguardSecure) {
                     return;
                 }
                 Helpers.restartSystemUI();
-            } else if (action.equals(ActionConstants.ACTION_SETTINGS_PANEL)) {
-                if (isKeyguardShowing && isKeyguardSecure) {
-                    return;
-                }
-                try {
-                    barService.expandSettingsPanel();
-                } catch (RemoteException e) {}
-            } else if (action.equals(ActionConstants.ACTION_LAST_APP)) {
-                if (isKeyguardShowing) {
-                    return;
-                }
-                try {
-                    barService.toggleLastApp();
-                } catch (RemoteException e) {
-                }
-                return;
             } else if (action.equals(ActionConstants.ACTION_RECENTS)) {
                 if (isKeyguardShowing) {
                     return;
@@ -253,49 +213,9 @@ public class Action {
                 } catch (RemoteException e) {
                 }
                 return;
-            } else if (action.equals(ActionConstants.ACTION_PIE)) {
-                boolean pieState = isPieEnabled(context);
-                if (pieState && !isNavBarEnabled(context) && isNavBarDefault(context)) {
-                    Toast.makeText(context,
-                            com.android.internal.R.string.disable_pie_navigation_error,
-                            Toast.LENGTH_LONG).show();
-                    return;
-                }
-                Settings.System.putIntForUser(
-                        context.getContentResolver(),
-                        Settings.System.PIE_CONTROLS,
-                        pieState ? 0 : 1, UserHandle.USER_CURRENT);
-                return;
-            } else if (action.equals(ActionConstants.ACTION_NAVBAR)) {
-                boolean navBarState = isNavBarEnabled(context);
-                if (navBarState && !isPieEnabled(context) && isNavBarDefault(context)) {
-                    Toast.makeText(context,
-                            com.android.internal.R.string.disable_navigation_pie_error,
-                            Toast.LENGTH_LONG).show();
-                    return;
-                }
-                Settings.System.putIntForUser(
-                        context.getContentResolver(),
-                        Settings.System.NAVIGATION_BAR_SHOW,
-                        navBarState ? 0 : 1, UserHandle.USER_CURRENT);
-                return;
             } else if (action.equals(ActionConstants.ACTION_SCREENSHOT)) {
                 try {
                     barService.toggleScreenshot();
-                } catch (RemoteException e) {
-                }
-                return;
-            } else if (action.equals(ActionConstants.ACTION_TORCH)) {
-                try {
-                    ITorchService torchService = ITorchService.Stub.asInterface(
-                            ServiceManager.getService(Context.TORCH_SERVICE));
-                    torchService.toggleTorch();
-                } catch (RemoteException e) {
-                }
-                return;
-            } else if (action.equals(ActionConstants.ACTION_POWER_MENU)) {
-                try {
-                    windowManagerService.toggleGlobalMenu();
                 } catch (RemoteException e) {
                 }
                 return;
@@ -405,22 +325,9 @@ public class Action {
                     powerManager.wakeUp(SystemClock.uptimeMillis());
                 }
                 return;
-            } else if (action.equals(ActionConstants.ACTION_TORCH)) {
-                // toggle torch the new way
-                TorchManager torchManager =
-                        (TorchManager) context.getSystemService(Context.TORCH_SERVICE);
-                if (!torchManager.isTorchOn()) {
-                    torchManager.setTorchEnabled(true);
-                } else {
-                    torchManager.setTorchEnabled(false);
-                }
-                return;
-            } else if (action.equals(ActionConstants.ACTION_SCREENSHOT)) {
-                context.sendBroadcast(new Intent(Intent.ACTION_SCREENSHOT));
-                return;
             } else if (action.equals(ActionConstants.ACTION_SCREENRECORD)) {
                 context.sendBroadcast(new Intent(Intent.ACTION_SCREENRECORD));
-                return;                  
+                return;
             } else {
                 // we must have a custom uri
                 Intent intent = null;
@@ -441,7 +348,7 @@ public class Action {
                 Settings.System.PIE_CONTROLS,
                 0, UserHandle.USER_CURRENT) == 1;
     }
-    
+
     public static boolean isNavBarEnabled(Context context) {
         return Settings.System.getIntForUser(context.getContentResolver(),
                 Settings.System.NAVIGATION_BAR_SHOW,
