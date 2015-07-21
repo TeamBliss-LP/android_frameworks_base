@@ -157,10 +157,7 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
     int mDisabledFlags = 0;
     int mNavigationIconHints = 0;
 
-    //private BackButtonDrawable mBackIcon, mBackLandIcon, mBackAltIcon;
-
-    //private Drawable mRecentIcon;
-    //private Drawable mRecentLandIcon;
+    private Drawable mBackIcon, mBackLandIcon, mBackAltIcon, mBackAltLandIcon;
 
     private int mRippleColor;
 
@@ -319,7 +316,7 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
         mShowMenu = false;
         mDelegateHelper = new DelegateViewHelper(this);
         mTaskSwitchHelper = new NavigationBarViewTaskSwitchHelper(context);
-        //getIcons(res);
+        getIcons(res);
 
         mBarTransitions = new NavigationBarTransitions(this);
         mButtonsConfig = ActionHelper.getNavBarConfig(mContext);
@@ -476,17 +473,23 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
         mOverrideMenuKeys = b;
         setMenuVisibility(mShowMenu, true /* force */);
     }
-/*
+
     private void getIcons(Resources res) {
-        mBackIcon = new BackButtonDrawable(res.getDrawable(R.drawable.ic_sysbar_back));
-        mBackLandIcon = new BackButtonDrawable(res.getDrawable(R.drawable.ic_sysbar_back_land));
-        mRecentIcon = res.getDrawable(R.drawable.ic_sysbar_recent);
-        mRecentLandIcon = res.getDrawable(R.drawable.ic_sysbar_recent_land);
+        mBackIcon = res.getDrawable(R.drawable.ic_sysbar_back);
+        mBackLandIcon = res.getDrawable(R.drawable.ic_sysbar_back_land);
+        mBackAltIcon = res.getDrawable(R.drawable.ic_sysbar_back_ime);
+        mBackAltLandIcon = res.getDrawable(R.drawable.ic_sysbar_back_ime);
+        if (mNavBarButtonColorMode != 3) {
+            mBackIcon = ColorHelper.getColoredDrawable(mBackIcon, mNavBarButtonColor);
+            mBackLandIcon = ColorHelper.getColoredDrawable(mBackLandIcon, mNavBarButtonColor);
+            mBackAltIcon = ColorHelper.getColoredDrawable(mBackAltIcon, mNavBarButtonColor);
+            mBackAltLandIcon = ColorHelper.getColoredDrawable(mBackAltLandIcon, mNavBarButtonColor);
+        }
     }
-*/
+
     public void updateResources(Resources res) {
         mThemedResources = res;
-        //getIcons(mThemedResources);
+        getIcons(mThemedResources);
         mBarTransitions.updateResources(res);
         for (int i = 0; i < mRotatedViews.length; i++) {
             ViewGroup container = (ViewGroup) mRotatedViews[i];
@@ -520,7 +523,7 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
                     int vid = v.getId();
                     clickAction = actionConfig.getClickAction();
                     iconUri = actionConfig.getIcon();
-                    d = ActionHelper.getActionIconImage(mContext, clickAction, iconUri);
+                    d = ActionHelper.getActionIconImage(mContext, clickAction, iconUri, landscape);
                     if (d != null) {
                         v.setImageBitmap(null);
                         colorize = true;
@@ -565,7 +568,7 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
 
     @Override
     public void setLayoutDirection(int layoutDirection) {
-        //getIcons(mThemedResources != null ? mThemedResources : getContext().getResources());
+        getIcons(mThemedResources != null ? mThemedResources : getContext().getResources());
         updateSettings();
 
         super.setLayoutDirection(layoutDirection);
@@ -705,11 +708,9 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
                 colorize = false;
             }
             mAppIsBinded = true;
-        } else if (landscape && clickAction.startsWith("**")) {
-            v.setPaddingRelative(2,5,2,5);
         }
 
-        Drawable d = ActionHelper.getActionIconImage(mContext, clickAction, iconUri);
+        Drawable d = ActionHelper.getActionIconImage(mContext, clickAction, iconUri, landscape);
 
         if (d != null) {
             if (colorize && mNavBarButtonColorMode != 3) {
@@ -720,7 +721,6 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
         v.setRippleColor(mRippleColor);
         return v;
     }
-
 
     public void getLegacyLeftMenuAction (Context context) {
         mCustomLeftShortcutUri = Settings.System.getString(context.getContentResolver(),
@@ -1103,8 +1103,8 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
     }
 
     private LayoutParams getLayoutParams(boolean landscape, int dp) {
-        return //landscape ?
-                //new LayoutParams(LayoutParams.MATCH_PARENT, dp, 1f) :
+        return landscape ?
+                new LayoutParams(LayoutParams.MATCH_PARENT, (int)(dp*1.2f), 1f) :
                 new LayoutParams(dp, LayoutParams.MATCH_PARENT, 1f);
     }
 
@@ -1157,8 +1157,21 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
         */
         mNavigationIconHints = hints;
 
-        final boolean showImeButton = ((hints & StatusBarManager.NAVIGATION_HINT_IME_SHOWN) != 0
-                    && !mImeArrowVisibility);
+        KeyButtonView v = (KeyButtonView)getBackButton();
+        if (v != null) {
+            v.setImageDrawable(null);
+            Drawable d = backAlt
+                    ? (mVertical ? mBackAltLandIcon : mBackAltIcon)
+                    : (mVertical ? mBackLandIcon    : mBackIcon);
+            if (mNavBarButtonColorMode != 3) {
+                d = ColorHelper.getColoredDrawable(d, mNavBarButtonColor);
+            }
+            v.setImageBitmap(ColorHelper.drawableToBitmap(d));
+        }
+
+        final boolean showImeButton = (
+            (hints & StatusBarManager.NAVIGATION_HINT_IME_SHOWN) != 0
+            && !mImeArrowVisibility);
         if (getImeSwitchButton() != null) {
             getImeSwitchButton().setVisibility(showImeButton ? View.VISIBLE : View.GONE);
             mIsImeButtonVisible = showImeButton;
@@ -1541,7 +1554,8 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
         }
 
         mNavBarButtonColorMode = Settings.System.getIntForUser(resolver,
-                Settings.System.NAVIGATION_BAR_BUTTON_TINT_MODE, 0, UserHandle.USER_CURRENT);
+                Settings.System.NAVIGATION_BAR_BUTTON_TINT_MODE,
+                3, UserHandle.USER_CURRENT);
 
         mButtonsConfig = ActionHelper.getNavBarConfig(mContext);
 

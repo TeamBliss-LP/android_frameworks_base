@@ -244,6 +244,11 @@ public class ActionHelper {
     // General methods to retrieve the correct icon for the respective action.
     public static Drawable getActionIconImage(Context context,
             String clickAction, String customIcon) {
+        return getActionIconImage(context, clickAction, customIcon, false);
+    }
+
+    public static Drawable getActionIconImage(Context context,
+            String clickAction, String customIcon, boolean landscape) {
         int resId = -1;
         Drawable d = null;
         PackageManager pm = context.getPackageManager();
@@ -303,7 +308,7 @@ public class ActionHelper {
                 return null;
             }
         } else if (clickAction.startsWith("**")) {
-            resId = getActionSystemIcon(systemUiResources, clickAction);
+            resId = getActionSystemIcon(systemUiResources, clickAction, landscape);
 
             if (resId > 0) {
                 return systemUiResources.getDrawable(resId);
@@ -314,6 +319,11 @@ public class ActionHelper {
 
     public static int getActionIconUri(Context context,
             String clickAction, String customIcon) {
+        return getActionIconUri(context, clickAction, customIcon, false);
+    }
+
+    public static int getActionIconUri(Context context,
+            String clickAction, String customIcon, boolean landscape) {
         int resId = -1;
         PackageManager pm = context.getPackageManager();
         if (pm == null) {
@@ -330,50 +340,56 @@ public class ActionHelper {
 
         if (customIcon != null && customIcon.startsWith(ActionConstants.SYSTEM_ICON_IDENTIFIER)) {
             resId = systemUiResources.getIdentifier(customIcon.substring(
-                        ActionConstants.SYSTEM_ICON_IDENTIFIER.length()), "drawable", "android");
+                        ActionConstants.SYSTEM_ICON_IDENTIFIER.length()),
+                        "drawable", "android");
         } else if (clickAction.startsWith("**")) {
-            resId = getActionSystemIcon(systemUiResources, clickAction);
+            resId = getActionSystemIcon(systemUiResources, clickAction, landscape);
         }
 
         return resId;
     }
 
     private static int getActionSystemIcon(Resources systemUiResources, String clickAction) {
+        return getActionSystemIcon(systemUiResources, clickAction, false);
+    }
+
+    private static int getActionSystemIcon(Resources systemUiResources, String clickAction, boolean landscape) {
         int resId = -1;
 
+        String suffix = landscape ? "_land" : "";
         // ToDo: Add the resources to SystemUI.
         if (clickAction.equals(ActionConstants.ACTION_HOME)) {
             resId = systemUiResources.getIdentifier(
-                        SYSTEMUI_METADATA_NAME + ":drawable/ic_sysbar_home", null, null);
+                        SYSTEMUI_METADATA_NAME + ":drawable/ic_sysbar_home"+suffix, null, null);
         } else if (clickAction.equals(ActionConstants.ACTION_BACK)) {
             resId = systemUiResources.getIdentifier(
-                        SYSTEMUI_METADATA_NAME + ":drawable/ic_sysbar_back", null, null);
+                        SYSTEMUI_METADATA_NAME + ":drawable/ic_sysbar_back"+suffix, null, null);
         } else if (clickAction.equals(ActionConstants.ACTION_RECENTS)) {
             resId = systemUiResources.getIdentifier(
-                        SYSTEMUI_METADATA_NAME + ":drawable/ic_sysbar_recent", null, null);
+                        SYSTEMUI_METADATA_NAME + ":drawable/ic_sysbar_recent"+suffix, null, null);
         } else if (clickAction.equals(ActionConstants.ACTION_SEARCH)
                 || clickAction.equals(ActionConstants.ACTION_ASSIST)
                 || clickAction.equals(ActionConstants.ACTION_KEYGUARD_SEARCH)) {
             resId = systemUiResources.getIdentifier(
-                        SYSTEMUI_METADATA_NAME + ":drawable/ic_sysbar_search", null, null);
+                        SYSTEMUI_METADATA_NAME + ":drawable/ic_sysbar_search"+suffix, null, null);
         } else if (clickAction.equals(ActionConstants.ACTION_KEYGUARD_SEARCH)) {
             resId = systemUiResources.getIdentifier(
                         SYSTEMUI_METADATA_NAME + ":drawable/ic_sysbar_search_light", null, null);
         } else if (clickAction.equals(ActionConstants.ACTION_MENU)) {
             resId = systemUiResources.getIdentifier(
-                        SYSTEMUI_METADATA_NAME + ":drawable/ic_sysbar_menu", null, null);
+                        SYSTEMUI_METADATA_NAME + ":drawable/ic_sysbar_menu"+suffix, null, null);
         } else if (clickAction.equals(ActionConstants.ACTION_MENU_BIG)) {
             resId = systemUiResources.getIdentifier(
-                        SYSTEMUI_METADATA_NAME + ":drawable/ic_sysbar_menu", null, null);
+                        SYSTEMUI_METADATA_NAME + ":drawable/ic_sysbar_menu"+suffix, null, null);
         } else if (clickAction.equals(ActionConstants.ACTION_IME)) {
             resId = systemUiResources.getIdentifier(
-                        SYSTEMUI_METADATA_NAME + ":drawable/ic_sysbar_ime_switcher", null, null);
+                        SYSTEMUI_METADATA_NAME + ":drawable/ic_sysbar_ime_switcher"+suffix, null, null);
         } else if (clickAction.equals(ActionConstants.ACTION_POWER)) {
             resId = systemUiResources.getIdentifier(
-                        SYSTEMUI_METADATA_NAME + ":drawable/ic_sysbar_power", null, null);
+                        SYSTEMUI_METADATA_NAME + ":drawable/ic_sysbar_power"+suffix, null, null);
         } else if (clickAction.equals(ActionConstants.ACTION_POWER_MENU)) {
             resId = systemUiResources.getIdentifier(
-                        SYSTEMUI_METADATA_NAME + ":drawable/ic_sysbar_power_menu", null, null);
+                        SYSTEMUI_METADATA_NAME + ":drawable/ic_sysbar_power_menu"+suffix, null, null);
         } else if (clickAction.equals(ActionConstants.ACTION_NOTIFICATIONS)) {
             resId = systemUiResources.getIdentifier(
                         SYSTEMUI_METADATA_NAME + ":drawable/ic_sysbar_notifications", null, null);
@@ -382,37 +398,37 @@ public class ActionHelper {
                         SYSTEMUI_METADATA_NAME + ":drawable/ic_sysbar_qs", null, null);
         } else if (clickAction.equals(ActionConstants.ACTION_VIB)) {
             resId = systemUiResources.getIdentifier(
-                        SYSTEMUI_METADATA_NAME + ":drawable/ic_sysbar_vib", null, null);
+                        SYSTEMUI_METADATA_NAME + ":drawable/ic_sysbar_vib"+suffix, null, null);
         } else if (clickAction.equals(ActionConstants.ACTION_SILENT)) {
             resId = systemUiResources.getIdentifier(
-                        SYSTEMUI_METADATA_NAME + ":drawable/ic_sysbar_silent", null, null);
+                        SYSTEMUI_METADATA_NAME + ":drawable/ic_sysbar_silent"+suffix, null, null);
         } else if (clickAction.equals(ActionConstants.ACTION_VIB_SILENT)) {
             resId = systemUiResources.getIdentifier(
-                        SYSTEMUI_METADATA_NAME + ":drawable/ic_sysbar_ring_vib_silent", null, null);
+                        SYSTEMUI_METADATA_NAME + ":drawable/ic_sysbar_ring_vib_silent"+suffix, null, null);
         } else if (clickAction.equals(ActionConstants.ACTION_SCREENSHOT)) {
             resId = systemUiResources.getIdentifier(
-                        SYSTEMUI_METADATA_NAME + ":drawable/ic_sysbar_screenshot", null, null);
+                        SYSTEMUI_METADATA_NAME + ":drawable/ic_sysbar_screenshot"+suffix, null, null);
         } else if (clickAction.equals(ActionConstants.ACTION_LAST_APP)) {
             resId = systemUiResources.getIdentifier(
                         SYSTEMUI_METADATA_NAME + ":drawable/ic_sysbar_lastapp", null, null);
         } else if (clickAction.equals(ActionConstants.ACTION_PIE)) {
             resId = systemUiResources.getIdentifier(
-                        SYSTEMUI_METADATA_NAME + ":drawable/ic_sysbar_pie", null, null);
+                        SYSTEMUI_METADATA_NAME + ":drawable/ic_sysbar_pie"+suffix, null, null);
         } else if (clickAction.equals(ActionConstants.ACTION_NAVBAR)) {
             resId = systemUiResources.getIdentifier(
-                        SYSTEMUI_METADATA_NAME + ":drawable/ic_sysbar_navbar", null, null);
-		} else if (clickAction.equals(ActionConstants.ACTION_SCREENRECORD)) {
+                        SYSTEMUI_METADATA_NAME + ":drawable/ic_sysbar_navbar"+suffix, null, null);
+        } else if (clickAction.equals(ActionConstants.ACTION_SCREENRECORD)) {
             resId = systemUiResources.getIdentifier(
                         SYSTEMUI_METADATA_NAME + ":drawable/ic_sysbar_screenrecord", null, null);
         } else if (clickAction.equals(ActionConstants.ACTION_TORCH)) {
             resId = systemUiResources.getIdentifier(
-                        SYSTEMUI_METADATA_NAME + ":drawable/ic_sysbar_torch", null, null);
+                        SYSTEMUI_METADATA_NAME + ":drawable/ic_sysbar_torch"+suffix, null, null);
         } else if (clickAction.equals(ActionConstants.ACTION_RESTARTUI)) {
             resId = systemUiResources.getIdentifier(
                         SYSTEMUI_METADATA_NAME + ":drawable/ic_qs_systemui_restart", null, null);
         } else {
             resId = systemUiResources.getIdentifier(
-                        SYSTEMUI_METADATA_NAME + ":drawable/ic_sysbar_null", null, null);
+                        SYSTEMUI_METADATA_NAME + ":drawable/ic_sysbar_null"+suffix, null, null);
         }
         return resId;
     }
