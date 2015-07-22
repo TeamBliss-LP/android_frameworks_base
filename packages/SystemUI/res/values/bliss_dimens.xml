@@ -57,4 +57,7 @@
     <dimen name="folder_height">480dp</dimen>
     <dimen name="setup_sidebar_width">90dp</dimen>
 
+    <!-- The font size for the temperature text -->
+    <dimen name="status_bar_temp_text_size">13sp</dimen>
+
 </resources>
