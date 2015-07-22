@@ -257,6 +257,7 @@
     <string name="quick_settings_sync_label">Sync</string>
     <string name="quick_settings_custom_tile_detail_title">Custom tile</string>
     <string name="quick_settings_remove">Remove tile</string>
+    <string name="quick_settings_themes">Themes</string>
 
     <!-- Dynamic tiles -->
     <string name="quick_settings_dynamic_tile_detail_title">Dynamic tile</string>
