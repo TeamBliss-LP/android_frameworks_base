@@ -758,6 +758,7 @@ public class GpsLocationProvider implements LocationProviderInterface {
         // Check if we have a legacy GPS HAL
         mLegacyGpsHAL = mContext.getResources().getBoolean(
                 com.android.internal.R.bool.config_legacyGpsHAL);
+
         mLastKnownMccMnc = getKnownMccMnc(mContext);
 
         // Load GPS configuration.
