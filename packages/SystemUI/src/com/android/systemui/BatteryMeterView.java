@@ -80,7 +80,6 @@ public class BatteryMeterView extends View implements DemoMode,
         BATTERY_METER_ICON_PORTRAIT,
         BATTERY_METER_ICON_LANDSCAPE,
         BATTERY_METER_CIRCLE,
-        BATTERY_METER_DOTTED_CIRCLE,
         BATTERY_METER_TEXT,
         BATTERY_METER_GONE
     }
@@ -493,7 +492,8 @@ public class BatteryMeterView extends View implements DemoMode,
                 meterMode = BatteryMeterMode.BATTERY_METER_CIRCLE;
                 break;
             case BatteryController.STYLE_DOTTED_CIRCLE:
-                meterMode = BatteryMeterMode.BATTERY_METER_DOTTED_CIRCLE;
+                meterMode = BatteryMeterMode.BATTERY_METER_CIRCLE;
+                mIsCircleDotted = true;
                 break;
             case BatteryController.STYLE_GONE:
                 meterMode = BatteryMeterMode.BATTERY_METER_GONE;
