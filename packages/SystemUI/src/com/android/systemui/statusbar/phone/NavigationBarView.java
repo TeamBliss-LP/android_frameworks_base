@@ -479,7 +479,20 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
         mBackLandIcon = res.getDrawable(R.drawable.ic_sysbar_back_land);
         mBackAltIcon = res.getDrawable(R.drawable.ic_sysbar_back_ime);
         mBackAltLandIcon = res.getDrawable(R.drawable.ic_sysbar_back_ime);
+
+        ContentResolver resolver = mContext.getContentResolver();
+        mNavBarButtonColorMode = Settings.System.getIntForUser(resolver,
+                Settings.System.NAVIGATION_BAR_BUTTON_TINT_MODE,
+                3, UserHandle.USER_CURRENT);
+
         if (mNavBarButtonColorMode != 3) {
+            mNavBarButtonColor = Settings.System.getIntForUser(resolver,
+                    Settings.System.NAVIGATION_BAR_BUTTON_TINT,
+                    -2, UserHandle.USER_CURRENT);
+            if (mNavBarButtonColor == -2) {
+                mNavBarButtonColor = mContext.getResources().getColor(
+                    com.android.internal.R.color.white);
+            }
             mBackIcon = ColorHelper.getColoredDrawable(mBackIcon, mNavBarButtonColor);
             mBackLandIcon = ColorHelper.getColoredDrawable(mBackLandIcon, mNavBarButtonColor);
             mBackAltIcon = ColorHelper.getColoredDrawable(mBackAltIcon, mNavBarButtonColor);
@@ -568,7 +581,6 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
 
     @Override
     public void setLayoutDirection(int layoutDirection) {
-        getIcons(mThemedResources != null ? mThemedResources : getContext().getResources());
         updateSettings();
 
         super.setLayoutDirection(layoutDirection);
@@ -1163,9 +1175,9 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
             Drawable d = backAlt
                     ? (mVertical ? mBackAltLandIcon : mBackAltIcon)
                     : (mVertical ? mBackLandIcon    : mBackIcon);
-            if (mNavBarButtonColorMode != 3) {
+            /* if (mNavBarButtonColorMode != 3) {
                 d = ColorHelper.getColoredDrawable(d, mNavBarButtonColor);
-            }
+            } */
             v.setImageBitmap(ColorHelper.drawableToBitmap(d));
         }
 
@@ -1546,11 +1558,12 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
         ContentResolver resolver = mContext.getContentResolver();
 
         mNavBarButtonColor = Settings.System.getIntForUser(resolver,
-                Settings.System.NAVIGATION_BAR_BUTTON_TINT, -2, UserHandle.USER_CURRENT);
+                Settings.System.NAVIGATION_BAR_BUTTON_TINT,
+                -2, UserHandle.USER_CURRENT);
 
         if (mNavBarButtonColor == -2) {
-            mNavBarButtonColor = mContext.getResources()
-                    .getColor(R.color.navigationbar_button_default_color);
+            mNavBarButtonColor = mContext.getResources().getColor(
+                com.android.internal.R.color.white);
         }
 
         mNavBarButtonColorMode = Settings.System.getIntForUser(resolver,
@@ -1594,6 +1607,10 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
         mImeArrowVisibility = (Settings.System.getIntForUser(resolver,
                 Settings.System.STATUS_BAR_IME_ARROWS, HIDE_IME_ARROW,
                 UserHandle.USER_CURRENT) == SHOW_IME_ARROW);
+
+        updateResources(ActionHelper.getNavbarThemedResources(mContext));
+        getIcons(mThemedResources != null ? mThemedResources : getContext().getResources());
+
         // construct the navigationbar
         makeBar();
 
