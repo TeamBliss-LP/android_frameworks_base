@@ -341,14 +341,16 @@ public class RecentsView extends FrameLayout implements TaskStackView.TaskStackV
         int height = MeasureSpec.getSize(heightMeasureSpec);
         Rect searchBarSpaceBounds = new Rect();
 
-        int paddingStatusBar = mContext.getResources().getDimensionPixelSize(R.dimen.status_bar_height) / 2;
+        final int topPadding = mContext.getResources().
+                    getDimensionPixelSize(com.android.internal.R.dimen.status_bar_height);
+        final int paddingStatusBar = (int) (topPadding / 2);
 
         final Resources res = getContext().getResources();
         boolean isLandscape = res.getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
 
         boolean enableMemDisplay = Settings.System.getInt(mContext.getContentResolver(),
                     Settings.System.SYSTEMUI_RECENTS_MEM_DISPLAY, 1) == 1;
-        
+
         // Get the search bar bounds and measure the search bar layout
         if (mSearchBar != null) {
             mConfig.getSearchBarBounds(width, height, mConfig.systemInsets.top, searchBarSpaceBounds);
@@ -401,17 +403,13 @@ public class RecentsView extends FrameLayout implements TaskStackView.TaskStackV
         }
 
         if (mFloatingButton != null && showClearAllRecents) {
-            int clearRecentsLocation = Settings.System.getInt(resolver,
-                    Settings.System.RECENTS_CLEAR_ALL_LOCATION, Constants.DebugFlags.App.RECENTS_CLEAR_ALL_BOTTOM_RIGHT);
-            FrameLayout.LayoutParams params = (FrameLayout.LayoutParams)
-                    mFloatingButton.getLayoutParams();
-            if (mSearchBar == null || isLandscape) {
-                params.topMargin = mContext.getResources().
-                    getDimensionPixelSize(com.android.internal.R.dimen.status_bar_height);
-            } else {
-                params.topMargin = mContext.getResources().
-                    getDimensionPixelSize(com.android.internal.R.dimen.status_bar_height);
-            }
+            final int clearRecentsLocation = Settings.System.getInt(resolver,
+                Settings.System.RECENTS_CLEAR_ALL_LOCATION,
+                Constants.DebugFlags.App.RECENTS_CLEAR_ALL_BOTTOM_RIGHT);
+            final int bw = mContext.getResources()
+                .getDimensionPixelSize(R.dimen.floating_action_button_width);
+            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(bw, bw);
+            params.setMargins(topPadding*2, topPadding, topPadding*2, topPadding);
 
             switch (clearRecentsLocation) {
                 case Constants.DebugFlags.App.RECENTS_CLEAR_ALL_TOP_LEFT:
