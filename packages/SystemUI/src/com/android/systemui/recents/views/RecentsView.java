@@ -341,14 +341,17 @@ public class RecentsView extends FrameLayout implements TaskStackView.TaskStackV
         int height = MeasureSpec.getSize(heightMeasureSpec);
         Rect searchBarSpaceBounds = new Rect();
 
-        int paddingStatusBar = mContext.getResources().getDimensionPixelSize(R.dimen.status_bar_height) / 2;
+        final int topPadding = mContext.getResources().
+                    getDimensionPixelSize(com.android.internal.R.dimen.status_bar_height);
+        final int paddingStatusBar = (int) (topPadding / 2);
+        int buttonMargin = paddingStatusBar;
 
         final Resources res = getContext().getResources();
         boolean isLandscape = res.getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
 
         boolean enableMemDisplay = Settings.System.getInt(mContext.getContentResolver(),
                     Settings.System.SYSTEMUI_RECENTS_MEM_DISPLAY, 1) == 1;
-        
+
         // Get the search bar bounds and measure the search bar layout
         if (mSearchBar != null) {
             mConfig.getSearchBarBounds(width, height, mConfig.systemInsets.top, searchBarSpaceBounds);
@@ -360,6 +363,7 @@ public class RecentsView extends FrameLayout implements TaskStackView.TaskStackV
 
             if (enableMemDisplay) {
                 if (!isLandscape) {
+                    buttonMargin = paddingSearchBar;
                     mMemBar.setPadding(0, paddingSearchBar, 0, 0);
                 } else {
                     mMemBar.setPadding(0, paddingStatusBar, 0, 0);
@@ -368,6 +372,7 @@ public class RecentsView extends FrameLayout implements TaskStackView.TaskStackV
         } else {
             if (enableMemDisplay) {
                 mMemBar.setPadding(0, paddingStatusBar, 0, 0);
+                buttonMargin += 5;
             }
         }
         showMemDisplay();
@@ -401,37 +406,47 @@ public class RecentsView extends FrameLayout implements TaskStackView.TaskStackV
         }
 
         if (mFloatingButton != null && showClearAllRecents) {
-            int clearRecentsLocation = Settings.System.getInt(resolver,
-                    Settings.System.RECENTS_CLEAR_ALL_LOCATION, Constants.DebugFlags.App.RECENTS_CLEAR_ALL_BOTTOM_RIGHT);
-            FrameLayout.LayoutParams params = (FrameLayout.LayoutParams)
-                    mFloatingButton.getLayoutParams();
-            if (mSearchBar == null || isLandscape) {
-                params.topMargin = mContext.getResources().
-                    getDimensionPixelSize(com.android.internal.R.dimen.status_bar_height);
-            } else {
-                params.topMargin = mContext.getResources().
-                    getDimensionPixelSize(com.android.internal.R.dimen.status_bar_height);
-            }
+            final int clearRecentsLocation = Settings.System.getInt(resolver,
+                Settings.System.RECENTS_CLEAR_ALL_LOCATION,
+                Constants.DebugFlags.App.RECENTS_CLEAR_ALL_BOTTOM_RIGHT);
+            final int bWidth = mContext.getResources()
+                .getDimensionPixelSize(R.dimen.floating_action_button_width);
+            final int buttonRadius = 10+(int)(bWidth/2);
+            final int margin = 50;
+            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(bWidth, bWidth);
 
             switch (clearRecentsLocation) {
                 case Constants.DebugFlags.App.RECENTS_CLEAR_ALL_TOP_LEFT:
                     params.gravity = Gravity.TOP | Gravity.LEFT;
+                    params.setMargins(margin, buttonRadius+buttonMargin,
+                        margin, margin);
                     break;
                 case Constants.DebugFlags.App.RECENTS_CLEAR_ALL_TOP_RIGHT:
                     params.gravity = Gravity.TOP | Gravity.RIGHT;
+                    params.setMargins(margin, buttonRadius+buttonMargin,
+                        (isLandscape ? margin+buttonRadius : margin), margin);
                     break;
                 case Constants.DebugFlags.App.RECENTS_CLEAR_ALL_TOP_CENTER:
                     params.gravity = Gravity.TOP | Gravity.CENTER;
+                    params.setMargins(margin, buttonRadius+buttonMargin,
+                        margin, margin);
                     break;
                 case Constants.DebugFlags.App.RECENTS_CLEAR_ALL_BOTTOM_LEFT:
                     params.gravity = Gravity.BOTTOM | Gravity.LEFT;
+                    params.setMargins(margin, margin,
+                        margin, (isLandscape ? margin : margin+buttonRadius));
                     break;
                 case Constants.DebugFlags.App.RECENTS_CLEAR_ALL_BOTTOM_RIGHT:
                 default:
                     params.gravity = Gravity.BOTTOM | Gravity.RIGHT;
+                    params.setMargins(margin, margin,
+                        (isLandscape ? margin+buttonRadius : margin),
+                        (isLandscape ? margin : margin+buttonRadius));
                     break;
                 case Constants.DebugFlags.App.RECENTS_CLEAR_ALL_BOTTOM_CENTER:
                     params.gravity = Gravity.BOTTOM | Gravity.CENTER;
+                    params.setMargins(margin, margin,
+                        margin, (isLandscape ? margin : margin+buttonRadius));
                     break;
             }
             mFloatingButton.setLayoutParams(params);
