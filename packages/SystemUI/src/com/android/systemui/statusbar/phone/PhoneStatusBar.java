@@ -663,6 +663,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.RECENT_CARD_TEXT_COLOR), false, this,
                     UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.Secure.getUriFor(
+                    Settings.Secure.QS_NUM_TILE_COLUMNS), false, this,
+                    UserHandle.USER_ALL);
             update();
         }
 
@@ -904,6 +907,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     1000, mCurrentUserId);
             if (mShowLabelTimeout < 100) {
                 mShowLabelTimeout = 100;
+            }
+
+            if (mQSPanel != null) {
+                mQSPanel.updateNumColumns();
             }
         }
     }

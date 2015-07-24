@@ -57,10 +57,11 @@ public class QSTileView extends ViewGroup {
     private final View mIcon;
     private final View mDivider;
     private final H mHandler = new H();
-    private final int mIconSizePx;
+    private int mIconSizePx;
+    private float mSizeScale = 1.0f;
     private final int mTileSpacingPx;
     private int mTilePaddingTopPx;
-    private final int mTilePaddingBelowIconPx;
+    private int mTilePaddingBelowIconPx;
     private final int mDualTileVerticalPaddingPx;
     private final View mTopBackgroundView;
 
@@ -82,9 +83,8 @@ public class QSTileView extends ViewGroup {
 
         mContext = context;
         final Resources res = context.getResources();
-        mIconSizePx = res.getDimensionPixelSize(R.dimen.qs_tile_icon_size);
+        updateDimens(res, 1.0f);
         mTileSpacingPx = res.getDimensionPixelSize(R.dimen.qs_tile_spacing);
-        mTilePaddingBelowIconPx =  res.getDimensionPixelSize(R.dimen.qs_tile_padding_below_icon);
         mDualTileVerticalPaddingPx =
                 res.getDimensionPixelSize(R.dimen.qs_dual_tile_padding_vertical);
         mTileBackground = getTileBackground();
@@ -110,6 +110,14 @@ public class QSTileView extends ViewGroup {
         mdefaultTextColor = res.getColor(R.color.qs_tile_text);
     }
 
+    void updateDimens(Resources res, float scaleFactor) {
+        mSizeScale = scaleFactor;
+        mIconSizePx = Math
+                .round(res.getDimensionPixelSize(R.dimen.qs_tile_icon_size) * scaleFactor);
+        mTilePaddingBelowIconPx = Math.round(res
+                .getDimensionPixelSize(R.dimen.qs_tile_padding_below_icon) * scaleFactor);
+    }
+
     private void updateTopPadding() {
         Resources res = getResources();
         int padding = res.getDimensionPixelSize(R.dimen.qs_tile_padding_top);
@@ -131,7 +139,7 @@ public class QSTileView extends ViewGroup {
         }
     }
 
-    private void recreateLabel() {
+    void recreateLabel() {
         CharSequence labelText = null;
         CharSequence labelDescription = null;
 
@@ -179,7 +187,7 @@ public class QSTileView extends ViewGroup {
             mLabel.setPadding(0, 0, 0, 0);
             mLabel.setTypeface(CONDENSED);
             mLabel.setTextSize(TypedValue.COMPLEX_UNIT_PX,
-                    res.getDimensionPixelSize(R.dimen.qs_tile_text_size));
+                    Math.round(res.getDimensionPixelSize(R.dimen.qs_tile_text_size) * mSizeScale));
             mLabel.setClickable(false);
             if (labelText != null) {
                 mLabel.setText(labelText);
