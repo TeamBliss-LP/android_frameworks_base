@@ -92,6 +92,9 @@
     <string name="quick_settings_appsidebar_on">AppSideBar On</string>
     <string name="quick_settings_appsidebar_off">AppSideBar Off</string>
 
+	<!-- TRDS -->
+    <string name="quick_settings_trds_label">TRDS</string>
+
     <string name="gestures_message">Draw your gesture here</string>
 
     <!-- Battery status in pie controls -->
