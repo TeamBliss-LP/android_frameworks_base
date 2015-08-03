@@ -203,6 +203,8 @@ public class NotificationPanelView extends PanelView implements
     private int mStatusBarHeaderHeight;
     private GestureDetector mDoubleTapGesture;
 
+    private int mQSBackgroundColor;
+    private boolean mQSShadeTransparency = false;
     private boolean mQSCSwitch = false;
 
     // Task manager
@@ -293,7 +295,6 @@ public class NotificationPanelView extends PanelView implements
             Settings.System.QS_COLOR_SWITCH, 0) == 1;
         if (mQSCSwitch) {
             setQSBackgroundColor();
-            mSettingsObserver.updateEx(3);
         }
     }
 
@@ -2182,80 +2183,81 @@ public class NotificationPanelView extends PanelView implements
 
         @Override
         public void onChange(boolean selfChange, Uri uri) {
+            update();
             ContentResolver resolver = mContext.getContentResolver();
-            int updateColors = 0;
             if (uri.equals(Settings.System.getUriFor(
                     Settings.System.QS_COLOR_SWITCH))) {
                 if (uri.equals(Settings.System.getUriFor(
                         Settings.System.QS_BACKGROUND_COLOR))
                     || uri.equals(Settings.System.getUriFor(
                         Settings.System.QS_TRANSPARENT_SHADE))) {
-                    updateColors = 1;
+                    mQSBackgroundColor = Settings.System.getInt(
+                            resolver, Settings.System.QS_BACKGROUND_COLOR, 0xff263238);
+                    mQSShadeTransparency = Settings.System.getInt(
+                            resolver, Settings.System.QS_TRANSPARENT_SHADE, 0) == 1;
+                    setQSBackgroundColor();
                 } else if (uri.equals(Settings.System.getUriFor(
                         Settings.System.QS_ICON_COLOR))
                     || uri.equals(Settings.System.getUriFor(
                         Settings.System.QS_TEXT_COLOR))) {
-                    updateColors = 2;
+                    setQSColors();
                 }
             }
-            updateEx(updateColors);
         }
 
         public void update() {
-            updateEx(0);
-        }
-
-        public void updateEx(int updateColors) {
             ContentResolver resolver = mContext.getContentResolver();
             mOneFingerQuickSettingsIntercept = Settings.System.getIntForUser(resolver,
-                    Settings.System.QS_QUICK_PULLDOWN,
-                    0, UserHandle.USER_CURRENT);
+                    Settings.System.QS_QUICK_PULLDOWN, 0, UserHandle.USER_CURRENT);
             mDoubleTapToSleepEnabled = Settings.System.getIntForUser(resolver,
-                    Settings.System.DOUBLE_TAP_SLEEP_GESTURE,
-                    1, UserHandle.USER_CURRENT) == 1;
+                    Settings.System.DOUBLE_TAP_SLEEP_GESTURE, 1, UserHandle.USER_CURRENT) == 1;
             mDoubleTapToSleepAnywhere = Settings.System.getIntForUser(resolver,
-                    Settings.System.DOUBLE_TAP_SLEEP_ANYWHERE,
-                    0, UserHandle.USER_CURRENT) == 1;
-            mQsSmartPullDown = Settings.System.getIntForUser(resolver,
-                    Settings.System.QS_SMART_PULLDOWN,
-                    0, UserHandle.USER_CURRENT);
-            mStatusBarLockedOnSecureKeyguard = Settings.Secure.getIntForUser(resolver,
-                    Settings.Secure.STATUS_BAR_LOCKED_ON_SECURE_KEYGUARD,
-                    1, UserHandle.USER_CURRENT) == 1;
+                    Settings.System.DOUBLE_TAP_SLEEP_ANYWHERE, 0, UserHandle.USER_CURRENT) == 1;
+            mQsSmartPullDown = Settings.System.getIntForUser(
+                    resolver, Settings.System.QS_SMART_PULLDOWN, 0,
+                    UserHandle.USER_CURRENT);
+            mQSCSwitch = Settings.System.getInt(
+                    resolver, Settings.System.QS_COLOR_SWITCH, 0) == 1;
+            mQSBackgroundColor = Settings.System.getInt(
+                    resolver, Settings.System.QS_BACKGROUND_COLOR, 0xff263238);
+            mQSShadeTransparency = Settings.System.getInt(
+                    resolver, Settings.System.QS_TRANSPARENT_SHADE, 0) == 1;
+            mStatusBarLockedOnSecureKeyguard = Settings.Secure.getIntForUser(
+                    resolver, Settings.Secure.STATUS_BAR_LOCKED_ON_SECURE_KEYGUARD, 1,
+                    UserHandle.USER_CURRENT) == 1;
             mShowTaskManager = Settings.System.getIntForUser(resolver,
-                    Settings.System.ENABLE_TASK_MANAGER,
-                    0, UserHandle.USER_CURRENT) == 1;
-            mQSCSwitch = Settings.System.getInt(resolver,
-                    Settings.System.QS_COLOR_SWITCH, 0) == 1;
-            boolean newQSCSwitch = Settings.System.getInt(resolver,
-                    Settings.System.QS_COLOR_SWITCH, 0) == 1;
-            if (mQSCSwitch != newQSCSwitch) {
-                mQSCSwitch = newQSCSwitch;
-                updateColors = 3;
-            }
-            if (mQsPanel != null && updateColors > 0) {
-                if (updateColors > 1) {
-                    mQsPanel.setColors();
-                } else {
-                    setQSBackgroundColor();
-                }
+                    Settings.System.ENABLE_TASK_MANAGER, 0,
+                    UserHandle.USER_CURRENT) == 1;
+            if (mQSCSwitch) {
+                setQSBackgroundColor();
+                setQSColors();
             }
         }
     }
 
-    public void setQSBackgroundColor() {
-        if (!mQSCSwitch) return;
+    private void setQSBackgroundColor() {
         ContentResolver resolver = mContext.getContentResolver();
-        int mQSBackgroundColor = Settings.System.getInt(resolver,
-                Settings.System.QS_BACKGROUND_COLOR, 0xff263238);
+        mQSBackgroundColor = Settings.System.getInt(
+                resolver, Settings.System.QS_BACKGROUND_COLOR, 0xff263238);
+        mQSShadeTransparency = Settings.System.getInt(mContext.getContentResolver(),
+            Settings.System.QS_TRANSPARENT_SHADE, 0) == 1;
         if (mQsContainer != null) {
-            boolean mQSShadeTransparency = Settings.System.getInt(resolver,
-                    Settings.System.QS_TRANSPARENT_SHADE, 0) == 1;
-            mQsContainer.getBackground().setColorFilter(
-                mQSBackgroundColor, mQSShadeTransparency ? Mode.MULTIPLY : Mode.SRC_OVER);
+            if (mQSShadeTransparency) {
+                mQsContainer.getBackground().setColorFilter(
+                        mQSBackgroundColor, Mode.MULTIPLY);
+            } else {
+                mQsContainer.getBackground().setColorFilter(
+                        mQSBackgroundColor, Mode.SRC_OVER);
+            }
         }
         if (mQsPanel != null) {
             mQsPanel.setDetailBackgroundColor(mQSBackgroundColor);
+        }
+    }
+
+    private void setQSColors() {
+        if (mQsPanel != null) {
+            mQsPanel.setColors();
         }
     }
 
