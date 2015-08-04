@@ -2,10 +2,11 @@
 <resources>
 
     <!-- Network speed indicator -->
-    <color name="status_bar_traffic_color">#FFFFFFFF</color>
+    <color name="status_bar_traffic_color">#ffffffff</color>
 
     <!-- Floating action button -->
     <color name="fab_color">#ffDC4C3C</color>
+    <color name="fab_background_color">#ffffffff</color>
     <color name="floating_action_button_icon_color">#ffffff</color>
 
     <!-- Gesture Anywhere specific colors -->
@@ -30,6 +31,6 @@
     <color name="sidebar_item_text_shadow_color">#ff000000</color>
 
     <!-- The color size for the temperature text -->
-    <color name="status_bar_temp_text_color">#FFFFFFFF</color>
+    <color name="status_bar_temp_text_color">#ffffffff</color>
 
 </resources>
