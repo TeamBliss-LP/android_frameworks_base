@@ -459,6 +459,14 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
         updateWeatherSettings();
     }
 
+    void setTaskManagerEnabled(boolean enabled) {
+        mShowTaskManager = enabled;
+        updateVisibilities();
+        updateSystemIconsLayoutParams();
+        updateMultiUserSwitch();
+        requestCaptureValues();
+    }
+
     private void updateHeights() {
         int height = mExpanded ? mExpandedHeight : mCollapsedHeight;
         ViewGroup.LayoutParams lp = getLayoutParams();
@@ -1322,9 +1330,6 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
                     Settings.System.HEADS_UP_SHOW_STATUS_BUTTON),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.ENABLE_TASK_MANAGER),
-                    false, this);
-            resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_POWER_MENU),
                     false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
@@ -1404,13 +1409,6 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
             }
 
             boolean updateLayout = false;
-            if (updateAll ||
-                uri.equals(Settings.System.getUriFor(
-                    Settings.System.ENABLE_TASK_MANAGER))) {
-                mShowTaskManager = Settings.System.getInt(resolver,
-                    Settings.System.ENABLE_TASK_MANAGER, 0) == 1;
-                updateLayout = true;
-            }
             if (updateAll ||
                 uri.equals(Settings.System.getUriFor(
                     Settings.System.HEADS_UP_SHOW_STATUS_BUTTON))) {
