@@ -244,6 +244,11 @@ interface IWindowManager
     boolean hasNavigationBar();
     boolean hasPermanentMenuKey();
 
+     /**
+     * Device needs a software navigation bar (because it has no hardware keys).
+     */
+    boolean needsNavigationBar();
+
     /**
      * Lock the device immediately with the specified options (can be null).
      */
