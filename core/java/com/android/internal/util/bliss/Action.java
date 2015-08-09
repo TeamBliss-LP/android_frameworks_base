@@ -362,6 +362,8 @@ public class Action {
                 context.sendBroadcast(new Intent(Intent.ACTION_SCREENRECORD));
                 return;
             } else if (action.equals(ActionConstants.ACTION_THEME_SWITCH)) {
+                boolean overrideCustomColors = Settings.System.getInt(context.getContentResolver(),
+                        Settings.System.OVERRIDE_CUSTOM_COLORS, 1) == 1;
                 boolean autoLightMode = Settings.Secure.getIntForUser(
                         context.getContentResolver(),
                         Settings.Secure.UI_THEME_AUTO_MODE, 0,
@@ -389,6 +391,44 @@ public class Action {
                             ? Configuration.UI_THEME_MODE_HOLO_LIGHT
                             : Configuration.UI_THEME_MODE_HOLO_DARK);
                 } catch (RemoteException e) {
+                }
+                if (overrideCustomColors) {
+                    if (context.getResources().getConfiguration().uiThemeMode
+                                == Configuration.UI_THEME_MODE_HOLO_DARK) {
+                        Settings.System.putInt(mContext.getContentResolver(),
+                                Settings.System.NOTIFICATION_BG_COLOR, 0xffffffff);
+                        Settings.System.putInt(mContext.getContentResolver(),
+                                Settings.System.NOTIFICATION_GUTS_BG_COLOR, 0xff384248);
+                        Settings.System.putInt(mContext.getContentResolver(),
+                                Settings.System.NOTIFICATION_APP_ICON_BG_COLOR, 0x4dffffff);
+                        Settings.System.putInt(mContext.getContentResolver(),
+                                Settings.System.NOTIFICATION_TEXT_COLOR, 0xff000000);
+                        Settings.System.putInt(mContext.getContentResolver(),
+                                Settings.System.NOTIFICATION_ICON_COLOR, 0xff000000);
+
+                        Settings.System.putInt(mContext.getContentResolver(),
+                                Settings.System.QS_BACKGROUND_COLOR, 0xff263238);
+                        Settings.System.putInt(mContext.getContentResolver(),
+                                Settings.System.STATUS_BAR_EXPANDED_HEADER_BG_COLOR,
+                                    0xff384248);
+                    } else {
+                        Settings.System.putInt(mContext.getContentResolver(),
+                                Settings.System.NOTIFICATION_BG_COLOR, 0xff000000);
+                        Settings.System.putInt(mContext.getContentResolver(),
+                                Settings.System.NOTIFICATION_GUTS_BG_COLOR, 0xff384248);
+                        Settings.System.putInt(mContext.getContentResolver(),
+                                Settings.System.NOTIFICATION_APP_ICON_BG_COLOR, 0x4d33b5e5);
+                        Settings.System.putInt(mContext.getContentResolver(),
+                                Settings.System.NOTIFICATION_TEXT_COLOR, 0xffffffff);
+                        Settings.System.putInt(mContext.getContentResolver(),
+                                Settings.System.NOTIFICATION_ICON_COLOR, 0xffffffff);
+
+                        Settings.System.putInt(mContext.getContentResolver(),
+                                Settings.System.QS_BACKGROUND_COLOR, 0xff000000);
+                        Settings.System.putInt(mContext.getContentResolver(),
+                                Settings.System.STATUS_BAR_EXPANDED_HEADER_BG_COLOR,
+                                    0xff000000);
+                    }
                 }
                 return;
             } else {

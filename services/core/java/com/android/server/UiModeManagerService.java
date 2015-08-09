@@ -604,8 +604,48 @@ final class UiModeManagerService extends SystemService
                         UserHandle.USER_CURRENT);
             }
             try {
+                boolean overrideCustomColors = Settings.System.getInt(mContext.getContentResolver(),
+                        Settings.System.OVERRIDE_CUSTOM_COLORS, 1) == 1;
                 ActivityManagerNative.getDefault().updateConfiguration(mConfiguration);
                 Toast.makeText(mContext, "updated configuration sent", Toast.LENGTH_SHORT).show();
+                if (overrideCustomColors) {
+                    if (mContext.getResources().getConfiguration().uiThemeMode
+                                == Configuration.UI_THEME_MODE_HOLO_DARK) {
+                        Settings.System.putInt(mContext.getContentResolver(),
+                                Settings.System.NOTIFICATION_BG_COLOR, 0xffffffff);
+                        Settings.System.putInt(mContext.getContentResolver(),
+                                Settings.System.NOTIFICATION_GUTS_BG_COLOR, 0xff384248);
+                        Settings.System.putInt(mContext.getContentResolver(),
+                                Settings.System.NOTIFICATION_APP_ICON_BG_COLOR, 0x4dffffff);
+                        Settings.System.putInt(mContext.getContentResolver(),
+                                Settings.System.NOTIFICATION_TEXT_COLOR, 0xff000000);
+                        Settings.System.putInt(mContext.getContentResolver(),
+                                Settings.System.NOTIFICATION_ICON_COLOR, 0xff000000);
+
+                        Settings.System.putInt(mContext.getContentResolver(),
+                                Settings.System.QS_BACKGROUND_COLOR, 0xff263238);
+                        Settings.System.putInt(mContext.getContentResolver(),
+                                Settings.System.STATUS_BAR_EXPANDED_HEADER_BG_COLOR,
+                                    0xff384248);
+                    } else {
+                        Settings.System.putInt(mContext.getContentResolver(),
+                                Settings.System.NOTIFICATION_BG_COLOR, 0xff000000);
+                        Settings.System.putInt(mContext.getContentResolver(),
+                                Settings.System.NOTIFICATION_GUTS_BG_COLOR, 0xff384248);
+                        Settings.System.putInt(mContext.getContentResolver(),
+                                Settings.System.NOTIFICATION_APP_ICON_BG_COLOR, 0x4d33b5e5);
+                        Settings.System.putInt(mContext.getContentResolver(),
+                                Settings.System.NOTIFICATION_TEXT_COLOR, 0xffffffff);
+                        Settings.System.putInt(mContext.getContentResolver(),
+                                Settings.System.NOTIFICATION_ICON_COLOR, 0xffffffff);
+
+                        Settings.System.putInt(mContext.getContentResolver(),
+                                Settings.System.QS_BACKGROUND_COLOR, 0xff000000);
+                        Settings.System.putInt(mContext.getContentResolver(),
+                                Settings.System.STATUS_BAR_EXPANDED_HEADER_BG_COLOR,
+                                    0xff000000);
+                    }
+                }
             } catch (RemoteException e) {
                 Slog.w(TAG, "Failure communicating with activity manager", e);
                 Toast.makeText(mContext, "failure communicating with activity manager", Toast.LENGTH_SHORT).show();
