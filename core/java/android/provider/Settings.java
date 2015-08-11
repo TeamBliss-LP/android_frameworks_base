@@ -3893,6 +3893,13 @@ public final class Settings {
         public static final String STATUS_BAR_EXPANDED_HEADER_SHOW_WEATHER_LOCATION = "status_bar_expanded_header_show_weather_location";
 
         /**
+         * Three Finger Gesture from Oppo
+         *
+         * @hide
+         */
+        public static final String THREE_FINGER_GESTURE = "three_finger_gesture";
+
+        /**
          * Whether to display the gesture anywhere trigger region or not.
          * @hide
          */
