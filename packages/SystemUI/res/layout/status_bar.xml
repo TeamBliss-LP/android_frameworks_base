@@ -71,17 +71,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <com.android.systemui.statusbar.widget.CarrierLabel
-                    android:id="@+id/status_bar_carrier_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:textAppearance="@style/TextAppearance.StatusBar.CarrierLabel"
-                    android:singleLine="true"
-                    android:ellipsize="end"
-                    android:visibility="gone"
-                    />
-
                 <TextView
                     android:id="@+id/status_bar_wifi_label"
                     android:layout_width="wrap_content"
@@ -126,6 +115,16 @@
 
                 </com.android.keyguard.AlphaOptimizedLinearLayout>
 
+               <com.android.systemui.statusbar.widget.CarrierLabel
+                    android:id="@+id/status_bar_carrier_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:textAppearance="@style/TextAppearance.StatusBar.Clock"
+                    android:visibility="gone"
+                    android:singleLine="true"
+                />
+
                 <TextView
                    android:id="@+id/left_weather_temp"
                    android:layout_width="wrap_content"
@@ -133,8 +132,8 @@
                    android:singleLine="true"
                    android:gravity="right|center_vertical"
                    android:textAppearance="@style/TextAppearance.StatusBar.WeatherTemp"
-                    android:visibility="gone"
-                    android:paddingStart="4dp"
+                   android:visibility="gone"
+                   android:paddingStart="4dp"
                    android:paddingEnd="4dp" />
 
                 <com.android.systemui.statusbar.StatusBarIconView android:id="@+id/moreIcon"
@@ -200,8 +199,7 @@
                android:textSize="@dimen/battery_level_text_size"
                android:visibility="gone" />
 
-
-           <com.android.systemui.statusbar.policy.Clock
+            <com.android.systemui.statusbar.policy.Clock
                 android:id="@+id/clock"
                 android:textAppearance="@style/TextAppearance.StatusBar.Clock"
                 android:layout_width="wrap_content"
