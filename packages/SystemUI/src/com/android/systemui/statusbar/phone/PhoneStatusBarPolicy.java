@@ -147,7 +147,7 @@ public class PhoneStatusBarPolicy {
     private final OnQSChanged mQSListener = new OnQSChanged() {
         @Override
         public void onQSChanged() {
-            // processQSChangedLocked();
+            processQSChangedLocked();
         }
     };
 
@@ -507,6 +507,11 @@ public class PhoneStatusBarPolicy {
 
     private void updateSu() {
         mService.setIconVisibility(SLOT_SU, mSuController.hasActiveSessions() && mSuIndicatorVisible);
+        if (mSuController.hasActiveSessions()) {
+            publishSuCustomTile();
+        } else {
+            unpublishSuCustomTile();
+        }
     }
 
     private final SuController.Callback mSuCallback = new SuController.Callback() {
@@ -516,6 +521,63 @@ public class PhoneStatusBarPolicy {
         }
     };
 
+    private void publishSuCustomTile() {
+        // This action should be performed as system
+        final int userId = UserHandle.myUserId();
+        long token = Binder.clearCallingIdentity();
+        try {
+            if (!QSUtils.isQSTileEnabledForUser(
+                    mContext, QSConstants.DYNAMIC_TILE_SU, userId)) {
+                return;
+            }
+
+            final UserHandle user = new UserHandle(userId);
+            final int icon = QSUtils.getDynamicQSTileResIconId(mContext, userId,
+                    QSConstants.DYNAMIC_TILE_SU);
+            final String contentDesc = QSUtils.getDynamicQSTileLabel(mContext, userId,
+                    QSConstants.DYNAMIC_TILE_SU);
+            final Context resourceContext = QSUtils.getQSTileContext(mContext, userId);
+
+            CustomTile.ListExpandedStyle style = new CustomTile.ListExpandedStyle();
+            ArrayList<CustomTile.ExpandedListItem> items = new ArrayList<>();
+            for (String pkg : mSuController.getPackageNamesWithActiveSuSessions()) {
+                CustomTile.ExpandedListItem item = new CustomTile.ExpandedListItem();
+                item.setExpandedListItemDrawable(icon);
+                item.setExpandedListItemTitle(getActiveSuApkLabel(pkg));
+                item.setExpandedListItemSummary(pkg);
+                item.setExpandedListItemOnClickIntent(getCustomTilePendingIntent(pkg));
+                items.add(item);
+            }
+            style.setListItems(items);
+
+            CMStatusBarManager statusBarManager = CMStatusBarManager.getInstance(mContext);
+            CustomTile tile = new CustomTile.Builder(resourceContext)
+                    .setLabel(contentDesc)
+                    .setContentDescription(contentDesc)
+                    .setIcon(icon)
+                    .setOnSettingsClickIntent(getCustomTileSettingsIntent())
+                    .setExpandedStyle(style)
+                    .hasSensitiveData(true)
+                    .build();
+            statusBarManager.publishTileAsUser(QSConstants.DYNAMIC_TILE_SU,
+                    PhoneStatusBarPolicy.class.hashCode(), tile, user);
+        } finally {
+            Binder.restoreCallingIdentity(token);
+        }
+    }
+
+    private void unpublishSuCustomTile() {
+        // This action should be performed as system
+        final int userId = UserHandle.myUserId();
+        long token = Binder.clearCallingIdentity();
+        try {
+            CMStatusBarManager statusBarManager = CMStatusBarManager.getInstance(mContext);
+            statusBarManager.removeTileAsUser(QSConstants.DYNAMIC_TILE_SU,
+                    PhoneStatusBarPolicy.class.hashCode(), new UserHandle(userId));
+        } finally {
+            Binder.restoreCallingIdentity(token);
+        }
+    }
 
     private PendingIntent getCustomTilePendingIntent(String pkg) {
         Intent i = new Intent(Intent.ACTION_MAIN);
@@ -529,5 +591,29 @@ public class PhoneStatusBarPolicy {
         Intent i = new Intent(Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS);
         i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         return i;
+    }
+
+    private String getActiveSuApkLabel(String pkg) {
+        final PackageManager pm = mContext.getPackageManager();
+        ApplicationInfo ai = null;
+        try {
+            ai = pm.getApplicationInfo(pkg, 0);
+        } catch (final NameNotFoundException e) {
+            // Ignore
+        }
+        return (String) (ai != null ? pm.getApplicationLabel(ai) : pkg);
+    }
+
+    private void processQSChangedLocked() {
+        final int userId = UserHandle.myUserId();
+        final boolean hasSuAccess = mSuController.hasActiveSessions();
+        final boolean isEnabledForUser = QSUtils.isQSTileEnabledForUser(mContext,
+                QSConstants.DYNAMIC_TILE_SU, userId);
+        boolean enabled = (userId == UserHandle.USER_OWNER) && isEnabledForUser && hasSuAccess;
+        if (enabled) {
+            publishSuCustomTile();
+        } else {
+            unpublishSuCustomTile();
+        }
     }
 }
