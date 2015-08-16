@@ -70,6 +70,9 @@ public class Clock extends TextView implements DemoMode {
 
     private static int AM_PM_STYLE = AM_PM_STYLE_GONE;
 
+    public static final int STYLE_DATE_LEFT  = 0;
+    public static final int STYLE_DATE_RIGHT = 1;
+
     public static final int CLOCK_DATE_DISPLAY_GONE = 0;
     public static final int CLOCK_DATE_DISPLAY_SMALL = 1;
     public static final int CLOCK_DATE_DISPLAY_NORMAL = 2;
@@ -147,6 +150,9 @@ public class Clock extends TextView implements DemoMode {
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUSBAR_CLOCK_FONT_SIZE), false,
 				    this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUSBAR_CLOCK_DATE_POSITION), false,
+					this, UserHandle.USER_ALL);
             updateSettings();
         }
 
@@ -309,10 +315,14 @@ public class Clock extends TextView implements DemoMode {
         } else {
             sdf = mClockFormat;
         }
+        String result = "";
+        String timeResult = sdf.format(mCalendar.getTime());
+        String dateResult = "";
+
+        int clockDatePosition = Settings.System.getInt(getContext().getContentResolver(),
+            Settings.System.STATUSBAR_CLOCK_DATE_POSITION, 0);
 
         CharSequence dateString = null;
-
-        String result = sdf.format(mCalendar.getTime());
 
         if (mClockDateDisplay != CLOCK_DATE_DISPLAY_GONE) {
             Date now = new Date();
@@ -322,22 +332,45 @@ public class Clock extends TextView implements DemoMode {
 
             if (clockDateFormat == null || clockDateFormat.isEmpty()) {
                 // Set dateString to short uppercase Weekday (Default for AOKP) if empty
-                dateString = DateFormat.format("EEE", now) + " ";
+                dateString = DateFormat.format("EEE", now);
             } else {
-                dateString = DateFormat.format(clockDateFormat, now) + " ";
+                dateString = DateFormat.format(clockDateFormat, now);
             }
             if (mClockDateStyle == CLOCK_DATE_STYLE_LOWERCASE) {
                 // When Date style is small, convert date to lowercase
-                result = dateString.toString().toLowerCase() + result;
+                dateResult = dateString.toString().toLowerCase();
             } else if (mClockDateStyle == CLOCK_DATE_STYLE_UPPERCASE) {
-                result = dateString.toString().toUpperCase() + result;
+                dateResult = dateString.toString().toUpperCase();
             } else {
-                result = dateString.toString() + result;
+                dateResult = dateString.toString();
             }
+            result = (clockDatePosition == STYLE_DATE_LEFT) ?
+                    dateResult + " " + timeResult : timeResult + " " + dateResult;
+        } else {
+            // No date, just show time
+            result = timeResult;
         }
 
         SpannableStringBuilder formatted = new SpannableStringBuilder(result);
 
+        if (mClockDateDisplay != CLOCK_DATE_DISPLAY_NORMAL) {
+            if (dateString != null) {
+                int dateStringLen = dateString.length();
+                int timeStringOffset =
+                        (clockDatePosition == STYLE_DATE_RIGHT) ?
+                        timeResult.length() + 1 : 0;
+                if (mClockDateDisplay == CLOCK_DATE_DISPLAY_GONE) {
+                    formatted.delete(0, dateStringLen);
+                } else {
+                    if (mClockDateDisplay == CLOCK_DATE_DISPLAY_SMALL) {
+                        CharacterStyle style = new RelativeSizeSpan(0.7f);
+                        formatted.setSpan(style, timeStringOffset,
+                                          timeStringOffset + dateStringLen,
+                                          Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
+                    }
+                }
+            }
+        }
         if (mAmPmStyle != AM_PM_STYLE_NORMAL) {
             int magic1 = result.indexOf(MAGIC1);
             int magic2 = result.indexOf(MAGIC2);
@@ -354,20 +387,6 @@ public class Clock extends TextView implements DemoMode {
                     formatted.delete(magic1, magic1 + 1);
                 }
             }
-        }
-        if (mClockDateDisplay != CLOCK_DATE_DISPLAY_NORMAL) {
-            if (dateString != null) {
-                int dateStringLen = dateString.length();
-                if (mClockDateDisplay == CLOCK_DATE_DISPLAY_GONE) {
-                    formatted.delete(0, dateStringLen);
-                } else {
-                    if (mClockDateDisplay == CLOCK_DATE_DISPLAY_SMALL) {
-                        CharacterStyle style = new RelativeSizeSpan(0.7f);
-                        formatted.setSpan(style, 0, dateStringLen,
-                                          Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
-                    }
-                }
-         }
         }
         return formatted;
     }
