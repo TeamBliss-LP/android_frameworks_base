@@ -43,8 +43,8 @@
   <string name="privacy_guard_notification_detail"><xliff:g id="app">%1$s</xliff:g> לא יוכל לגשת למידע אישי</string>
   <string name="permlab_useHardwareFramework">השתמש במסגרת חומרתית</string>
   <string name="permdesc_useHardwareFramework">אפשר ליישום לגשת למסגרת החומרתית של CM.</string>
-  <string name="permlab_setKeyguardWallpaper">הגדר טפט למסך הנעילה</string>
-  <string name="permdesc_setKeyguardWallpaper">אפשר ליישום לשנות את הטפט של מסך הנעילה.</string>
+  <string name="permlab_setKeyguardWallpaper">הגדרת טפט למסך הנעילה</string>
+  <string name="permdesc_setKeyguardWallpaper">מאפשר ליישום לשנות את הטפט של מסך הנעילה.</string>
   <string name="privacy_guard_dialog_title">שומר הפרטיות</string>
   <string name="privacy_guard_dialog_summary"><xliff:g id="app">%1$s</xliff:g> מבקש <xliff:g id="op">%2$s</xliff:g>.</string>
   <string name="global_action_reboot">הפעלה מחדש</string>
