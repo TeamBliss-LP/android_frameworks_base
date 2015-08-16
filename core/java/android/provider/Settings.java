@@ -3757,6 +3757,21 @@ public final class Settings {
          */
         public static final String STATUS_BAR_BATTERY_STATUS_CIRCLE_DOT_LENGTH = "status_bar_battery_status_circle_dot_length";
 
+
+        /**
+         * Shake to clean recents app screen
+         * @hide
+         *
+         */
+        public static final String SHAKE_TO_CLEAN_RECENTS = "shake_to_clean_recents";
+
+        /**
+         * Shake to clean notifications
+         * @hide
+         *
+         */
+        public static final String SHAKE_TO_CLEAN_NOTIFICATIONS = "shake_to_clean_notifications";
+
         /**
          * Interval of the Circle battery status dots on the status bar
          *
@@ -5423,6 +5438,16 @@ public final class Settings {
          * @hide
          */
         public static final String WHEN_TO_MAKE_WIFI_CALLS = "when_to_make_wifi_calls";
+
+        /**
+         * Settings to reset on user request. They will fall back to their default value (0).
+         *
+         * @hide
+         */
+        public static final String[] SETTINGS_TO_RESET = {
+            SHAKE_TO_CLEAN_RECENTS,
+            SHAKE_TO_CLEAN_NOTIFICATIONS
+         };
 
         // Settings moved to Settings.Secure
 
