@@ -670,7 +670,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             resolver.registerContentObserver(Settings.Secure.getUriFor(
                     Settings.Secure.QS_NUM_TILE_COLUMNS), false, this,
                     UserHandle.USER_ALL);
-            resolver.registerContentObserver(Settings.Secure.getUriFor(
+            resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.SHAKE_TO_CLEAN_NOTIFICATIONS), false, this,
                     UserHandle.USER_ALL);
             update();
@@ -837,7 +837,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     Settings.System.STATUS_BAR_BRIGHTNESS_CONTROL,
                     0, mCurrentUserId) == 1;
             enableShakeCleanByUser = Settings.System.getIntForUser(resolver,
-                    Settings.System.SHAKE_TO_CLEAN_NOTIFICATIONS, 1,
+                    Settings.System.SHAKE_TO_CLEAN_NOTIFICATIONS, 0,
                     UserHandle.USER_CURRENT) == 1;
             mVisualizerEnabled = Settings.Secure.getIntForUser(resolver,
                     Settings.Secure.LOCKSCREEN_VISUALIZER_ENABLED, 1,
