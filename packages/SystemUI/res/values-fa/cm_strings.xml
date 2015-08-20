@@ -86,4 +86,11 @@
   <string name="interruption_level_silent">سکوت</string>
   <string name="zen_silent_with_warning">بدون مزاحمت، به جز هشدارها.</string>
   <string name="quick_settings_remove">حذف کاشی</string>
+  <string name="quick_settings_dynamic_tile_detail_title">کاشی پویا</string>
+  <string name="dynamic_qs_tile_next_alarm_label">هشدار بعدی</string>
+  <string name="dynamic_qs_tile_ime_selector_label">انتخابگر IME</string>
+  <string name="dynamic_qs_tile_su_label">دسترسی به روت</string>
+  <string name="fingerprint_try_again_hint">لطفاً دوباره اسکن کنید</string>
+  <string name="accessibility_dock_battery_level">باتری داک <xliff:g id="number">%d</xliff:g> درصد.</string>
+  <string name="quick_settings_custom_qs_detail_empty_text">موردی پیدا نشد</string>
 </resources>
