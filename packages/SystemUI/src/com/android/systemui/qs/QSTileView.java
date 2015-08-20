@@ -18,6 +18,7 @@ package com.android.systemui.qs;
 
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
@@ -41,6 +42,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 import android.widget.TextView;
+
+import com.android.internal.util.bliss.QSColorHelper;
 
 import com.android.systemui.FontSizeUtils;
 import com.android.systemui.R;
@@ -232,12 +235,8 @@ public class QSTileView extends ViewGroup {
         final ContentResolver resolver = mContext.getContentResolver();
         mQSCSwitch = Settings.System.getInt(resolver,
             Settings.System.QS_COLOR_SWITCH, 0) == 1;
-        mLabelColor = Settings.System.getIntForUser(resolver,
-            Settings.System.QS_TEXT_COLOR,
-            mdefaultTextColor, UserHandle.USER_CURRENT);
-        mIconColor = Settings.System.getIntForUser(resolver,
-            Settings.System.QS_ICON_COLOR,
-            mdefaultTextColor, UserHandle.USER_CURRENT);
+        mIconColor = QSColorHelper.getIconColor(mContext);
+        mLabelColor = QSColorHelper.getTextColor(mContext);
     }
 
     public void setLabelColor() {
@@ -268,6 +267,30 @@ public class QSTileView extends ViewGroup {
         return mQSCSwitch ? mLabelColor : mdefaultTextColor;
     }
 
+    public void setRippleColor() {
+        if (mTileBackground instanceof RippleDrawable) {
+            setRippleColor((RippleDrawable) mTileBackground);
+        }
+    }
+
+    private void setRippleColor(RippleDrawable rd) {
+        final int rippleColor = QSColorHelper.getRippleColor(mContext);
+
+        int states[][] = new int[][] {
+            new int[] {
+                com.android.internal.R.attr.state_enabled
+            }
+        };
+        int colors[] = new int[] {
+            rippleColor
+        };
+        ColorStateList color = new ColorStateList(states, colors);
+
+        if (rd instanceof RippleDrawable) {
+            rd.setColor(color);
+        }
+    }
+
     private void setRipple(RippleDrawable tileBackground) {
         mRipple = tileBackground;
         if (getWidth() != 0) {
@@ -295,6 +318,12 @@ public class QSTileView extends ViewGroup {
         final TypedArray ta = mContext.obtainStyledAttributes(attrs);
         final Drawable d = ta.getDrawable(0);
         ta.recycle();
+	return d;
+    }
+
+    private Drawable newTileBackground() {
+        final Drawable d = mContext.getDrawable(R.drawable.qs_ripple_drawable);
+        setRippleColor((RippleDrawable) d);
         return d;
     }
 

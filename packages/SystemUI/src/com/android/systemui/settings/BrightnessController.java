@@ -258,6 +258,10 @@ public class BrightnessController implements ToggleSlider.Listener {
         }
     }
 
+    public void setToggleSliderColors() {
+        mControl.setColors();
+    }
+
     /** Fetch the brightness mode from the system settings and update the icon */
     private void updateMode() {
         if (mAutomaticAvailable) {

@@ -17,6 +17,7 @@
 package com.android.systemui.qs.tiles;
 
 import com.android.internal.util.ArrayUtils;
+import com.android.internal.util.bliss.QSColorHelper;
 import com.android.systemui.FontSizeUtils;
 import com.android.systemui.R;
 import com.android.systemui.statusbar.phone.UserAvatarView;
@@ -131,8 +132,7 @@ public class UserDetailItemView extends LinearLayout {
         boolean mQSCSwitch = Settings.System.getInt(getContext().getContentResolver(),
                 Settings.System.QS_COLOR_SWITCH, 0) == 1;
         if (mQSCSwitch) {
-            int textColorNormal = Settings.System.getInt(getContext().getContentResolver(),
-                    Settings.System.QS_TEXT_COLOR, 0xffffffff);
+            int textColorNormal = QSColorHelper.getTextColor(mContext);
             int textColorActivated = getContext().getResources().getColor(
                     R.color.system_accent_color);
             int textColorDeactivated = (102 << 24) | (textColorNormal & 0x00ffffff); // Text color normal with a transparency of 40%

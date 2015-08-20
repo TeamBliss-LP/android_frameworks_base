@@ -173,6 +173,7 @@ import com.android.systemui.doze.DozeLog;
 import com.android.systemui.doze.ShakeSensorManager;
 import com.android.systemui.keyguard.KeyguardViewMediator;
 import com.android.systemui.omni.StatusBarHeaderMachine;
+import com.android.systemui.qs.QSBar;
 import com.android.systemui.qs.QSPanel;
 import com.android.systemui.recent.ScreenPinningRequest;
 import com.android.systemui.settings.BrightnessController;
@@ -404,6 +405,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     // settings
     View mFlipSettingsView;
     private QSPanel mQSPanel;
+    private QSBar mQSBar;
+
     boolean mSearchPanelAllowed = true;
 
     String mGreeting = "";
@@ -1771,6 +1774,24 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 }
             });
         }
+
+        // Set up the quick settings button bar
+        mQSBar = (QSBar) mStatusBarWindowContent.findViewById(R.id.quick_settings_bar);
+        if (mQSBar != null) {
+            mQSBar.setUp(this, mBluetoothController, mNetworkController, mRotationLockController,
+            mLocationController, mHotspotController);
+        }
+
+        // Set up the initial custom tile listener state.
+        try {
+            mCustomTileListenerService.registerAsSystemService(mContext,
+                    new ComponentName(mContext.getPackageName(), getClass().getCanonicalName()),
+                    UserHandle.USER_ALL);
+        } catch (RemoteException e) {
+            Log.e(TAG, "Unable to register custom tile listener", e);
+        }
+
+        mQSPanel.getHost().setCustomTileListenerService(mCustomTileListenerService);
 
         // Task manager
         mTaskManagerPanel =

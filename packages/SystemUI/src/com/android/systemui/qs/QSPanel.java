@@ -43,6 +43,8 @@ import android.view.accessibility.AccessibilityEvent;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.android.internal.util.bliss.QSColorHelper;
+
 import com.android.systemui.FontSizeUtils;
 import com.android.systemui.R;
 import com.android.systemui.cm.UserContentObserver;
@@ -208,8 +210,8 @@ public class QSPanel extends ViewGroup {
         mDetailSettingsButton.setText(R.string.quick_settings_more_settings);
         mDetailRemoveButton.setText(R.string.quick_settings_remove);
         final int color = mQSCSwitch ? mQStextColor : mQSdefaultTextColor;
-        mDetailDoneButton.setTextColor(color);
-        mDetailSettingsButton.setTextColor(color);
+        mDetailDoneButton.setTextColor(QSColorHelper.getTextColor(mContext));
+        mDetailSettingsButton.setTextColor(QSColorHelper.getTextColor(mContext));
         mDetailRemoveButton.setTextColor(color);
     }
 
@@ -367,6 +369,7 @@ public class QSPanel extends ViewGroup {
             if (mQSCSwitch) {
                 r.tileView.setLabelColor();
                 r.tileView.setIconColor();
+                r.tileView.setRippleColor();
             }
             r.tile.refreshState();
 
@@ -763,6 +766,7 @@ public class QSPanel extends ViewGroup {
         if (mListening) {
             mSettingsObserver.observe();
         }
+        mBrightnessController.setToggleSliderColors();
     }
 
     public void setHideQsTilesWithSensitiveData(boolean value) {
