@@ -197,4 +197,6 @@
   <string name="live_display_hint">LiveDisplay poate reduce oboseala ochilor şi vă poate ajuta să dormiți noaptea. Apasă aici pentru a-l încerca!</string>
   <string name="quick_settings_tile_flashlight_not_title">Lanterna este pornită</string>
   <string name="permlab_resetBatteryStats">resetează statisticile bateriei</string>
+  <string name="silent_mode_priority">Prioritate</string>
+  <string name="silent_mode_none">Nimic</string>
 </resources>
