@@ -513,7 +513,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         }
     };
 
-    class SettingsObserver extends UserContentObserver {
+    private class SettingsObserver extends UserContentObserver {
         SettingsObserver(Handler handler) {
             super(handler);
         }
@@ -1004,6 +1004,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         }
     };
 
+    private SettingsObserver mSettingsObserver = new SettingsObserver(mHandler);
+
     private int mInteractingWindows;
     private boolean mAutohideSuspended;
     private int mStatusBarMode;
@@ -1200,8 +1202,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         addNavigationBar();
 
         // Status bar settings observer
-        SettingsObserver observer = new SettingsObserver(mHandler);
-        observer.observe();
+        mSettingsObserver.observe();
+
 
 
         // Lastly, call to the icon policy to install/update all the icons.
@@ -4813,7 +4815,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
      */
     void updateResources(Configuration newConfig) {
         final Context context = mContext;
-        SettingsObserver observer = new SettingsObserver(mHandler);
 
         // detect theme change.
         ThemeConfig newTheme = newConfig != null ? newConfig.themeConfig : null;
@@ -4822,7 +4823,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         if (updateStatusBar) {
             mContext.recreateTheme();
             recreateStatusBar();
-            observer.update();
+            mSettingsObserver.update();
             addSidebarView();
 
         } else {
