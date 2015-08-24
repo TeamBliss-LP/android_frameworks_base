@@ -177,13 +177,22 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
 
     private int mTextColor;
     private int mIconColor;
-    private int mStatusBarPowerMenuStyle;
+
+    private ContentObserver mContentObserver = new ContentObserver(new Handler()) {
+      @Override
+         public void onChange(boolean selfChange, Uri uri) {
+         loadShowStatusBarPowerMenuSettings();
+       }
+    };
 
     public StatusBarHeaderView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        loadShowStatusBarPowerMenuSettings();
         mContext = context;
         mVibrator = (Vibrator) mContext.getSystemService(Context.VIBRATOR_SERVICE);
     }
+
+    private int mStatusBarPowerMenuStyle;
 
     @Override
     protected void onFinishInflate() {
@@ -243,6 +252,7 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
         mWeatherLine2 = (TextView) findViewById(R.id.weather_line_2);
         mSettingsObserver = new SettingsObserver(new Handler());
         loadDimens();
+        updateStatusBarPowerMenuVisibility();
         if (mQSCSwitch) {
             updateBackgroundColor();
         }
@@ -420,6 +430,7 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
         if (mQSPanel != null) {
             mQSPanel.setExpanded(mExpanded);
         }
+        updateStatusBarPowerMenuVisibility();
         updateClockScale();
         updateAvatarScale();
         updateClockLp();
@@ -460,7 +471,6 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
         if (mTaskManagerButton != null) {
             mTaskManagerButton.setVisibility(mExpanded && mShowTaskManager ? View.VISIBLE : View.GONE);
         }
-        updateStatusBarPowerMenuVisibility();
 
         mQsDetailHeader.setVisibility(mExpanded && mShowingDetail ? View.VISIBLE : View.GONE);
         if (mSignalCluster != null) {
@@ -737,8 +747,10 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
             startDateLongClickActivity();
         } else if (v == mWeatherContainer) {
             startForecastLongClickActivity();
-        } else if (mStatusBarPowerMenu != null && v == mStatusBarPowerMenu) {
-            statusBarPowerMenuAction();
+        } else if (mStatusBarPowerMenuStyle == STATUS_BAR_POWER_MENU_DEFAULT) {
+            triggerPowerMenuDialog();
+        } else if (mStatusBarPowerMenuStyle == STATUS_BAR_POWER_MENU_INVERTED) {
+            goToSleep();
         } else if (mHeadsUpButton != null && v == mHeadsUpButton) {
             startHeadsUpLongClickActivity();
         } else if (mTaskManagerButton != null && v == mTaskManagerButton) {
@@ -1375,14 +1387,6 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
                 updateHeadsUpButton();
                 updateLayout = true;
             }
-            if (updateAll ||
-                uri.equals(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_POWER_MENU))) {
-                mStatusBarPowerMenuStyle = Settings.System.getInt(resolver,
-                        Settings.System.STATUS_BAR_POWER_MENU, 0);
-                updateStatusBarPowerMenuVisibility();
-                updateLayout = true;
-            }
             if (updateLayout) {
                 updateSystemIconsLayoutParams();
             }
@@ -1476,6 +1480,12 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
         int b = Color.blue(color);
         int transparentColor = (alpha << 24) + (r << 16) + (g << 8) + b;
         return transparentColor;
+    }
+
+    private void loadShowStatusBarPowerMenuSettings() {
+        ContentResolver resolver = getContext().getContentResolver();
+        mStatusBarPowerMenuStyle = Settings.System.getInt(resolver,
+                Settings.System.STATUS_BAR_POWER_MENU, 0);
     }
 
     private void goToSleep() {
