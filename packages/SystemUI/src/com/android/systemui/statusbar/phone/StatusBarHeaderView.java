@@ -1211,6 +1211,8 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
 
         private void handleShowingDetail(final QSTile.DetailAdapter detail) {
             final boolean showingDetail = detail != null;
+            mQSCSwitch = Settings.System.getInt(getContext().getContentResolver(),
+                    Settings.System.QS_COLOR_SWITCH, 0) == 1;
             transition(mClock, !showingDetail);
             transition(mDateGroup, !showingDetail);
 
@@ -1323,6 +1325,9 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_POWER_MENU),
                     false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_CUSTOM_HEADER),
+                    false, this);
 
             update();
         }
@@ -1376,6 +1381,11 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
                 uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_EXPANDED_HEADER_ICON_COLOR))) {
                 updateIconColorSettings();
+            }
+            if (updateAll ||
+                uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_CUSTOM_HEADER))) {
+                updateEverything();
             }
             if (updateAll ||
                 uri.equals(Settings.System.getUriFor(
