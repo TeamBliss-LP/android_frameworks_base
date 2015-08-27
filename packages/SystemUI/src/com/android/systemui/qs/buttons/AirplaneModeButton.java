@@ -1,6 +1,5 @@
 /*
  * Copyright (C) 2015 DarkKat
- * Copyright (C) 2015 The Fusion Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -68,8 +67,8 @@ public class AirplaneModeButton extends QSButton implements
     }
 
     @Override
-    public void onWifiSignalChanged(boolean enabled, boolean connected, int wifiSignalIconId,
-                boolean activityIn, boolean activityOut,
+    public void onWifiSignalChanged(boolean enabled, boolean connected,
+                int wifiSignalIconId, boolean activityIn, boolean activityOut,
                 String wifiSignalContentDescriptionId, String description) {
     }
 
@@ -77,7 +76,7 @@ public class AirplaneModeButton extends QSButton implements
     public void onMobileDataSignalChanged(boolean enabled, int mobileSignalIconId,
                 String mobileSignalContentDescriptionId, int dataTypeIconId,
                 boolean activityIn, boolean activityOut,
-                String dataTypeContentDescriptionId, String description, boolean noSim,
+                String dataTypeContentDescriptionId, String description,
                 boolean isDataTypeIconWide) {
     }
 
