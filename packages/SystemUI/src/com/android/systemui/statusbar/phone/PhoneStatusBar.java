@@ -437,6 +437,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     private boolean mBlissLogo;
     private int mBlissLogoColor;
     private ImageView blissLogo;
+    private int mBlissLogoStyle;
 
     // battery
     private BatteryMeterView mBatteryView;
@@ -566,6 +567,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_BLISS_LOGO_COLOR),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_BLISS_LOGO_STYLE),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_SHOW_TICKER),
@@ -811,6 +815,11 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     || uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_WEATHER_SIZE))) {
                     doRecreate = true;
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_BLISS_LOGO_STYLE))
+                    || uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_BLISS_LOGO_COLOR))) {
+                    doRecreate = true;
             }
             updateEx(doRecreate);
         }
@@ -889,9 +898,15 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                         mWeatherTempColor, mWeatherTempSize);
             }
 
+            mBlissLogoStyle = Settings.System.getIntForUser(
+                    resolver, Settings.System.STATUS_BAR_BLISS_LOGO_STYLE, 0,
+                    UserHandle.USER_CURRENT);
+
             mBlissLogo = Settings.System.getIntForUser(resolver,
                     Settings.System.STATUS_BAR_BLISS_LOGO,
                     0, mCurrentUserId) == 1;
+            showBlissLogo(mBlissLogo, mBlissLogoStyle);
+
             mBlissLogoColor = Settings.System.getIntForUser(resolver,
                     Settings.System.STATUS_BAR_BLISS_LOGO_COLOR,
                     0xFFFFFFFF, mCurrentUserId);
@@ -944,6 +959,15 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mWeatherTempView.setTextSize(size);
         mWeatherTempView.setVisibility(View.VISIBLE);
     }
+
+    public void showBlissLogo(boolean show, int color) {
+        if (mStatusBarView == null) return;
+        ContentResolver resolver = mContext.getContentResolver();
+        if (blissLogo != null) {
+            blissLogo.setColorFilter(color, Mode.SRC_IN);
+            blissLogo.setVisibility(show && mBlissLogo ? View.VISIBLE : View.GONE);
+        }
+     }
 
     private boolean isPieEnabled() {
         return Settings.System.getIntForUser(mContext.getContentResolver(),
@@ -1616,6 +1640,15 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             });
         }
         updateClockSize();
+
+        mBlissLogoStyle = Settings.System.getIntForUser(
+                mContext.getContentResolver(), Settings.System.STATUS_BAR_BLISS_LOGO_STYLE, 0,
+                UserHandle.USER_CURRENT);
+        if (mBlissLogoStyle == 0) {
+            blissLogo = (ImageView) mStatusBarView.findViewById(R.id.left_bliss_logo);
+        } else {
+            blissLogo = (ImageView) mStatusBarView.findViewById(R.id.bliss_logo);
+        }
 
         mWeatherTempStyle = Settings.System.getIntForUser(
                 mContext.getContentResolver(), Settings.System.STATUS_BAR_WEATHER_TEMP_STYLE, 0,
@@ -4545,15 +4578,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             }
         }
     };
-
-    public void showBlissLogo(boolean show, int color) {
-        if (mStatusBarView == null) return;
-        blissLogo = (ImageView) mStatusBarView.findViewById(R.id.bliss_logo);
-        if (blissLogo != null) {
-            blissLogo.setColorFilter(color, Mode.SRC_IN);
-            blissLogo.setVisibility(show && mBlissLogo ? View.VISIBLE : View.GONE);
-        }
-    }
 
     public void showStatusBarCarrierLabel(boolean show) {
         if (mStatusBarView == null || mContext == null) return;
