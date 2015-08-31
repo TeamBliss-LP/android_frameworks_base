@@ -691,6 +691,12 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.SHAKE_TO_CLEAN_NOTIFICATIONS), false, this,
                     UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.Secure.UI_THEME_MODE), false, this,
+                    UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.Secure.UI_THEME_AUTO_MODE), false, this,
+                    UserHandle.USER_ALL);
             update();
         }
 
@@ -833,6 +839,11 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     Settings.System.STATUS_BAR_BLISS_LOGO_STYLE))
                     || uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_BLISS_LOGO_COLOR))) {
+                    doRecreate = true;
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.Secure.UI_THEME_MODE))
+                    || uri.equals(Settings.System.getUriFor(
+                    Settings.Secure.UI_THEME_AUTO_MODE))) {
                     doRecreate = true;
             }
             updateEx(doRecreate);
@@ -4912,11 +4923,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         int uiThemeMode = res.getConfiguration().uiThemeMode;
         if (uiThemeMode != mCurrUiThemeMode) {
             mCurrUiThemeMode = uiThemeMode;
-            recreateStatusBar();
-            updateRowStates();
-            updateSpeedbump();
-            updateClearAll();
-            updateEmptyShadeView();
         } else {
             loadDimens();
         }
