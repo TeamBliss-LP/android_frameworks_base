@@ -905,11 +905,13 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 addSidebarView();
             }
 
+            boolean navLeftInLandscape = Settings.System.getIntForUser(resolver,
+                    Settings.System.NAVBAR_LEFT_IN_LANDSCAPE, 0, UserHandle.USER_CURRENT) == 1;
             if (mNavigationBarView != null) {
-                boolean navLeftInLandscape = Settings.System.getIntForUser(
-                    resolver, Settings.System.NAVBAR_LEFT_IN_LANDSCAPE,
-                    0, mCurrentUserId) == 1;
                 mNavigationBarView.setLeftInLandscape(navLeftInLandscape);
+            }
+            if (mSearchPanelView != null) {
+                mSearchPanelView.setLeftNavbar(navLeftInLandscape);
             }
 
             mShowWifiSsidLabel = Settings.Global.getInt(resolver,
