@@ -23,7 +23,7 @@ import android.telephony.TelephonyManager;
 
 import com.android.internal.telephony.Phone;
 
-import com.android.internal.util.cm.QSUtils;
+import com.android.internal.util.bliss.QsDeviceUtils;
 import com.android.systemui.qs.QSTile;
 import com.android.systemui.R;
 
@@ -64,8 +64,8 @@ public class LteTile extends QSTile<QSTile.BooleanState> {
         // Hide the tile if device doesn't support LTE
         // or it supports Dual Sim Dual Active.
         // TODO: Should be spawning off a tile per sim
-        if (!QSUtils.deviceSupportsLte(mContext)
-                || QSUtils.deviceSupportsDdsSupported(mContext)) {
+        if (!QsDeviceUtils.deviceSupportsLte(mContext)
+                || QsDeviceUtils.deviceSupportsDdsSupported(mContext)) {
             state.visible = false;
             return;
         }

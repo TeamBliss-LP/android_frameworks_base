@@ -104,24 +104,24 @@
     <!-- Min alpha % that recent items will fade to while being dismissed -->
     <integer name="config_recent_item_min_alpha">3</integer>
 
-    <!-- The number of columns in the QuickSettings -->
+    <!-- The number of columns in the QuickSettingsPanel -->
     <integer name="quick_settings_num_columns">3</integer>
 
-    <!-- The maximum number of rows in the QuickSettings -->
+    <!-- The maximum number of rows in the QuickSettingsPanel -->
     <integer name="quick_settings_max_rows">4</integer>
 
-    <!-- The maximum number of rows in the QuickSettings when on the keyguard -->
+    <!-- The maximum number of rows in the QuickSettingsPanel when on the keyguard -->
     <integer name="quick_settings_max_rows_keyguard">3</integer>
 
-    <!-- The number of columns that the top level tiles span in the QuickSettings -->
+    <!-- The number of columns that the top level tiles span in the QuickSettingsPanel -->
     <integer name="quick_settings_user_time_settings_tile_span">1</integer>
 
-    <!-- The default tiles to display in QuickSettings -->
+    <!-- The default tiles to display in QuickSettingsPanel -->
     <string name="quick_settings_tiles_default" translatable="false">
         wifi,bt,cell,airplane,rotation,flashlight,location,sync
     </string>
 
-    <!-- The tiles to display in QuickSettings -->
+    <!-- The tiles to display in QuickSettingsPanel -->
     <string name="quick_settings_tiles" translatable="false">default</string>
 
     <!-- Whether or not the RSSI tile is capitalized or not. -->

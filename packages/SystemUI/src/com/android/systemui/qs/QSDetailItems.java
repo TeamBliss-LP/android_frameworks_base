@@ -36,6 +36,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.android.internal.util.bliss.QSColorHelper;
+
 import com.android.systemui.FontSizeUtils;
 import com.android.systemui.R;
 
@@ -242,11 +244,9 @@ public class QSDetailItems extends FrameLayout {
         mQSCSwitch = Settings.System.getInt(resolver,
                 Settings.System.QS_COLOR_SWITCH, 0) == 1;
         if (mQSCSwitch) {
-            mTextColor = Settings.System.getInt(resolver,
-                    Settings.System.QS_TEXT_COLOR, 0xffffffff);
+            mIconColor = QSColorHelper.getIconColor(mContext);
+            mTextColor = QSColorHelper.getTextColor(mContext);
             mEmptyTextColor = (153 << 24) | (mTextColor & 0x00ffffff); // Text color with a transparency of 60%
-            mIconColor = Settings.System.getInt(resolver,
-                    Settings.System.QS_ICON_COLOR, 0xffffffff);
         }
     }
 

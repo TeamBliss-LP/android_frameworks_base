@@ -18,6 +18,7 @@ package com.android.systemui.qs;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.View;
 import android.widget.FrameLayout;
 
 import com.android.systemui.R;
@@ -27,8 +28,14 @@ import com.android.systemui.R;
  */
 public class QSContainer extends FrameLayout {
 
+    private static final int QS_TYPE_PANEL = 0;
+    private static final int QS_TYPE_BAR   = 1;
+
     private int mHeightOverride = -1;
+    private QSBarContainer mQSBarContainer;
+    private QSBar mQSBar;
     private QSPanel mQSPanel;
+    private int mQSType;
 
     public QSContainer(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -37,6 +44,9 @@ public class QSContainer extends FrameLayout {
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
+        mQSBarContainer =
+                (QSBarContainer) findViewById(R.id.quick_settings_bar_container);
+        mQSBar = (QSBar) findViewById(R.id.quick_settings_bar);
         mQSPanel = (QSPanel) findViewById(R.id.quick_settings_panel);
     }
 
@@ -46,6 +56,40 @@ public class QSContainer extends FrameLayout {
         updateBottom();
     }
 
+    public void setQSType(int qsType) {
+        mQSType = qsType;
+        if (mQSType == QS_TYPE_PANEL) {
+            mQSBarContainer.setVisibility(View.GONE);
+            mQSBar.setVisibility(View.GONE);
+            mQSPanel.setVisibility(View.INVISIBLE);
+            setVisibility(View.INVISIBLE);
+        } else if (mQSType == QS_TYPE_BAR) {
+            mQSPanel.setVisibility(View.GONE);
+            mQSBarContainer.setVisibility(View.INVISIBLE);
+            mQSBar.setVisibility(View.INVISIBLE);
+            setVisibility(View.INVISIBLE);
+        } else {
+            mQSBarContainer.setVisibility(View.GONE);
+            mQSBar.setVisibility(View.GONE);
+            mQSPanel.setVisibility(View.GONE);
+            setVisibility(View.GONE);
+        }
+    }
+
+    public void setQSTypeVisibility(boolean visible) {
+        if (mQSType == QS_TYPE_PANEL) {
+            mQSPanel.setVisibility(visible ?  View.VISIBLE : View.INVISIBLE);
+        } else if (mQSType == QS_TYPE_BAR) {
+            mQSBarContainer.setVisibility(visible ?  View.VISIBLE : View.INVISIBLE);
+            mQSBar.setVisibility(visible ?  View.VISIBLE : View.INVISIBLE);
+        }
+    }
+
+    public void setListening(boolean listening) {
+        mQSPanel.setListening(listening && mQSType == QS_TYPE_PANEL);
+        mQSBar.setListening(listening && mQSType == QS_TYPE_BAR);
+    }
+        
     /**
      * Overrides the height of this view (post-layout), so that the content is clipped to that
      * height and the background is set to that height.

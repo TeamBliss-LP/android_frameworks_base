@@ -25,6 +25,8 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
+import com.android.internal.util.bliss.QSColorHelper;
+
 import com.android.systemui.R;
 import com.android.systemui.qs.QSTile.SignalState;
 
@@ -157,8 +159,7 @@ public final class SignalTileView extends QSTileView {
         mQSCSwitch = Settings.System.getInt(mContext.getContentResolver(),
                 Settings.System.QS_COLOR_SWITCH, 0) == 1;
         if (mQSCSwitch) {
-            mIconColor = Settings.System.getInt(mContext.getContentResolver(),
-                    Settings.System.QS_ICON_COLOR, 0xffffffff);
+            mIconColor = QSColorHelper.getIconColor(mContext);
         }
     }
 

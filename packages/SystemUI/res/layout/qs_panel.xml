@@ -23,6 +23,22 @@
         android:paddingBottom="8dp"
         android:elevation="2dp">
 
+    <com.android.systemui.qs.QSBarContainer
+            android:id="@+id/quick_settings_bar_container"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/notification_min_height"
+            android:fadingEdgeLength="30dp"
+            android:requiresFadingEdge="horizontal"
+            android:scrollbars="none">
+        <com.android.systemui.qs.QSBar
+                android:id="@+id/quick_settings_bar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                android:background="#0000" />
+    </com.android.systemui.qs.QSBarContainer> -->
+
     <com.android.systemui.qs.QSPanel
         android:id="@+id/quick_settings_panel"
         android:background="#0000"
