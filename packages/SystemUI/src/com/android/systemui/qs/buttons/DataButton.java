@@ -1,6 +1,5 @@
 /*
  * Copyright (C) 2015 DarkKat
- * Copyright (C) 2015 The Fusion Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,12 +25,15 @@ import android.provider.Settings;
 import com.android.systemui.R;
 import com.android.systemui.qs.QSBar;
 import com.android.systemui.statusbar.policy.NetworkController;
+import com.android.systemui.statusbar.policy.NetworkController.MobileDataController;
+
 
 public class DataButton extends QSButton implements
         NetworkController.NetworkSignalChangedCallback {
     private static final Intent WIRELESS_SETTINGS = new Intent(Settings.ACTION_WIRELESS_SETTINGS);
 
     private final NetworkController mNetworkController;
+    private final MobileDataController mMobileDataController;
 
     private boolean mEnabled;
     private boolean mAirplaneModeEnabled;
@@ -41,9 +43,10 @@ public class DataButton extends QSButton implements
         super(context, qsBar, iconEnabled, iconDisabled);
 
         mNetworkController = mQSBar.getNetworkController();
+        mMobileDataController = mNetworkController.getMobileDataController();
         mAirplaneModeEnabled = Settings.Global.getInt(mContext.getContentResolver(),
                 Settings.Global.AIRPLANE_MODE_ON, 0) != 0;
-        mEnabled = !mAirplaneModeEnabled && mNetworkController.isMobileDataEnabled();
+        mEnabled = !mAirplaneModeEnabled && mMobileDataController.isMobileDataEnabled();
         updateState(mEnabled);
     }
 
@@ -59,7 +62,7 @@ public class DataButton extends QSButton implements
     @Override
     public void handleClick() {
         if (!mAirplaneModeEnabled) {
-            mNetworkController.setMobileDataEnabled(!mEnabled);
+            mMobileDataController.setMobileDataEnabled(!mEnabled);
         } else {
             mQSBar.startSettingsActivity(WIRELESS_SETTINGS);
         }
@@ -75,8 +78,8 @@ public class DataButton extends QSButton implements
     }
 
     @Override
-    public void onWifiSignalChanged(boolean enabled, boolean connected, int wifiSignalIconId,
-                boolean activityIn, boolean activityOut,
+    public void onWifiSignalChanged(boolean enabled, boolean connected,
+                int wifiSignalIconId, boolean activityIn, boolean activityOut,
                 String wifiSignalContentDescriptionId, String description) {
     }
 
@@ -84,9 +87,9 @@ public class DataButton extends QSButton implements
     public void onMobileDataSignalChanged(boolean enabled, int mobileSignalIconId,
                 String mobileSignalContentDescriptionId, int dataTypeIconId,
                 boolean activityIn, boolean activityOut,
-                String dataTypeContentDescriptionId, String description, boolean noSim,
+                String dataTypeContentDescriptionId, String description,
                 boolean isDataTypeIconWide) {
-        mEnabled = !mAirplaneModeEnabled && mNetworkController.isMobileDataEnabled();
+        mEnabled = !mAirplaneModeEnabled && mMobileDataController.isMobileDataEnabled();
         updateState(mEnabled);
     }
 
@@ -97,11 +100,11 @@ public class DataButton extends QSButton implements
     @Override
     public void onAirplaneModeChanged(boolean enabled) {
         mAirplaneModeEnabled = enabled;
-        mEnabled = !mAirplaneModeEnabled && mNetworkController.isMobileDataEnabled();
+        mEnabled = !mAirplaneModeEnabled && mMobileDataController.isMobileDataEnabled();
         updateState(mEnabled);
     }
 
     @Override
-    public void onMobileDataEnabled(boolean visible) {
+    public  void onMobileDataEnabled(boolean visible) {
     }
 }
