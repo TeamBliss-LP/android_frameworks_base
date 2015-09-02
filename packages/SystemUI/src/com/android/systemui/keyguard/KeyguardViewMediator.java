@@ -2049,10 +2049,6 @@ public class KeyguardViewMediator extends SystemUI {
          }
      }
 
-    public void setBackgroundBitmap(Bitmap bmp) {
-        mStatusBarKeyguardViewManager.setBackgroundBitmap(bmp);
-    }
-
     private void startFingerAuthIfUsingFingerprint() {
         synchronized (KeyguardViewMediator.this) {
             if (DBG_FINGERPRINT) Log.i(TAG, "startFingerAuthIfUsingFingerprint()");
