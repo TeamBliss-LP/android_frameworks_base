@@ -4908,8 +4908,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             mNotificationIconArea.setVisibility(View.INVISIBLE);
             mSystemIconArea.setVisibility(View.INVISIBLE);
         }
-
-        updateWeatherTextState(mWeatherController.getWeatherInfo().temp, mWeatherTempColor, mWeatherTempSize, mWeatherTempFontStyle);
     }
 
     private void removeAllViews(ViewGroup parent) {
