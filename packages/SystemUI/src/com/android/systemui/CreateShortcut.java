@@ -73,7 +73,7 @@ public class CreateShortcut extends LauncherActivity {
         if (Settings.Secure.getIntForUser(getContentResolver(),
                 Settings.Secure.CHAMBER_OF_SECRETS, 0,
                 UserHandle.USER_CURRENT) == 1) {
-            targetIntent.addCategory("com.android.systemui.SHORTCUT_EXTRA");
+            targetIntent.addCategory("com.android.systemui.SHORTCUT_COS");
         } else {
             targetIntent.addCategory("com.android.systemui.SHORTCUT");
         }
@@ -112,13 +112,21 @@ public class CreateShortcut extends LauncherActivity {
         if (c.equals ("Rotation")) {
             return R.drawable.ic_qs_auto_rotate;
         } else if (c.equals("Torch")) {
-            return R.drawable.ic_signal_flashlight_enable_animation;
-        } else if (c.equals("ChamberOfSecrets")) {
-            return R.drawable.ic_qs_slim_action;
+            return R.drawable.ic_qs_torch;
+        } else if (c.equals("SleepScreen")) {
+            return R.drawable.ic_qs_sleep;
         } else if (c.equals("Reboot")) {
             return R.drawable.ic_qs_reboot;
         } else if (c.equals("Recovery")) {
             return R.drawable.ic_qs_reboot_recovery;
+        } else if (c.equals("VolumePanel")) {
+            return R.drawable.ic_qs_volume;
+        } else if (c.equals("RestartUI")) {
+            return R.drawable.ic_qs_systemui_restart;
+        } else if (c.equals("PowerMenu")) {
+            return R.drawable.ic_qs_powermenu;
+        } else if (c.equals("ChamberOfSecrets")) {
+            return R.drawable.ic_qs_slim_action;
         } else {
             // Oh-Noes, you found a wild derp.
             return R.drawable.ic_sysbar_null;
