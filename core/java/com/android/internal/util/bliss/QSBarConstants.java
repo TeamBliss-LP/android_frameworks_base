@@ -43,7 +43,5 @@ public class QSBarConstants {
         + BUTTON_ROTATION   + BUTTON_DELIMITER
         + ICON_EMPTY        + BUTTON_DELIMITER
         + BUTTON_LOCATION   + BUTTON_DELIMITER
-        + ICON_EMPTY        + BUTTON_DELIMITER
-        + BUTTON_NFC        + BUTTON_DELIMITER
         + ICON_EMPTY;
 }
