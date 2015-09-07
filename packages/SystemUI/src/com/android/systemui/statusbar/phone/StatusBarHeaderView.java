@@ -745,6 +745,7 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
             statusBarPowerMenuAction();
         } else if (mHeadsUpButton != null && v == mHeadsUpButton) {
             startHeadsUpActivity();
+            updateHeadsUpButton();
         } else if (v == mWeatherContainer) {
             startForecastActivity();
         } else {
