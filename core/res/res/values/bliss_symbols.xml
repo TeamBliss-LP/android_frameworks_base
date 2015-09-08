@@ -174,7 +174,4 @@
   <java-symbol type="anim" name="recent_screen_enter_left" />
   <java-symbol type="anim" name="recent_screen_fade_out" />
 
-  <!-- Doze invert -->
-  <java-symbol type="bool" name="config_invert_colors_on_doze" />
-
 </resources>
