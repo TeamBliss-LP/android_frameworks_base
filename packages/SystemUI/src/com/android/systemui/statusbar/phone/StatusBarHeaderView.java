@@ -268,9 +268,7 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
         mBackgroundImage = (ImageView) findViewById(R.id.background_image);
         loadDimens();
         updateStatusBarPowerMenuVisibility();
-        if (mQSCSwitch) {
-            updateBackgroundColor();
-        }
+        updateBackgroundColor();
         updateEverything();
         addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
             @Override
@@ -453,9 +451,7 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
     }
 
     private void updateHeaderElements() {
-        if (mQSCSwitch) {
         updateBackgroundColor();
-        }
         updateTextColorSettings();
         updateIconColorSettings();
         updateHeadsUpButton();
@@ -1486,9 +1482,14 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
 
     private void updateBackgroundColor() {
         ContentResolver resolver = mContext.getContentResolver();
+        int stockbg = mContext.getResources().getColor(R.color.notification_header_bg);
         int backgroundColor = Settings.System.getInt(resolver,
-                Settings.System.STATUS_BAR_EXPANDED_HEADER_BG_COLOR, 0xff384248);
+                Settings.System.STATUS_BAR_EXPANDED_HEADER_BG_COLOR, stockbg);
+        if (mQSCSwitch) {
             getBackground().setColorFilter(backgroundColor, Mode.SRC_OVER);
+        } else {
+            getBackground().setColorFilter(stockbg, Mode.SRC_OVER);
+        }
     }
 
     public void updateBatteryColorSettings(boolean isHeader) {
