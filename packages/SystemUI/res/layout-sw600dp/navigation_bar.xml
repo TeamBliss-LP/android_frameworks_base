@@ -182,14 +182,14 @@
                 android:layout_height="match_parent"
                 android:layout_marginStart="40dp"
                 android:src="@drawable/ic_sysbar_lights_out_dot_small"
-                android:scaleType="centerInside"
+                android:scaleType="center"
                 android:layout_weight="0"
                 />
             <ImageView
                 android:layout_width="128dp" android:paddingStart="25dp" android:paddingEnd="25dp"
                 android:layout_height="match_parent"
                 android:src="@drawable/ic_sysbar_lights_out_dot_large"
-                android:scaleType="centerInside"
+                android:scaleType="center"
                 android:layout_weight="0"
                 />
             <ImageView
@@ -197,7 +197,7 @@
                 android:layout_marginEnd="40dp"
                 android:layout_height="match_parent"
                 android:src="@drawable/ic_sysbar_lights_out_dot_small"
-                android:scaleType="centerInside"
+                android:scaleType="center"
                 android:layout_weight="0"
                 />
             <Space 
@@ -346,14 +346,14 @@
                 android:layout_height="match_parent"
                 android:layout_marginStart="40dp"
                 android:src="@drawable/ic_sysbar_lights_out_dot_small"
-                android:scaleType="centerInside"
+                android:scaleType="center"
                 android:layout_weight="0"
                 />
             <ImageView
                 android:layout_width="162dp" android:paddingStart="42dp" android:paddingEnd="42dp"
                 android:layout_height="match_parent"
                 android:src="@drawable/ic_sysbar_lights_out_dot_large"
-                android:scaleType="centerInside"
+                android:scaleType="center"
                 android:layout_weight="0"
                 />
             <ImageView
@@ -361,7 +361,7 @@
                 android:layout_marginEnd="40dp"
                 android:layout_height="match_parent"
                 android:src="@drawable/ic_sysbar_lights_out_dot_small"
-                android:scaleType="centerInside"
+                android:scaleType="center"
                 android:layout_weight="0"
                 />
             <Space 
