@@ -105,11 +105,12 @@ public class VisualizerView extends View implements Palette.PaletteAsyncListener
     private final Runnable mUnlinkVisualizer = new Runnable() {
         @Override
         public void run() {
-          if(mVisualizer != null) {
-            mVisualizer.setEnabled(false);
-            mVisualizer.release();
-            mVisualizer = null;
-          }
+            if (mVisualizer != null) {
+                mVisualizer.setDataCaptureListener(null, 0, false, false);
+                mVisualizer.setEnabled(false);
+                mVisualizer.release();
+                mVisualizer = null;
+            }
         }
     };
 
