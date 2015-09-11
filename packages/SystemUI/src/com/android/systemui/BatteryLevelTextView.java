@@ -211,7 +211,7 @@ public class BatteryLevelTextView extends TextView implements
     public void setTextColor(boolean isHeader) {
         if (isHeader) {
             int headerColor = Settings.System.getInt(mResolver,
-                    Settings.System.STATUS_BAR_EXPANDED_HEADER_TEXT_COLOR,
+                    Settings.System.STATUS_BAR_EXPANDED_HEADER_CLOCK_COLOR,
                     DEFAULT_BATTERY_TEXT_COLOR);
             setTextColor(headerColor);
         } else {

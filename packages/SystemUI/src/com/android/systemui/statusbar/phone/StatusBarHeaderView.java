@@ -180,8 +180,13 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
 
     private boolean mQSCSwitch = false;
 
-    private int mTextColor;
+    private int mClockColor;
+    private int mDateColor;
+    private int mAlarmColor;
     private int mIconColor;
+    private int mAmPmColor;
+    private int mWeather1Color;
+    private int mWeather2Color;
 
     private ContentObserver mContentObserver = new ContentObserver(new Handler()) {
       @Override
@@ -1318,7 +1323,22 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
                     Settings.System.STATUS_BAR_EXPANDED_HEADER_SHOW_WEATHER_LOCATION),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_EXPANDED_HEADER_TEXT_COLOR),
+                    Settings.System.STATUS_BAR_EXPANDED_HEADER_CLOCK_COLOR),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_EXPANDED_HEADER_DATE_COLOR),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_EXPANDED_HEADER_ALARM_COLOR),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_EXPANDED_HEADER_AMPM_COLOR),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_EXPANDED_HEADER_WEATHER1_COLOR),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_EXPANDED_HEADER_WEATHER2_COLOR),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_EXPANDED_HEADER_ICON_COLOR),
@@ -1381,7 +1401,17 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
             }
             if (updateAll ||
                 uri.equals(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_EXPANDED_HEADER_TEXT_COLOR))) {
+                    Settings.System.STATUS_BAR_EXPANDED_HEADER_CLOCK_COLOR))
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_EXPANDED_HEADER_DATE_COLOR))
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_EXPANDED_HEADER_ALARM_COLOR))
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_EXPANDED_HEADER_AMPM_COLOR))
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_EXPANDED_HEADER_WEATHER1_COLOR))
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_EXPANDED_HEADER_WEATHER2_COLOR))) {
                 updateTextColorSettings();
             }
             if (updateAll ||
@@ -1467,21 +1497,41 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
 
     private void updateTextColorSettings() {
         ContentResolver resolver = mContext.getContentResolver();
-        mTextColor = Settings.System.getInt(resolver,
-                Settings.System.STATUS_BAR_EXPANDED_HEADER_TEXT_COLOR,
+        mClockColor = Settings.System.getInt(resolver,
+                Settings.System.STATUS_BAR_EXPANDED_HEADER_CLOCK_COLOR,
                 DEFAULT_HEADER_COLOR);
 
-        mTime.setTextColor(mTextColor);
-        mAmPm.setTextColor(mTextColor);
+        mDateColor = Settings.System.getInt(resolver,
+                Settings.System.STATUS_BAR_EXPANDED_HEADER_DATE_COLOR,
+                DEFAULT_HEADER_COLOR);
+
+        mAlarmColor = Settings.System.getInt(resolver,
+                Settings.System.STATUS_BAR_EXPANDED_HEADER_ALARM_COLOR,
+                DEFAULT_HEADER_COLOR);
+
+        mAmPmColor = Settings.System.getInt(resolver,
+                Settings.System.STATUS_BAR_EXPANDED_HEADER_AMPM_COLOR,
+                DEFAULT_HEADER_COLOR);
+
+        mWeather1Color = Settings.System.getInt(resolver,
+                Settings.System.STATUS_BAR_EXPANDED_HEADER_WEATHER1_COLOR,
+                DEFAULT_HEADER_COLOR);
+
+        mWeather2Color = Settings.System.getInt(resolver,
+                Settings.System.STATUS_BAR_EXPANDED_HEADER_WEATHER2_COLOR,
+                DEFAULT_HEADER_COLOR);
+
+        mTime.setTextColor(mClockColor);
+        mAmPm.setTextColor(mAmPmColor);
         mDateCollapsed.setTextColor(
-                getTransparentColor(mTextColor, 178));
+                getTransparentColor(mDateColor, 178));
         mDateExpanded.setTextColor(
-                getTransparentColor(mTextColor, 178));
+                getTransparentColor(mDateColor, 178));
         updateBatteryColorSettings(mExpanded);
         mAlarmStatus.setTextColor(
-                getTransparentColor(mTextColor, 100));
-        mWeatherLine1.setTextColor(mTextColor);
-        mWeatherLine2.setTextColor(mTextColor);
+                getTransparentColor(mAlarmColor, 100));
+        mWeatherLine1.setTextColor(mWeather1Color);
+        mWeatherLine2.setTextColor(mWeather2Color);
     }
 
     private void updateIconColorSettings() {
