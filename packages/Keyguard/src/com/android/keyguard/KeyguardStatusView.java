@@ -47,7 +47,7 @@ import android.widget.TextView;
 
 import com.android.internal.util.cm.WeatherController;
 import com.android.internal.util.cm.WeatherControllerImpl;
-import com.android.internal.util.bliss.ImageHelper;
+import com.android.internal.util.bliss.AltImageHelper;
 import com.android.internal.widget.LockPatternUtils;
 
 import java.util.Date;
@@ -397,9 +397,9 @@ public class KeyguardStatusView extends GridLayout implements
         if (mIconColor == -2) {
             mWeatherConditionImage.setImageDrawable(weatherIcon);
         } else {
-            Drawable coloredWeatherIcon =
-                    ImageHelper.getColoredDrawable(weatherIcon, mIconColor);
-            mWeatherConditionImage.setImageDrawable(coloredWeatherIcon);
+            Bitmap coloredWeatherIcon =
+                    AltImageHelper.getColoredBitmap(weatherIcon, mIconColor);
+            mWeatherConditionImage.setImageBitmap(coloredWeatherIcon);
         }
     }
 
