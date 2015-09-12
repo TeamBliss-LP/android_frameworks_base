@@ -4127,17 +4127,47 @@ public final class Settings {
          */
         public static final String LOCK_SCREEN_WEATHER_COLORIZE_ALL_ICONS = "lock_screen_weather_colorize_all_icons";
 
-        /**
-         * Color of the text on the lock screen
+         /**
+         * Change the color of the lockscreen bottom camera shortcut
+         *
          * @hide
          */
-        public static final String LOCK_SCREEN_TEXT_COLOR = "lock_screen_text_color";
+        public static final String LOCKSCREEN_CAMERA_ICON_COLOR = "lockscreen_camera_icon_color";
 
         /**
-         * Color of the icons on the lock screen
+         * Change the color of the lockscreen bottom phone shortcut
+         *
          * @hide
          */
-        public static final String LOCK_SCREEN_ICON_COLOR = "lock_screen_icon_color";
+        public static final String LOCKSCREEN_PHONE_ICON_COLOR = "lockscreen_phone_icon_color";
+
+        /**
+         * Change the color of the lockscreen lock icon
+         *
+         * @hide
+         */
+        public static final String LOCKSCREEN_LOCK_ICON_COLOR = "lockscreen_lock_icon_color";
+
+        /**
+         * Change the color of the lockscreen indication text
+         *
+         * @hide
+         */
+        public static final String LOCKSCREEN_INDICATION_TEXT_COLOR = "lockscreen_indication_text_color";
+
+        /**
+         * Change the color of the lockscreen clock
+         *
+         * @hide
+         */
+        public static final String LOCKSCREEN_CLOCK_COLOR = "lockscreen_clock_color";
+
+        /**
+         * Change the color of the lockscreen date underneath the clock
+         *
+         * @hide
+         */
+        public static final String LOCKSCREEN_CLOCK_DATE_COLOR = "lockscreen_clock_date_color";
 
         /**
          * show carrier in statusbae while on lockscreen. The value is

@@ -75,13 +75,15 @@ public class KeyguardStatusView extends GridLayout implements
 
     private boolean mShowWeather;
     private int mIconNameValue = 0;
+    private int mPrimaryTextColor;
+    private int mIconColor;
+
+    private WeatherController mWeatherController;
 
     //On the first boot, keygard will start to receiver TIME_TICK intent.
     //And onScreenTurnedOff will not get called if power off when keyguard is not started.
     //Set initial value to false to skip the above case.
     private boolean mEnableRefresh = false;
-
-    private WeatherController mWeatherController;
 
     private KeyguardUpdateMonitorCallback mInfoCallback = new KeyguardUpdateMonitorCallback() {
 
@@ -89,6 +91,8 @@ public class KeyguardStatusView extends GridLayout implements
         public void onTimeChanged() {
             if (mEnableRefresh) {
                 refresh();
+                updateClockColor();
+                updateClockDateColor();
             }
         }
 
@@ -98,6 +102,8 @@ public class KeyguardStatusView extends GridLayout implements
                 if (DEBUG) Slog.v(TAG, "refresh statusview showing:" + showing);
                 refresh();
                 updateOwnerInfo();
+                updateClockColor();
+                updateClockDateColor();
             }
         }
 
@@ -106,6 +112,8 @@ public class KeyguardStatusView extends GridLayout implements
             setEnableMarquee(true);
             mEnableRefresh = true;
             refresh();
+            updateClockColor();
+            updateClockDateColor();
         }
 
         @Override
@@ -118,6 +126,8 @@ public class KeyguardStatusView extends GridLayout implements
         public void onUserSwitchComplete(int userId) {
             refresh();
             updateOwnerInfo();
+            updateClockColor();
+            updateClockDateColor();
         }
     };
 
@@ -132,6 +142,8 @@ public class KeyguardStatusView extends GridLayout implements
     public KeyguardStatusView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         mWeatherController = new WeatherControllerImpl(mContext);
+        updateClockColor();
+        updateClockDateColor();
     }
 
     private void setEnableMarquee(boolean enabled) {
@@ -146,6 +158,8 @@ public class KeyguardStatusView extends GridLayout implements
         mAlarmStatusView = (TextView) findViewById(R.id.alarm_status);
         mDateView = (TextClock) findViewById(R.id.date_view);
         mClockView = (TextClock) findViewById(R.id.clock_view);
+        mDateView.setShowCurrentUserTime(true);
+        mClockView.setShowCurrentUserTime(true);
         mOwnerInfo = (TextView) findViewById(R.id.owner_info);
         mWeatherView = findViewById(R.id.keyguard_weather_view);
         mWeatherCity = (TextView) findViewById(R.id.city);
@@ -160,6 +174,8 @@ public class KeyguardStatusView extends GridLayout implements
         setEnableMarquee(screenOn);
         refresh();
         updateOwnerInfo();
+        updateClockColor();
+        updateClockDateColor();
 
         // Disable elegant text height because our fancy colon makes the ymin value huge for no
         // reason.
@@ -308,22 +324,20 @@ public class KeyguardStatusView extends GridLayout implements
 
         mShowWeather = Settings.System.getInt(resolver,
                 Settings.System.LOCK_SCREEN_SHOW_WEATHER, 0) == 1;
+        mIconColor = Settings.System.getInt(resolver,
+                Settings.System.LOCK_SCREEN_WEATHER_ICON_COLOR, -2);
+        mPrimaryTextColor = Settings.System.getInt(resolver,
+                Settings.System.LOCK_SCREEN_WEATHER_TEXT_COLOR, -2);
         boolean showLocation = Settings.System.getInt(resolver,
                 Settings.System.LOCK_SCREEN_SHOW_WEATHER_LOCATION, 1) == 1;
         boolean showTimestamp = Settings.System.getInt(resolver,
                 Settings.System.LOCK_SCREEN_SHOW_WEATHER_TIMESTAMP, 1) == 1;
         int iconNameValue = Settings.System.getInt(resolver,
                 Settings.System.LOCK_SCREEN_WEATHER_CONDITION_ICON, 0);
-        boolean colorizeAllIcons = Settings.System.getInt(resolver,
-                Settings.System.LOCK_SCREEN_WEATHER_COLORIZE_ALL_ICONS, 0) == 1;
         int hideMode = Settings.System.getInt(resolver,
                     Settings.System.LOCK_SCREEN_WEATHER_HIDE_PANEL, 0);
         int numberOfNotificationsToHide = Settings.System.getInt(resolver,
                        Settings.System.LOCK_SCREEN_WEATHER_NUMBER_OF_NOTIFICATIONS, 6);
-        int defaultPrimaryTextColor =
-                res.getColor(R.color.keyguard_default_primary_text_color);
-        int primaryTextColor = Settings.System.getInt(resolver,
-                Settings.System.LOCK_SCREEN_TEXT_COLOR, defaultPrimaryTextColor);
 
         if (hideMode == 0) {
             if (currentVisibleNotifications > maxAllowedNotifications) {
@@ -334,16 +348,6 @@ public class KeyguardStatusView extends GridLayout implements
                 forceHideByNumberOfNotifications = true;
             }
         }
-
-        // primaryTextColor with a transparency of 70%
-        int secondaryTextColor = (179 << 24) | (primaryTextColor & 0x00ffffff);
-        // primaryTextColor with a transparency of 50%
-        int alarmTextAndIconColor = (128 << 24) | (primaryTextColor & 0x00ffffff);
-
-        int defaultIconColor =
-                res.getColor(R.color.keyguard_default_icon_color);
-        int iconColor = Settings.System.getInt(resolver,
-                Settings.System.LOCK_SCREEN_ICON_COLOR, defaultIconColor);
 
         if (mWeatherView != null) {
             mWeatherView.setVisibility(
@@ -362,38 +366,46 @@ public class KeyguardStatusView extends GridLayout implements
             mWeatherTimestamp.setVisibility(showTimestamp ? View.VISIBLE : View.GONE);
         }
 
-        mAlarmStatusView.setTextColor(alarmTextAndIconColor);
-        mDateView.setTextColor(primaryTextColor);
-        mClockView.setTextColor(primaryTextColor);
-        noWeatherInfo.setTextColor(primaryTextColor);
-        mWeatherCity.setTextColor(primaryTextColor);
-        mWeatherConditionText.setTextColor(primaryTextColor);
-        mWeatherCurrentTemp.setTextColor(primaryTextColor);
+        mWeatherCity.setTextColor(mPrimaryTextColor);
+        mWeatherConditionText.setTextColor(mPrimaryTextColor);
+        mWeatherCurrentTemp.setTextColor(mPrimaryTextColor);
         mWeatherHumidity.setTextColor(secondaryTextColor);
         mWeatherWind.setTextColor(secondaryTextColor);
         mWeatherTimestamp.setTextColor(secondaryTextColor);
-        mOwnerInfo.setTextColor(primaryTextColor);
 
         if (mIconNameValue != iconNameValue) {
             mIconNameValue = iconNameValue;
             mWeatherController.updateWeather();
         }
-        Drawable[] drawables = mAlarmStatusView.getCompoundDrawablesRelative();
-        Drawable alarmIcon = null;
-        mAlarmStatusView.setCompoundDrawablesRelative(null, null, null, null);
-        if (drawables[0] != null) {
-            alarmIcon = drawables[0];
-            alarmIcon.setColorFilter(alarmTextAndIconColor, Mode.MULTIPLY);
-        }
-        mAlarmStatusView.setCompoundDrawablesRelative(alarmIcon, null, null, null);
+
         mWeatherConditionImage.setImageDrawable(null);
         Drawable weatherIcon = mWeatherConditionDrawable;
-        if (iconNameValue == 0 || colorizeAllIcons) {
-            Drawable coloredWeatherIcon =
-                    ImageHelper.getColoredDrawable(weatherIcon, iconColor);
-            mWeatherConditionImage.setImageDrawable(coloredWeatherIcon);
-        } else {
+        if (mIconColor == -2) {
             mWeatherConditionImage.setImageDrawable(weatherIcon);
+        } else {
+            Drawable coloredWeatherIcon =
+                    ImageHelper.getColoredDrawable(weatherIcon, mIconColor);
+            mWeatherConditionImage.setImageDrawable(coloredWeatherIcon);
+        }
+    }
+
+    private void updateClockColor() {
+        ContentResolver resolver = getContext().getContentResolver();
+        int color = Settings.System.getInt(resolver,
+                Settings.System.LOCKSCREEN_CLOCK_COLOR, 0xFFFFFFFF);
+
+        if (mClockView != null) {
+            mClockView.setTextColor(color);
+        }
+    }
+
+    private void updateClockDateColor() {
+        ContentResolver resolver = getContext().getContentResolver();
+        int color = Settings.System.getInt(resolver,
+                Settings.System.LOCKSCREEN_CLOCK_DATE_COLOR, 0xFFFFFFFF);
+
+        if (mDateView != null) {
+            mDateView.setTextColor(color);
         }
     }
 

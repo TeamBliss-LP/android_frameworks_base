@@ -559,12 +559,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     Settings.System.STATUS_BAR_CLOCK),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.LOCK_SCREEN_TEXT_COLOR),
-                    false, this, UserHandle.USER_ALL);
-            resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.LOCK_SCREEN_ICON_COLOR),
-                    false, this, UserHandle.USER_ALL);
-            resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.HEADS_UP_DISMISS_ON_REMOVE),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
@@ -743,11 +737,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                         mBatterySaverWarningColor = mContext.getResources()
                             .getColor(com.android.internal.R.color.battery_saver_mode_color);
                     }
-            } else if (uri.equals(Settings.System.getUriFor(
-                    Settings.System.LOCK_SCREEN_TEXT_COLOR))
-                    || uri.equals(Settings.System.getUriFor(
-                    Settings.System.LOCK_SCREEN_ICON_COLOR))) {
-                    setKeyguardTextAndIconColors();
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_SHOW_TICKER))) {
                     mTickerEnabled = Settings.System.getIntForUser(
@@ -1937,7 +1926,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         resetUserSetupObserver();
 
         startGlyphRasterizeHack();
-        setKeyguardTextAndIconColors();
         updateBatteryLevelTextColor();
         UpdateNotifDrawerClearAllIconColor();
         mStatusBarHeaderMachine = new StatusBarHeaderMachine(mContext);
@@ -3151,26 +3139,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                             .start();
                 }
             }
-        }
-    }
-
-
-    public void setKeyguardTextAndIconColors() {
-        ContentResolver resolver = mContext.getContentResolver();
-        int defaultTextColor = mContext.getResources()
-                .getColor(R.color.keyguard_default_primary_text_color);
-        int textColor =
-                Settings.System.getInt(resolver,
-                Settings.System.LOCK_SCREEN_TEXT_COLOR, defaultTextColor);
-        if (mKeyguardBottomArea != null) {
-            int iconColor =
-                Settings.System.getInt(resolver,
-                Settings.System.LOCK_SCREEN_ICON_COLOR, defaultTextColor);
-            mKeyguardBottomArea.updateTextColor(textColor);
-            mKeyguardBottomArea.updateIconColor(iconColor);
-        }
-        if (mKeyguardStatusBar != null) {
-            mKeyguardStatusBar.updateTextColor(textColor);
         }
     }
 
