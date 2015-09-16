@@ -8307,7 +8307,8 @@ public final class Settings {
             ADVANCED_REBOOT,
             DEVELOPMENT_SHORTCUT,
             STATUS_BAR_LOCKED_ON_SECURE_KEYGUARD,
-            LOCKSCREEN_ENABLE_POWER_MENU
+            LOCKSCREEN_ENABLE_POWER_MENU,
+            PRIVACY_GUARD_NOTIFICATION
         };
 
         /**
