@@ -466,9 +466,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     private BatteryMeterView mBatteryView;
     private BatteryLevelTextView mBatteryLevel;
 
-    // Status bar carrier
-    private boolean mShowStatusBarCarrier;
-
     private TextView mWifiSsidLabel;
     private boolean mShowWifiSsidLabel;
 
@@ -563,9 +560,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.LOCKSCREEN_BOTTOM_ICONS_COLOR),
-                    false, this, UserHandle.USER_ALL);
-            resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_CARRIER),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.NAVBAR_LEFT_IN_LANDSCAPE),
@@ -769,13 +763,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.PIE_CONTROLS))) {
                     attachPieContainer(isPieEnabled());
-            } else if (uri.equals(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_CARRIER))) {
-                    mShowStatusBarCarrier = Settings.System.getIntForUser(
-                        resolver,
-                        Settings.System.STATUS_BAR_CARRIER,
-                        0, mCurrentUserId) == 1;
-                    showStatusBarCarrierLabel(mShowStatusBarCarrier);
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.USE_SLIM_RECENTS))) {
                 updateRecents();
@@ -1606,12 +1593,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             mBatterySaverWarningColor = mContext.getResources()
                    .getColor(com.android.internal.R.color.battery_saver_mode_color);
         }
-
-        mShowStatusBarCarrier = Settings.System.getIntForUser(
-                mContext.getContentResolver(),
-                Settings.System.STATUS_BAR_CARRIER,
-                0, mCurrentUserId) == 1;
-        showStatusBarCarrierLabel(mShowStatusBarCarrier);
 
         // set the inital view visibility
         setAreThereNotifications();
@@ -4704,14 +4685,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         }
     };
 
-    public void showStatusBarCarrierLabel(boolean show) {
-        if (mStatusBarView == null || mContext == null) return;
-        View statusBarCarrierLabel = mStatusBarView.findViewById(R.id.status_bar_carrier_label);
-        if (statusBarCarrierLabel != null) {
-            statusBarCarrierLabel.setVisibility(show ? View.VISIBLE : View.GONE);
-        }
-    }
-
     public void showWifiSsidLabel(String ssid) {
         if (mStatusBarView == null || mContext == null
             || mWifiSsidLabel == null || mNetworkController == null) {
@@ -5072,10 +5045,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         TextView clock = (TextView) mStatusBarView.findViewById(R.id.clock);
         if (clock != null) {
             FontSizeUtils.updateFontSize(clock, R.dimen.status_bar_clock_size);
-        }
-        TextView carrier = (TextView) mStatusBarView.findViewById(R.id.status_bar_carrier_label);
-        if (carrier != null) {
-            FontSizeUtils.updateFontSize(carrier, R.dimen.status_bar_clock_size);
         }
         TextView wifi = (TextView) mStatusBarView.findViewById(R.id.status_bar_wifi_label);
         if (wifi != null) {
