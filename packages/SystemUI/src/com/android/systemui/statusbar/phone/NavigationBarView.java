@@ -382,7 +382,8 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
         getIcons(res);
 
         mBarTransitions = new NavigationBarTransitions(this);
-        mButtonsConfig = ActionHelper.getNavBarConfig(mContext);
+        mButtonsConfig = ActionHelper.getNavBarConfigWithDescription(
+                mContext, "shortcut_action_values", "shortcut_action_entries");
         mButtonIdList = new ArrayList<Integer>();
 
         mDoubleTapGesture = new GestureDetector(mContext,
@@ -718,7 +719,8 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
                 KeyButtonView v = generateKey(landscape,
                         actionConfig.getClickAction(),
                         actionConfig.getLongpressAction(),
-                        actionConfig.getIcon());
+                        actionConfig.getIcon(),
+                        actionConfig.getClickActionDescription());
                 v.setTag((landscape ? "key_land_" : "key_") + j);
 
                 addButton(navButtonLayout, v, landscape);
@@ -756,12 +758,12 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
     }
 
     private KeyButtonView generateKey(boolean landscape, String clickAction,
-            String longpress,
-            String iconUri) {
+            String longpress, String iconUri, String description) {
 
         KeyButtonView v = new KeyButtonView(mContext, null);
         v.setClickAction(clickAction);
         v.setLongpressAction(longpress);
+        v.setContentDescription(description);
         int i = mContext.getResources().getDimensionPixelSize(R.dimen.navigation_key_width);
         v.setLayoutParams(getLayoutParams(landscape, i));
 
@@ -1689,7 +1691,8 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
                 Settings.System.NAVIGATION_BAR_BUTTON_TINT_MODE,
                 3, UserHandle.USER_CURRENT);
 
-        mButtonsConfig = ActionHelper.getNavBarConfig(mContext);
+        mButtonsConfig = ActionHelper.getNavBarConfigWithDescription(
+                mContext, "shortcut_action_values", "shortcut_action_entries");
 
         mMenuSetting = Settings.System.getIntForUser(resolver,
                 Settings.System.MENU_LOCATION, SHOW_RIGHT_MENU,
