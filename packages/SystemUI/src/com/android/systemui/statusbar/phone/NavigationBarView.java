@@ -158,7 +158,7 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
     int mDisabledFlags = 0;
     int mNavigationIconHints = 0;
 
-    private BackButtonDrawable mBackIcon, mBackLandIcon, mBackAltIcon;
+    private Drawable mBackIcon, mBackLandIcon, mBackAltIcon, mBackAltLandIcon;
     private Drawable mRecentIcon;
     private Drawable mRecentLandIcon;
 
@@ -550,10 +550,32 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
     }
 
     private void getIcons(Resources res) {
-        mBackIcon = new BackButtonDrawable(res.getDrawable(R.drawable.ic_sysbar_back));
-        mBackLandIcon = new BackButtonDrawable(res.getDrawable(R.drawable.ic_sysbar_back_land));
+        mBackIcon = res.getDrawable(R.drawable.ic_sysbar_back);
+        mBackLandIcon = res.getDrawable(R.drawable.ic_sysbar_back_land);
+        mBackAltIcon = res.getDrawable(R.drawable.ic_sysbar_back_ime);
+        mBackAltLandIcon = res.getDrawable(R.drawable.ic_sysbar_back_ime);
         mRecentIcon = res.getDrawable(R.drawable.ic_sysbar_recent);
         mRecentLandIcon = res.getDrawable(R.drawable.ic_sysbar_recent_land);
+        ContentResolver resolver = mContext.getContentResolver();
+        mNavBarButtonColorMode = Settings.System.getIntForUser(resolver,
+                Settings.System.NAVIGATION_BAR_BUTTON_TINT_MODE,
+                3, UserHandle.USER_CURRENT);
+
+        if (mNavBarButtonColorMode != 3) {
+            mNavBarButtonColor = Settings.System.getIntForUser(resolver,
+                    Settings.System.NAVIGATION_BAR_BUTTON_TINT,
+                    -2, UserHandle.USER_CURRENT);
+            if (mNavBarButtonColor == -2) {
+                mNavBarButtonColor = mContext.getResources().getColor(
+                    com.android.internal.R.color.white);
+            }
+            mBackIcon = ColorHelper.getColoredDrawable(mBackIcon, mNavBarButtonColor);
+            mBackLandIcon = ColorHelper.getColoredDrawable(mBackLandIcon, mNavBarButtonColor);
+            mBackAltIcon = ColorHelper.getColoredDrawable(mBackAltIcon, mNavBarButtonColor);
+            mBackAltLandIcon = ColorHelper.getColoredDrawable(mBackAltLandIcon, mNavBarButtonColor);
+			mRecentIcon = ColorHelper.getColoredDrawable(mRecentIcon, mNavBarButtonColor);
+            mRecentLandIcon = ColorHelper.getColoredDrawable(mRecentLandIcon, mNavBarButtonColor);
+        }
     }
 
     public void updateResources(Resources res) {
@@ -1228,6 +1250,18 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
         */
         mNavigationIconHints = hints;
 
+        KeyButtonView v = (KeyButtonView)getBackButton();
+        if (v != null) {
+            v.setImageDrawable(null);
+            Drawable d = backAlt
+                    ? (mVertical ? mBackAltLandIcon : mBackAltIcon)
+                    : (mVertical ? mBackLandIcon    : mBackIcon);
+            /* if (mNavBarButtonColorMode != 3) {
+                d = ColorHelper.getColoredDrawable(d, mNavBarButtonColor);
+            } */
+            v.setImageBitmap(ColorHelper.drawableToBitmap(d));
+        }
+
         final boolean showImeButton = (
             (hints & StatusBarManager.NAVIGATION_HINT_IME_SHOWN) != 0
             && !mImeArrowVisibility);
@@ -1543,7 +1577,7 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
     }
 
     private void adjustExtraKeyGravity(View navBar, boolean isLayoutRtl) {
-        View menu = navBar.findViewById(R.id.menu);
+        View menu = getBackButton();
         View imeSwitcher = navBar.findViewById(R.id.ime_switcher);
 
         /**
