@@ -16,6 +16,7 @@
 
 package com.android.internal.util.bliss;
 
+import java.util.Random;
 import android.content.Context;
 import android.content.res.Resources;
 import android.view.animation.AnimationUtils;
@@ -25,6 +26,7 @@ import java.util.ArrayList;
 
 public class AwesomeAnimationHelper {
 
+	public final static int ANIMATION_RANDOM = 14;
     public final static int ANIMATION_DEFAULT = 0;
     public final static int ANIMATION_FADE = 1;
     public final static int ANIMATION_SLIDE_RIGHT = 2;
@@ -67,6 +69,7 @@ public class AwesomeAnimationHelper {
         animList.add(ANIMATION_GROW_SHRINK_BOTTOM);
         animList.add(ANIMATION_GROW_SHRINK_LEFT);
         animList.add(ANIMATION_GROW_SHRINK_RIGHT);
+		animList.add(ANIMATION_RANDOM);
         int length = animList.size();
         int[] anim = new int[length];
         for (int i = 0; i < length; i++) {
@@ -76,6 +79,10 @@ public class AwesomeAnimationHelper {
     }
 
     public static int[] getSystemAnimations(int mAnim, boolean enterOnly, boolean reverseExit) {
+		if(mAnim == ANIMATION_RANDOM){
+            mAnim = (new Random()).nextInt(14);
+            // Random number from 0 to 13
+        }
         int[] anim = new int[2];
         switch (mAnim) {
             case ANIMATION_FADE:
@@ -189,8 +196,11 @@ public class AwesomeAnimationHelper {
         return value;
     }
 
-    public static String getProperName(Resources res, int index) {
+        public static String getProperName(Resources res, int index) {
         String[] str = res.getStringArray(com.android.internal.R.array.anim_controls_entries);
+        if (index == ANIMATION_RANDOM){
+                index = str.length - 1;
+        }
         return str[index];
     }
 
