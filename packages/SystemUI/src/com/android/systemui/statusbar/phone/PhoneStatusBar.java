@@ -904,6 +904,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             if (mNavigationBarView != null) {
                 mNavigationBarView.setLeftInLandscape(navLeftInLandscape);
             }
+            if (mSearchPanelView != null) {
+                mSearchPanelView.setLeftNavbar(navLeftInLandscape);
+            }
 
             mShowWifiSsidLabel = Settings.Global.getInt(resolver,
                 Settings.Global.WIFI_STATUS_BAR_SSID, 0) == 1;
