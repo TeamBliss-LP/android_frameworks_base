@@ -85,11 +85,11 @@ public class NavigationRingHelpers {
 
     public static void resetActionsToDefaults(Context context) {
         final ContentResolver cr = context.getContentResolver();
-        Settings.Secure.putString(cr, Settings.Secure.NAVIGATION_RING_TARGETS[0], ACTION_NULL);
+        Settings.Secure.putString(cr, Settings.Secure.NAVIGATION_RING_TARGETS[0], ACTION_TORCH);
         Settings.Secure.putString(cr, Settings.Secure.NAVIGATION_RING_TARGETS[1], ACTION_ASSIST);
-        Settings.Secure.putString(cr, Settings.Secure.NAVIGATION_RING_TARGETS[2], ACTION_NULL);
-        Settings.Secure.putString(cr, Settings.Secure.NAVIGATION_RING_TARGETS[3], ACTION_NULL);
-        Settings.Secure.putString(cr, Settings.Secure.NAVIGATION_RING_TARGETS[4], ACTION_NULL);
+        Settings.Secure.putString(cr, Settings.Secure.NAVIGATION_RING_TARGETS[2], ACTION_SCREENSHOT);
+        Settings.Secure.putString(cr, Settings.Secure.NAVIGATION_RING_TARGETS[3], ACTION_VIB);
+        Settings.Secure.putString(cr, Settings.Secure.NAVIGATION_RING_TARGETS[4], ACTION_KILL);
     }
 
     public static boolean isAssistantAvailable(Context context) {
@@ -124,6 +124,10 @@ public class NavigationRingHelpers {
         } else if (action.equals(ACTION_TORCH)) {
             resourceId = getTorchDrawableResId(context);
         } else if (action.equals(ACTION_ASSIST)) {
+            resourceId = R.drawable.ic_navigation_ring_search;
+        } else if (action.equals(ACTION_EXPANDED_DESKTOP)) {
+            resourceId = R.drawable.ic_navigation_ring_expanded_desktop;
+        } else if (action.equals(ACTION_VOICE_SEARCH)) {
             resourceId = R.drawable.ic_navigation_ring_search;
         } else if (action.startsWith("**")) {
             // SlimActions without pre-defined navring icon, try to use navbar icon instead for now
