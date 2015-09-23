@@ -85,11 +85,11 @@ public class NavigationRingHelpers {
 
     public static void resetActionsToDefaults(Context context) {
         final ContentResolver cr = context.getContentResolver();
-        Settings.Secure.putString(cr, Settings.Secure.NAVIGATION_RING_TARGETS[0], ACTION_TORCH);
+        Settings.Secure.putString(cr, Settings.Secure.NAVIGATION_RING_TARGETS[0], ACTION_NULL);
         Settings.Secure.putString(cr, Settings.Secure.NAVIGATION_RING_TARGETS[1], ACTION_ASSIST);
-        Settings.Secure.putString(cr, Settings.Secure.NAVIGATION_RING_TARGETS[2], ACTION_SCREENSHOT);
-        Settings.Secure.putString(cr, Settings.Secure.NAVIGATION_RING_TARGETS[3], ACTION_VIB);
-        Settings.Secure.putString(cr, Settings.Secure.NAVIGATION_RING_TARGETS[4], ACTION_KILL);
+        Settings.Secure.putString(cr, Settings.Secure.NAVIGATION_RING_TARGETS[2], ACTION_NULL);
+        Settings.Secure.putString(cr, Settings.Secure.NAVIGATION_RING_TARGETS[3], ACTION_NULL);
+        Settings.Secure.putString(cr, Settings.Secure.NAVIGATION_RING_TARGETS[4], ACTION_NULL);
     }
 
     public static boolean isAssistantAvailable(Context context) {
