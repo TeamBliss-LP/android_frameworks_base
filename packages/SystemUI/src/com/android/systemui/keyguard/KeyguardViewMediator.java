@@ -16,6 +16,7 @@
 
 package com.android.systemui.keyguard;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ActivityManagerNative;
@@ -941,8 +942,7 @@ public class KeyguardViewMediator extends SystemUI {
             // This also "locks" the device when not secure to provide easy access to the
             // camera while preventing unwanted input.
             final boolean lockImmediately =
-                mLockPatternUtils.getPowerButtonInstantlyLocks() || !mLockPatternUtils.isSecure()
-                    || isFingerprintActive();
+                mLockPatternUtils.getPowerButtonInstantlyLocks() || isFingerprintActive();
 
             notifyScreenOffLocked();
 
@@ -978,18 +978,17 @@ public class KeyguardViewMediator extends SystemUI {
         final ContentResolver cr = mContext.getContentResolver();
 
         // From DisplaySettings
-        int currentUserId = mLockPatternUtils.getCurrentUser();
-        long displayTimeout = Settings.System.getIntForUser(cr, SCREEN_OFF_TIMEOUT,
-                KEYGUARD_DISPLAY_TIMEOUT_DELAY_DEFAULT, currentUserId);
+        long displayTimeout = Settings.System.getInt(cr, SCREEN_OFF_TIMEOUT,
+                KEYGUARD_DISPLAY_TIMEOUT_DELAY_DEFAULT);
 
         // From SecuritySettings
-        final long lockAfterTimeout = Settings.Secure.getIntForUser(cr,
+        final long lockAfterTimeout = Settings.Secure.getInt(cr,
                 Settings.Secure.LOCK_SCREEN_LOCK_AFTER_TIMEOUT,
-                KEYGUARD_LOCK_AFTER_DELAY_DEFAULT, currentUserId);
+                KEYGUARD_LOCK_AFTER_DELAY_DEFAULT);
 
         // From DevicePolicyAdmin
         final long policyTimeout = mLockPatternUtils.getDevicePolicyManager()
-                .getMaximumTimeToLock(null, currentUserId);
+                .getMaximumTimeToLock(null, mLockPatternUtils.getCurrentUser());
 
         long timeout;
         if (policyTimeout > 0) {
@@ -1074,7 +1073,7 @@ public class KeyguardViewMediator extends SystemUI {
         }
         Profile profile = mProfileManager.getActiveProfile();
         if (profile != null) {
-            if (profile.getScreenLockMode().getValue() == Profile.LockMode.DISABLE) {
+            if (profile.getScreenLockMode().getValue() == Profile.LockMode.DISABLE && mBootCompleted) {
                 if (DEBUG) Log.d(TAG, "isKeyguardDisabled: keyguard is disabled by profile");
                 return true;
             }
@@ -1722,8 +1721,7 @@ public class KeyguardViewMediator extends SystemUI {
     private void playSound(int soundId) {
         if (soundId == 0) return;
         final ContentResolver cr = mContext.getContentResolver();
-        if (Settings.System.getIntForUser(cr, Settings.System.LOCKSCREEN_SOUNDS_ENABLED,
-                1, mLockPatternUtils.getCurrentUser()) == 1) {
+        if (Settings.System.getInt(cr, Settings.System.LOCKSCREEN_SOUNDS_ENABLED, 1) == 1) {
 
             mLockSounds.stop(mLockSoundStreamId);
             // Init mAudioManager
@@ -2102,8 +2100,6 @@ public class KeyguardViewMediator extends SystemUI {
             }
         }
     }
-<<<<<<< HEAD
-=======
 
     public void setBackgroundBitmap(Bitmap bmp) {
         mStatusBarKeyguardViewManager.setBackgroundBitmap(bmp);
@@ -2118,6 +2114,4 @@ public class KeyguardViewMediator extends SystemUI {
                 context.getSystemService(Context.FINGERPRINT_SERVICE);
         return fp != null && fp.userEnrolled() && lockPatternUtils.usingFingerprint();
     }
-
->>>>>>> 93cd959... Fingerprint: don't report as active without any fp's
 }
