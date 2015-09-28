@@ -752,6 +752,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             resolver.registerContentObserver(Settings.Global.getUriFor(
                     Settings.Global.POLICY_CONTROL), false, this,
                      UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_SHOW_NETWORK_ACTIVITY),
+                    false, this, UserHandle.USER_ALL);
             update();
         }
 
@@ -1073,6 +1076,12 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 if (mNotificationPanel != null) {
                     mNotificationPanel.setTaskManagerEnabled(showTaskManager);
                 }
+            }
+
+            if (mNetworkController != null) {
+                boolean showIndicators = Settings.System.getIntForUser(
+                        mContext.getContentResolver(), Settings.System.STATUS_BAR_SHOW_NETWORK_ACTIVITY, 0, mCurrentUserId) == 1;
+                mNetworkController.setShowIndicators(showIndicators);
             }
         }
     }
