@@ -2403,4 +2403,8 @@
         <item>-44</item>
     </integer-array>
 
+    <!-- Config to enable installation of region locked packages -->
+    <string-array name="config_region_locked_packages" translatable="false">
+    </string-array>
+
 </resources>
