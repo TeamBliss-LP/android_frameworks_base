@@ -228,7 +228,6 @@ public class PieItem extends PieView.PieDrawable {
             int drawableColorMode = Settings.System.getIntForUser(cr,
                     Settings.System.PIE_ICON_COLOR_MODE, 0,
                     UserHandle.USER_CURRENT);
-            if (drawableColorMode != 3) {
                 int drawableColor = Settings.System.getIntForUser(cr,
                         Settings.System.PIE_ICON_COLOR, -2,
                         UserHandle.USER_CURRENT);
@@ -236,10 +235,15 @@ public class PieItem extends PieView.PieDrawable {
                     drawableColor = color;
                 }
 
-                if (!(mPieIconType == 2 && drawableColorMode == 1)
-                        && !(mPieIconType == 1 && drawableColorMode != 0)) {
-                    drawable = ImageHelper.getColoredDrawable(drawable, drawableColor);
-                }
+            boolean colorize = true;
+            if (mPieIconType == 2 && drawableColorMode == 1
+                    || mPieIconType == 1 && drawableColorMode != 0) {
+                colorize = false;
+            }
+
+            drawable.mutate();
+            if (colorize && drawableColorMode != 3) {
+                drawable = ImageHelper.getColoredDrawable(drawable, drawableColor);
             }
             imageView.setImageBitmap(ImageHelper.drawableToBitmap(drawable));
             imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
