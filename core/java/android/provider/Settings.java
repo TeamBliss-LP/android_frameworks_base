@@ -5021,12 +5021,6 @@ public final class Settings {
         public static final String ON_THE_GO_CAMERA = "on_the_go_camera";
 
         /**
-         * Disable ads (HFM)
-         * @hide
-         */
-        public static final String HFM_DISABLE_ADS = "hfm_disable_ads";
-
-        /**
          * Whether to prevent loud volume levels when headset is first plugged in.
          * @hide
          */
