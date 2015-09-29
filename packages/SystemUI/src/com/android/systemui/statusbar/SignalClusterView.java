@@ -117,7 +117,6 @@ public class SignalClusterView
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_VPN_ICON_COLOR),
                     false, this, UserHandle.USER_ALL);
-            updateColorsFromSettings();
         }
 
         void unobserve() {
@@ -126,12 +125,12 @@ public class SignalClusterView
 
         @Override
         public void onChange(boolean selfChange, Uri uri) {
-            updateColors();
+            updateSettings();
         }
 
         @Override
         public void onChange(boolean selfChange) {
-            updateColors();
+            updateSettings();
         }
     }
 
@@ -203,7 +202,6 @@ public class SignalClusterView
 
         mObserver.observe();
         updateSettings();
-        updateColors();
     }
 
     @Override
@@ -244,12 +242,9 @@ public class SignalClusterView
         mActivityIcon = activityIcon;
         mWifiActivityId = activityIcon;
         mWifiDescription = contentDescription;
-        if (doUpdateColors) {
-            updateColors();
-        } else {
+
         updateSettings();
-            apply();
-        }
+        apply();
     }
 
     @Override
@@ -274,12 +269,8 @@ public class SignalClusterView
         boolean doUpdateColors = mActivityIcon != activityIcon;
         mActivityIcon = activityIcon;
 
-        if (doUpdateColors) {
-            updateColors();
-        } else {
         updateSettings();
-            apply();
-        }
+        apply();
     }
 
     @Override
@@ -324,7 +315,7 @@ public class SignalClusterView
         mAirplaneIconId = airplaneIconId;
         mAirplaneContentDescription = contentDescription;
 
-        updateColors();
+        updateSettings();
     }
 
     @Override
@@ -559,38 +550,5 @@ public class SignalClusterView
                 mMobileType.setColorFilter(mNetworkColor, Mode.MULTIPLY);
             }
         }
-    }
-
-    private void updateColors() {
-        updateColorsFromSettings();
-        apply();
-    }
-
-    private void updateColorsFromSettings() {
-        ContentResolver resolver = mContext.getContentResolver();
-
-        int networkNormalColor = Settings.System.getIntForUser(resolver,
-                Settings.System.STATUS_BAR_NETWORK_ICONS_NORMAL_COLOR,
-                DEFAULT_COLOR, UserHandle.USER_CURRENT);
-        int networkFullyColor = Settings.System.getIntForUser(resolver,
-                Settings.System.STATUS_BAR_NETWORK_ICONS_FULLY_COLOR,
-                networkNormalColor, UserHandle.USER_CURRENT);
-        int networkActivityNormalColor = Settings.System.getIntForUser(resolver,
-                Settings.System.STATUS_BAR_NETWORK_ACTIVITY_ICONS_NORMAL_COLOR,
-                DEFAULT_ACTIVITY_COLOR, UserHandle.USER_CURRENT);
-        int networkActivityFullyColor = Settings.System.getIntForUser(resolver,
-                Settings.System.STATUS_BAR_NETWORK_ACTIVITY_ICONS_FULLY_COLOR,
-                networkActivityNormalColor, UserHandle.USER_CURRENT);
-        mAirplaneModeColor = Settings.System.getIntForUser(resolver,
-                Settings.System.STATUS_BAR_AIRPLANE_MODE_ICON_COLOR,
-                networkNormalColor, UserHandle.USER_CURRENT);
-        mVpnColor = Settings.System.getIntForUser(resolver,
-                Settings.System.STATUS_BAR_VPN_ICON_COLOR,
-                networkNormalColor, UserHandle.USER_CURRENT);
-
-        mNetworkColor =
-                mActivityIcon == 0 ? networkNormalColor : networkFullyColor;
-        mNetworkActivityColor =
-                mActivityIcon == 0 ? networkActivityNormalColor : networkActivityFullyColor;
-    }
-}
+     }
+  }
