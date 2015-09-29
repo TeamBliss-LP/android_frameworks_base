@@ -124,11 +124,6 @@ public class SignalClusterView
         }
 
         @Override
-        public void onChange(boolean selfChange, Uri uri) {
-            updateSettings();
-        }
-
-        @Override
         public void onChange(boolean selfChange) {
             updateSettings();
         }
@@ -233,12 +228,12 @@ public class SignalClusterView
     }
 
     @Override
-    public void setWifiIndicators(boolean visible, int strengthIcon, int activityIcon,
+    public void setWifiIndicators(boolean visible, int strengthIcon, int inetCondition, int activityIcon,
             String contentDescription) {
         mWifiVisible = visible;
         mWifiStrengthId = strengthIcon;
+        mInetCondition = inetCondition;
         mWifiActivityId = activityIcon;
-        boolean doUpdateColors = mActivityIcon != activityIcon;
         mActivityIcon = activityIcon;
         mWifiActivityId = activityIcon;
         mWifiDescription = contentDescription;
@@ -248,26 +243,20 @@ public class SignalClusterView
     }
 
     @Override
-    public void setMobileDataIndicators(boolean visible, int strengthIcon,
+    public void setMobileDataIndicators(boolean visible, int strengthIcon, int inetCondition,
             int activityIcon, int typeIcon, String contentDescription,
             String typeContentDescription, boolean isTypeIconWide,
             boolean showRoamingIndicator, int subId) {
         PhoneState state = getState(subId);
-        if (state == null) {
-            return;
-        }
-
         state.mMobileVisible = visible;
         state.mMobileStrengthId = strengthIcon;
+        mInetCondition = inetCondition;
         state.mMobileActivityId = activityIcon;
         state.mMobileTypeId = typeIcon;
         state.mMobileDescription = contentDescription;
         state.mMobileTypeDescription = typeContentDescription;
         state.mIsMobileTypeIconWide = isTypeIconWide;
         state.mShowRoamingIndicator = showRoamingIndicator;
-
-        boolean doUpdateColors = mActivityIcon != activityIcon;
-        mActivityIcon = activityIcon;
 
         updateSettings();
         apply();
@@ -398,7 +387,6 @@ public class SignalClusterView
                 if (!anyMobileVisible) {
                     firstMobileTypeId = state.mMobileTypeId;
                     anyMobileVisible = true;
-                    state.applyColors();
                 }
             }
         }
@@ -510,14 +498,11 @@ public class SignalClusterView
         public boolean apply(boolean isSecondaryIcon) {
             if (mMobileVisible && !mIsAirplaneMode) {
                 mMobile.setImageResource(mMobileStrengthId);
-                mMobile.setColorFilter(mNetworkColor, Mode.MULTIPLY);
                 mMobileGroup.setContentDescription(
-                        mMobileTypeDescription + " " + mMobileDescription);
+                mMobileTypeDescription + " " + mMobileDescription);
                 mMobileGroup.setVisibility(View.VISIBLE);
                 mMobileActivity.setImageResource(mMobileActivityId);
-                mMobileActivity.setColorFilter(mNetworkActivityColor, Mode.MULTIPLY);
                 mMobileType.setImageResource(mMobileTypeId);
-                mMobileType.setColorFilter(mNetworkColor, Mode.MULTIPLY);
                 mMobileRoaming.setVisibility(mShowRoamingIndicator ? View.VISIBLE : View.GONE);
             } else {
                 mMobileGroup.setVisibility(View.GONE);
@@ -542,13 +527,6 @@ public class SignalClusterView
                     && mMobileGroup.getContentDescription() != null) {
                 event.getText().add(mMobileGroup.getContentDescription());
             }
-        }
-        public void applyColors() {
-            if (mMobileGroup != null && mMobile != null) {
-                mMobile.setColorFilter(mNetworkColor, Mode.MULTIPLY);
-                mMobileActivity.setColorFilter(mNetworkActivityColor, Mode.MULTIPLY);
-                mMobileType.setColorFilter(mNetworkColor, Mode.MULTIPLY);
-            }
-        }
+        }        
      }
   }
