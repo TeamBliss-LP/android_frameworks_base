@@ -324,9 +324,6 @@
     <!-- Enable the default volume dialog -->
     <bool name="enable_volume_ui">true</bool>
 
-    <!-- Whether to disable exit-to-home animations for this device -->
-    <bool name="config_disableRecentsToHomeAnimation">false</bool>
-
     <!-- On-The-Go -->
     <integer name="quick_settings_onthego_dialog_short_timeout">3000</integer>
     <integer name="quick_settings_onthego_dialog_long_timeout">6000</integer>
