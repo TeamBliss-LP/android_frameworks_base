@@ -234,8 +234,7 @@ public class KeyguardBouncer {
      * WARNING: This method might cause Binder calls.
      */
     public boolean isSecure() {
-        return mKeyguardView == null || (mKeyguardView.getSecurityMode() != SecurityMode.None &&
-                mKeyguardView.getSecurityMode() != SecurityMode.ThirdParty);
+        return mKeyguardView == null || mKeyguardView.getSecurityMode() != SecurityMode.None;
     }
 
     public boolean onMenuPressed() {

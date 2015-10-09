@@ -113,30 +113,26 @@ public class KeyguardSecurityContainer extends FrameLayout implements KeyguardSe
 
     @Override
     public void onResume(int reason) {
-        if (mCurrentSecuritySelection != SecurityMode.None &&
-                mCurrentSecuritySelection != SecurityMode.ThirdParty) {
+        if (mCurrentSecuritySelection != SecurityMode.None) {
             getSecurityView(mCurrentSecuritySelection).onResume(reason);
         }
     }
 
     @Override
     public void onPause() {
-        if (mCurrentSecuritySelection != SecurityMode.None &&
-                mCurrentSecuritySelection != SecurityMode.ThirdParty) {
+        if (mCurrentSecuritySelection != SecurityMode.None) {
             getSecurityView(mCurrentSecuritySelection).onPause();
         }
     }
 
     public void startAppearAnimation() {
-        if (mCurrentSecuritySelection != SecurityMode.None &&
-                mCurrentSecuritySelection != SecurityMode.ThirdParty) {
+        if (mCurrentSecuritySelection != SecurityMode.None) {
             getSecurityView(mCurrentSecuritySelection).startAppearAnimation();
         }
     }
 
     public boolean startDisappearAnimation(Runnable onFinishRunnable) {
-        if (mCurrentSecuritySelection != SecurityMode.None &&
-                mCurrentSecuritySelection != SecurityMode.ThirdParty) {
+        if (mCurrentSecuritySelection != SecurityMode.None) {
             return getSecurityView(mCurrentSecuritySelection).startDisappearAnimation(
                     onFinishRunnable);
         }
@@ -478,12 +474,11 @@ public class KeyguardSecurityContainer extends FrameLayout implements KeyguardSe
         boolean finish = false;
         if (mUpdateMonitor.getUserHasTrust(mLockPatternUtils.getCurrentUser())) {
             finish = true;
-        } else if (SecurityMode.None == mCurrentSecuritySelection ||
-                SecurityMode.ThirdParty == mCurrentSecuritySelection) {
+        } else if (SecurityMode.None == mCurrentSecuritySelection) {
             SecurityMode securityMode = mSecurityModel.getSecurityMode();
             // Allow an alternate, such as biometric unlock
             securityMode = mSecurityModel.getAlternateFor(securityMode);
-            if (SecurityMode.None == securityMode || SecurityMode.ThirdParty == securityMode) {
+            if (SecurityMode.None == securityMode) {
                 finish = true; // no security required
             } else {
                 showSecurityScreen(securityMode); // switch to the alternate security view
@@ -503,8 +498,7 @@ public class KeyguardSecurityContainer extends FrameLayout implements KeyguardSe
                 case SimPuk:
                     // Shortcut for SIM PIN/PUK to go to directly to user's security screen or home
                     SecurityMode securityMode = mSecurityModel.getSecurityMode();
-                    if (securityMode != SecurityMode.None &&
-                            securityMode != SecurityMode.ThirdParty) {
+                    if (securityMode != SecurityMode.None) {
                         showSecurityScreen(securityMode);
                     } else {
                         finish = true;
@@ -542,7 +536,7 @@ public class KeyguardSecurityContainer extends FrameLayout implements KeyguardSe
             oldView.onPause();
             oldView.setKeyguardCallback(mNullCallback); // ignore requests from old view
         }
-        if (securityMode != SecurityMode.None && securityMode != SecurityMode.ThirdParty) {
+        if (securityMode != SecurityMode.None) {
             newView.onResume(KeyguardSecurityView.VIEW_REVEALED);
             newView.setKeyguardCallback(mCallback);
         }
@@ -560,8 +554,7 @@ public class KeyguardSecurityContainer extends FrameLayout implements KeyguardSe
 
         mCurrentSecuritySelection = securityMode;
         mSecurityCallback.onSecurityModeChanged(securityMode,
-                securityMode != SecurityMode.None && securityMode != SecurityMode.ThirdParty &&
-                        newView.needsInput());
+                securityMode != SecurityMode.None && newView.needsInput());
     }
 
     private KeyguardSecurityViewFlipper getFlipper() {
