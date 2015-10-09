@@ -1955,6 +1955,33 @@ public class KeyguardViewMediator extends SystemUI {
         }
     }
 
+    /**
+     * @return Whether a third party keyguard is enabled
+     */
+    private boolean isThirdPartyKeyguardEnabled() {
+        return mLockPatternUtils.isThirdPartyKeyguardEnabled();
+    }
+
+    /**
+     * Launches the third party keyguard activity as specified by
+     * {@link LockPatternUtils#getThirdPartyKeyguardComponent()}
+     */
+    private void showThirdPartyKeyguard(boolean playSounds) {
+        ComponentName thirdPartyKeyguardComponent =
+                mLockPatternUtils.getThirdPartyKeyguardComponent();
+        if (thirdPartyKeyguardComponent != null) {
+            Intent intent = new Intent();
+            intent.setComponent(thirdPartyKeyguardComponent);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            try {
+                mContext.startActivity(intent);
+                if (playSounds) playSounds(true);
+            } catch (ActivityNotFoundException e) {
+                Log.e(TAG, "Unable to start third party keyguard: " + thirdPartyKeyguardComponent);
+            }
+        }
+    }
+
     private void resetKeyguardDonePendingLocked() {
         mKeyguardDonePending = false;
         mHandler.removeMessages(KEYGUARD_DONE_PENDING_TIMEOUT);

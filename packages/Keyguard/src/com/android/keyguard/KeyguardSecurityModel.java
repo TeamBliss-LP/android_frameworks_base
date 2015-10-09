@@ -117,6 +117,9 @@ public class KeyguardSecurityModel {
                         mode = mLockPatternUtils.isPermanentlyLocked() ?
                             SecurityMode.Account : SecurityMode.Gesture;
                     }
+                case DevicePolicyManager.PASSWORD_THIRD_PARTY_UNSECURED:
+                        // currently set this to none and let systemui handle the rest
+                        mode = SecurityMode.ThirdParty;
                     break;
                 case DevicePolicyManager.PASSWORD_THIRD_PARTY_UNSECURED:
                         // currently set this to none and let systemui handle the rest
