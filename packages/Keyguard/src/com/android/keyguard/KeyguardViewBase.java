@@ -141,8 +141,7 @@ public abstract class KeyguardViewBase extends FrameLayout implements SecurityCa
             mSecurityContainer.showPrimarySecurityScreen(false /*turningOff*/);
             return true;
         }
-        if (mSecurityContainer.getCurrentSecuritySelection() != SecurityMode.None &&
-                mSecurityContainer.getCurrentSecuritySelection() != SecurityMode.ThirdParty) {
+        if (mSecurityContainer.getCurrentSecuritySelection() != SecurityMode.None) {
             mSecurityContainer.dismiss(false);
             return true;
         }
@@ -262,8 +261,7 @@ public abstract class KeyguardViewBase extends FrameLayout implements SecurityCa
      */
     public void verifyUnlock() {
         SecurityMode securityMode = mSecurityContainer.getSecurityMode();
-        if (securityMode == KeyguardSecurityModel.SecurityMode.None ||
-                securityMode == KeyguardSecurityModel.SecurityMode.ThirdParty) {
+        if (securityMode == KeyguardSecurityModel.SecurityMode.None) {
             if (mViewMediatorCallback != null) {
                 mViewMediatorCallback.keyguardDone(true);
             }
