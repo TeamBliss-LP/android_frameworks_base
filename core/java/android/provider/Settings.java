@@ -5055,22 +5055,10 @@ public final class Settings {
         public static final String VOLUME_KEYS_CONTROL_MEDIA_STREAM = "volume_keys_control_media_stream";
 
         /**
-         * Enable/disable overwrite default value for ambient display
-         * @hide
-         */
-        public static final String DOZE_OVERWRITE_VALUE = "doze_overwrite_value";
-
-        /**
          * Toggle for navigation ring
          * @hide
          */
         public static final String ENABLE_NAVIGATION_RING = "enable_navigation_ring";
-
-        /**
-         * Duration in for ambient display
-         * @hide
-         */
-        public static final String DOZE_PULSE_DURATION_IN = "doze_pulse_duration_in";
 
         /**
          * Duration visible for ambient display
@@ -5078,17 +5066,18 @@ public final class Settings {
          */
         public static final String DOZE_PULSE_DURATION_VISIBLE = "doze_pulse_duration_visible";
 
-        /**
-         * Duration out for ambient display
-         * @hide
-         */
-        public static final String DOZE_PULSE_DURATION_OUT = "doze_pulse_duration_out";
 
         /**
          * Pulse if there is notifications for ambient display
          * @hide
          */
         public static final String DOZE_PULSE_ON_NOTIFICATIONS = "doze_pulse_on_notifications";
+
+         /**
+         * Follow pre-configured doze pulse repeat schedule
+         * @hide
+         */
+        public static final String DOZE_SCHEDULE = "doze_schedule";
 
         /**
          * Shake threshold for ambient display

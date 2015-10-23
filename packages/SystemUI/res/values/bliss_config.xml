@@ -37,5 +37,8 @@
     <!-- milliseconds how long heads up should be in snooze. -->
     <integer name="heads_up_snooze_time">300000</integer>
 
+    <!-- Doze: alternate schedule -->
+    <string name="doze_pulse_schedule_alternate" translatable="false">1s</string>
+
 </resources>
 
