@@ -5110,12 +5110,6 @@ public final class Settings {
         public static final String DOZE_BRIGHTNESS = "doze_brightness";
 
         /**
-         * Auto brigthness for ambient display
-         * @hide
-         */
-        public static final String DOZE_AUTO_BRIGHTNESS = "doze_auto_brightness";
-
-        /**
          * Volume key controls ringtone or media sound stream
          *
          * @hide
