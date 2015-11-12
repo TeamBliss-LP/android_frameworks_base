@@ -303,6 +303,7 @@ public class DozeService extends DreamService implements ProximitySensorManager.
 
         mDreaming = false;
         listenForPulseSignals(false);
+
         // Tell the host that it's over.
         mHost.stopDozing();
     }
@@ -314,7 +315,7 @@ public class DozeService extends DreamService implements ProximitySensorManager.
             // Here we need a wakelock to stay awake until the pulse is finished.
             mWakeLock.acquire();
             mPulsing = true;
-            if (!mDozeParameters.getProxCheckBeforePulse()) {
+            if (!mDozeParameters.getProxCheckBeforePulse(reason)) {
                 // skip proximity check
                 continuePulsing(reason);
                 return;
