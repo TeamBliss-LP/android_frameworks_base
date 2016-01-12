@@ -315,6 +315,7 @@
 
    <!-- Fingerprint -->
    <string name="fingerprint_try_again_hint">Please scan again</string>
+   <string name="fingerprint_try_again_hint_too_many">Too many fingerprint attempts. Try again later.</string>
 
     <!-- Empty view text for CustomQSTile -->
     <string name="quick_settings_custom_qs_detail_empty_text">No items found</string>
